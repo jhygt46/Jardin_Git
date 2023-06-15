@@ -28,6 +28,7 @@ import (
 	"github.com/fasthttp/router"
 	_ "github.com/go-sql-driver/mysql"
 
+	"github.com/unrolled/secure"
 	"github.com/valyala/fasthttp"
 )
 
