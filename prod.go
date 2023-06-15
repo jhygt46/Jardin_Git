@@ -279,6 +279,8 @@ func main() {
 		go func() {
 			if err := fasthttp.ListenAndServe(":80", redirectHTTP); err != nil {
 				panic(err)
+			} else {
+				fmt.Println("START HTTP")
 			}
 		}()
 
@@ -288,6 +290,8 @@ func main() {
 
 		if err := server.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.valleencantado.cl/fullchain.pem", "/etc/letsencrypt/live/www.valleencantado.cl/privkey.pem"); err != nil {
 			panic(err)
+		} else {
+			fmt.Println("START HTTPS")
 		}
 
 	}()
