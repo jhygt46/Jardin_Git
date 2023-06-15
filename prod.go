@@ -277,16 +277,15 @@ func main() {
 		//fasthttp.ListenAndServe(port, r.Handler)
 
 		// DESPUES
-
 		secureMiddleware := secure.New(secure.Options{SSLRedirect: true})
 		secureHandler := secureMiddleware.Handler(r.Handler)
-
 		go func() {
 			log.Fatal(fasthttp.ListenAndServe(":80", secureHandler))
 		}()
-
-		// Iniciar servidor HTTPS
-		log.Fatal(fasthttp.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.valleencantado.cl/fullchain.pem", "/etc/letsencrypt/live/www.valleencantado.cl/privkey.pem", secureHandler))
+		go func() {
+			log.Fatal(fasthttp.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.valleencantado.cl/fullchain.pem", "/etc/letsencrypt/live/www.valleencantado.cl/privkey.pem", secureHandler))
+		}()
+		select {}
 
 		//secureMiddleware := secure.New(secure.Options{SSLRedirect: true})
 		//secureHandler := secureMiddleware.Handler(r.Handler)
