@@ -275,16 +275,34 @@ func main() {
 		// ANTES
 		fasthttp.ListenAndServe(port, r.Handler)
 
-		//secureMiddleware := secure.New(secure.Options{SSLRedirect: true})
-		//secureHandler := secureMiddleware.Handler(r.Handler)
-		//go func() { log.Fatal(fasthttp.ListenAndServe(":80", secureHandler)) }()
-		//log.Fatal(fasthttp.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.valleencantado.cl/fullchain.pem", "/etc/letsencrypt/live/www.valleencantado.cl/privkey.pem", secureHandler))
+		// DESPUES
+		go func() {
+			if err := fasthttp.ListenAndServe(":80", redirectHTTP); err != nil {
+				panic(err)
+			}
+		}()
+
+		server := &fasthttp.Server{
+			Handler: r.Handler,
+			TLSConfig: &fasthttp.ServerTLSConfig{
+				CertFile: "/etc/letsencrypt/live/www.valleencantado.cl/fullchain.pem", // Ruta al archivo de certificado público
+				KeyFile:  "/etc/letsencrypt/live/www.valleencantado.cl/privkey.pem",   // Ruta al archivo de clave privada
+			},
+		}
+
+		if err := server.ListenAndServeTLS(":443", ""); err != nil {
+			panic(err)
+		}
 
 	}()
 	if err := run(con, pass, os.Stdout); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}
+}
+func redirectHTTP(ctx *fasthttp.RequestCtx) {
+	redirectURL := fmt.Sprintf("https://%v%v", string(ctx.Host()), string(ctx.URI().RequestURI()))
+	ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
 }
 func Accion(ctx *fasthttp.RequestCtx) {
 
