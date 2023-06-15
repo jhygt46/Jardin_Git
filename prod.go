@@ -215,9 +215,9 @@ func main() {
 		jsHandler = fasthttp.FSHandler("C:/Go/Jardin/js", 1)
 		port = ":81"
 	} else {
-		imgHandler = fasthttp.FSHandler("/var/Jardin/img", 1)
-		cssHandler = fasthttp.FSHandler("/var/Jardin/css", 1)
-		jsHandler = fasthttp.FSHandler("/var/Jardin/js", 1)
+		imgHandler = fasthttp.FSHandler("/var/Jardin_Git/img", 1)
+		cssHandler = fasthttp.FSHandler("/var/Jardin_Git/css", 1)
+		jsHandler = fasthttp.FSHandler("/var/Jardin_Git/js", 1)
 		port = ":80"
 	}
 
