@@ -273,13 +273,18 @@ func main() {
 		r.GET("/qrhtml/{name}", HtmlQr)
 
 		// ANTES
-		fasthttp.ListenAndServe(port, r.Handler)
+		//fasthttp.ListenAndServe(port, r.Handler)
 
 		// DESPUES
+		go func() {
+			if err := fasthttp.ListenAndServe(":80", redirectHTTP); err != nil {
+				panic(err)
+			} else {
+				fmt.Println("START HTTP")
+			}
+		}()
 
-		server := &fasthttp.Server{
-			Handler: r.Handler,
-		}
+		server := &fasthttp.Server{Handler: r.Handler}
 
 		if err := server.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.valleencantado.cl/fullchain.pem", "/etc/letsencrypt/live/www.valleencantado.cl/privkey.pem"); err != nil {
 			panic(err)
