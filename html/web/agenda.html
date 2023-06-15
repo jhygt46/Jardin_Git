@@ -1,0 +1,140 @@
+<script>
+    fecha_agenda = { fecha: '{{.Agenda.Fecha}}', fecha_prev: '{{.Agenda.FechaPrev}}', fecha_next: '{{.Agenda.FechaNext}}' };
+</script>
+<div class="contagenda respdim vhalign">
+    {{if or .Permisos.Admin .Permisos.Educadora}}
+    <div class="cont_agenda">
+        <div class="agenda_fecha">{{.Agenda.Fecha}}</div>
+        <div class="agenda_cursos">
+            {{ range $Idcur, $Curso := .Agenda.AgendaCurso.Cursos }}
+            <div class="agenda_curso">
+                <div class="curso_nombre" onclick="agenda_curso(this)">{{$Curso.Nombre}}</div>
+                <div class="curso_alumnos" style="display: none;">
+                    {{ range $Idusr, $User := $Curso.Users }}
+                    <div class="curso_alumno">
+                        <div class="alumno_nombre" onclick="agenda_alumno(this)">{{$User.Nombre}}</div>
+                        <div class="alumno_detalle" style="display: none">
+                            <div class="tipo_agenda1">
+                                <div></div>
+                                <div>Nada</div>
+                                <div>Mitad</div>
+                                <div>Todo</div> 
+                            </div>
+                            <div class="tipo_agenda1">
+                                <div>Colación</div>
+                                <div><input onclick="handleChange1(this, 1, {{$Idusr}})" name="colacion{{$Idusr}}" type="radio" value="1" {{if eq $User.Ali1 1}}checked{{end}}></div>
+                                <div><input onclick="handleChange1(this, 1, {{$Idusr}})" name="colacion{{$Idusr}}" type="radio" value="2" {{if eq $User.Ali1 2}}checked{{end}}></div>
+                                <div><input onclick="handleChange1(this, 1, {{$Idusr}})" name="colacion{{$Idusr}}" type="radio" value="3" {{if eq $User.Ali1 3}}checked{{end}}></div> 
+                            </div>
+                            <div class="tipo_agenda1">
+                                <div>Almuerzo</div>
+                                <div><input class="" onclick="handleChange1(this, 2, {{$Idusr}})" name="almuerzo{{$Idusr}}" type="radio" value="1" {{if eq $User.Ali2 1}}checked{{end}}></div>
+                                <div><input class="" onclick="handleChange1(this, 2, {{$Idusr}})" name="almuerzo{{$Idusr}}" type="radio" value="2" {{if eq $User.Ali2 2}}checked{{end}}></div>
+                                <div><input class="" onclick="handleChange1(this, 2, {{$Idusr}})" name="almuerzo{{$Idusr}}" type="radio" value="3" {{if eq $User.Ali2 3}}checked{{end}}></div> 
+                            </div>
+                            <div class="tipo_agenda1">
+                                <div>Once</div>
+                                <div><input class="" onclick="handleChange1(this, 3, {{$Idusr}})" name="once{{$Idusr}}" type="radio" value="1" {{if eq $User.Ali3 1}}checked{{end}}></div>
+                                <div><input class="" onclick="handleChange1(this, 3, {{$Idusr}})" name="once{{$Idusr}}" type="radio" value="2" {{if eq $User.Ali3 2}}checked{{end}}></div>
+                                <div><input class="" onclick="handleChange1(this, 3, {{$Idusr}})" name="once{{$Idusr}}" type="radio" value="3" {{if eq $User.Ali3 3}}checked{{end}}></div> 
+                            </div>
+                            <div class="tipo_agenda2 tipo_agendaespacio">
+                                <div>Orina</div>
+                                <div><input class="" onclick="handleChange1(this, 4, {{$Idusr}})" name="orina{{$Idusr}}" type="radio" value="1" {{if eq $User.Dep1 1}}checked{{end}}></div>
+                                <div><input class="" onclick="handleChange1(this, 4, {{$Idusr}})" name="orina{{$Idusr}}" type="radio" value="2" {{if eq $User.Dep1 2}}checked{{end}}></div>
+                                <div><input class="" onclick="handleChange1(this, 4, {{$Idusr}})" name="orina{{$Idusr}}" type="radio" value="3" {{if eq $User.Dep1 3}}checked{{end}}></div> 
+                                <div><input class="" onclick="handleChange1(this, 4, {{$Idusr}})" name="orina{{$Idusr}}" type="radio" value="4" {{if eq $User.Dep1 4}}checked{{end}}></div> 
+                                <div><input class="" onclick="handleChange1(this, 4, {{$Idusr}})" name="orina{{$Idusr}}" type="radio" value="5" {{if eq $User.Dep1 5}}checked{{end}}></div> 
+                            </div>
+                            <div class="tipo_agenda2">
+                                <div>Deposiciones</div>
+                                <div><input class="" onclick="handleChange1(this, 5, {{$Idusr}})" name="deposiciones" type="radio" value="1" {{if eq $User.Dep2 1}}checked{{end}}></div>
+                                <div><input class="" onclick="handleChange1(this, 5, {{$Idusr}})" name="deposiciones" type="radio" value="2" {{if eq $User.Dep2 2}}checked{{end}}></div>
+                                <div><input class="" onclick="handleChange1(this, 5, {{$Idusr}})" name="deposiciones" type="radio" value="3" {{if eq $User.Dep2 3}}checked{{end}}></div> 
+                                <div><input class="" onclick="handleChange1(this, 5, {{$Idusr}})" name="deposiciones" type="radio" value="4" {{if eq $User.Dep2 4}}checked{{end}}></div> 
+                                <div><input class="" onclick="handleChange1(this, 5, {{$Idusr}})" name="deposiciones" type="radio" value="5" {{if eq $User.Dep2 5}}checked{{end}}></div> 
+                            </div>
+                            <div class="tipo_agenda3">
+                                <textarea onblur="sendcommentagenda(this, {{$Idusr}})">{{$User.Comentario}}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+    {{end}}
+    {{if .Permisos.Apoderado}}
+    <div class="titulo">
+        <div class="header vhalign">
+            <div class="image"><img src="/img/hada_chica.png" /></div>
+            <div class="text text1">Agenda</div>
+            <div class="text text2">ValleEncantado</div>
+        </div>
+    </div>
+    <div class="form">
+        <div class="inputs vhalign">
+            <div class="agenda_top">
+                <div class="fecha_prev icon" id="" onclick="search_agenda(this, -1)"></div>
+                <div class="fecha_nom">{{.Agenda.FechaStr}}</div>
+                <div class="fecha_next icon opacity" id="no" onclick="search_agenda(this, 1)"></div>
+            </div>
+            <div class="agenda_bottom">
+                <div class="cont_agenda ca{{if eq (len .Agenda.Users) 1}}1{{else}}2{{end}}">
+                    {{ range .Agenda.Users }}
+                        <div class="apo_alu">
+                            <div class="apo_alu_nom">{{.Nombre}}</div>
+                            <div class="apo_alu_det">
+                                {{if .Data}}
+                                    <div class="cont_alu_det clearfix">
+                                        <div class="alu_info col1 b1">Colación</div>
+                                        <div class="alu_info col1 b1">Almuerzo</div>
+                                        <div class="alu_info col1 b1">Once</div>
+                                    </div>
+                                    <div class="cont_alu_det clearfix">
+                                        <div class="alu_info col1 b2">{{if eq .Ali1 1}}Nada{{else if eq .Ali1 2}}Mitad{{else if eq .Ali1 3}}Toda{{else}}&nbsp;{{end}}</div>
+                                        <div class="alu_info col1 b2">{{if eq .Ali2 1}}Nada{{else if eq .Ali2 2}}Mitad{{else if eq .Ali2 3}}Toda{{else}}&nbsp;{{end}}</div>
+                                        <div class="alu_info col1 b2">{{if eq .Ali3 1}}Nada{{else if eq .Ali3 2}}Mitad{{else if eq .Ali3 3}}Toda{{else}}&nbsp;{{end}}</div>
+                                    </div>
+                                    <div class="cont_alu_det clearfix mtop">
+                                        <div class="alu_info col2 b1">Orina</div>
+                                        <div class="alu_info col2 b1">Deposición</div>
+                                    </div>
+                                    <div class="cont_alu_det clearfix">
+                                        <div class="alu_info col2 b2">{{.Dep1}}</div>
+                                        <div class="alu_info col2 b2">{{.Dep2}}</div>
+                                    </div>
+                                    {{if .ShowComentario }}
+                                        <div class="cont_alu_det clearfix mtop">
+                                            <div class="alu_info col3a b1">Comentario</div>
+                                        </div>
+                                        <div class="cont_alu_det clearfix">
+                                            <div class="alu_info col3b b2">{{.Comentario}}</div>
+                                        </div>
+                                    {{end}}
+                                {{else}}
+                                    NO DATA
+                                {{end}}
+                            </div>
+                        </div>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{end}}
+    {{if not .Register}}
+    <div class="titulo">
+        <div class="header vhalign">
+            <div class="image"><img src="/img/hada_chica.png" /></div>
+            <div class="text text1">Agenda</div>
+            <div class="text text2">ValleEncantado</div>
+        </div>
+    </div>
+    <div class="form">
+        <div class="inputs vhalign"></div>
+    </div>
+    {{end}}
+</div>

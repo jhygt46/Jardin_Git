@@ -1,0 +1,61 @@
+
+
+<div class="mt">
+    <h1>{{.Titulo}}</h1>
+    <ul class="clearfix valign">
+        <a class="back icn r1" title="Mis Cotizaciones" onclick="backurl()"></a>
+    </ul>
+</div>
+<hr>
+<div class="i">
+    <div class="fc" id="info-0">
+        <div class="fct">
+            <h1>{{.SubTitulo}}</h1>
+            <h2>{{.SubTitulo2}}</h2>
+            <ul class="clearfix valign"></ul>
+        </div>
+        <form action="" method="post" class="basic-grey">
+            <fieldset>
+                <input id="id" type="hidden" value="{{.FormId}}" />
+                <input id="accion" type="hidden" value="{{.FormAccion}}" />
+                <label>
+                    <span>Educadoras:</span>
+                    <select id="id_usr">
+                        <option value="0">Seleccionar</option>
+                        {{range .Lista}}
+                        <option value="{{.Id}}" {{if eq .Id $.Padre.Id_usr}}checked="checked"{{end}}>{{.Nombre}}</option>
+                        {{end}}
+                    </select>
+                    <div class="mensaje"></div>
+                </label>
+                <div>
+                    <input type="button" onclick="fm(this)" value="Enviar">
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+{{if .Padres}}
+<div class="i">
+    <div class="fc" id="info-0">
+        <div class="fct">
+            <h1>{{.SubTitulo}}</h1>
+            <h2>{{.SubTitulo2}}</h2>
+            <ul class="clearfix valign"></ul>
+        </div>
+        <ul class='lu'>
+            {{range .Padres}}
+            <li class="u" rel="{{.Id_usr}}">                
+                <div class="no">{{.Nombre}}</div>
+                <div class="btns clearfix valign">
+                    <a title="Eliminar" class="icn del" onclick="eliminar('{{$.DelAccion}}', '{{$.FormId}}/{{.Id_usr}}', '{{$.DelObj}}', '{{.Nombre}}')"></a>
+                </div>
+            </li>
+            {{end}}
+        </ul>
+    </div>
+</div>
+{{end}}
+<br />
+<br />

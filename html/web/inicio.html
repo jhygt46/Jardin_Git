@@ -1,0 +1,10 @@
+<div class="contmodulos">
+    {{if .Register}}
+        {{range $I, $Modulo := .Modulos}}
+            <a href="/{{$Modulo.Url}}" class="modulos mod{{ len $.Modulos }} mdl{{$I}}">
+                <div class="txt valign">{{$Modulo.Titulo}}<br/>{{$Modulo.Text}}</div>
+                <div class="img"></div>
+            </a>
+        {{end}}
+    {{end}}
+</div>

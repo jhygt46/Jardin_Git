@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Jardin Infantil y Sala Cuna Valle Encantado</title>
+        <link href="https://fonts.googleapis.com/css?family=Baloo+Tamma" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#4285f4" />
+        <link href="/favicon.ico" rel="shortcut icon"/>
+        <link href="/css/web.css" rel="stylesheet" media="all" />
+        <script src="/js/web.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="menu">
+                <div class="button"><p></p><p></p><p></p></div>
+            </div>
+            <div class="mensaje msgok">
+                <div class="msg vhalign"></div>
+            </div>
+            <div class="user"><div class="avatar"><img src="/img/avatar_none.png" alt="" /></div></div>
+            <div class="login {{if eq .Login 0}}nodisplay{{end}}">
+                <div class="clogin respdim vhalign">
+                    <div class="close">
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <div class="titulo">
+                        <div class="header vhalign">
+                            <div class="image"><img src="/img/hada_chica.png" /></div>
+                            <div class="text text1">{{if .Register}}Bienvenido{{else}}Login{{end}}</div>
+                            <div class="text text2">ValleEncantado</div>
+                        </div>
+                    </div>
+                    {{if .Register}}
+                    <div class="form">
+                        <div class="alldata inputs vhalign">
+                            <div class="data">
+                                <div class="d1">Nombre:</div>
+                                <div class="d2">{{.User.Nombre}}</div>
+                                <div class="d3"><input type="text" class="changeuser" id="user_nom" value="{{.User.Nombre}}"></div>
+                                <div class="d4 icon valign"></div>
+                            </div>
+                            <div class="data">
+                                <div class="d1">Correo:</div>
+                                <div class="d2">{{.User.Correo}}</div>
+                                <div class="d3"><input type="text" class="changeuser" id="user_correo" value="{{.User.Correo}}"></div>
+                                <div class="d4 icon valign"></div>
+                            </div>
+                            <div class="data">
+                                <div class="d1">Telefono:</div>
+                                <div class="d2">{{if eq .User.Telefono2 ""}}{{.User.Telefono}}{{else}}{{.User.Telefono2}}{{end}}</div>
+                                <div class="d3"><input type="text" class="changeuser" id="user_telefono" value="{{.User.Telefono}}"></div>
+                                <div class="d4 icon valign"></div>
+                            </div>
+                            <div class="recuperar"><a href="/salir">Salir</a></div>
+                        </div>
+                    </div>
+                    {{else}}
+                        <div class="form">
+                            <div class="inputs vhalign">
+                                <div class="input">
+                                    <div class="name">Correo</div>
+                                    <div><input type="text" id="correo"></div>
+                                </div>
+                                <div class="input">
+                                    <div class="name">Contraseña</div>
+                                    <div><input type="password" id="password"></div>
+                                </div>
+                                <div class="input">
+                                    <a class="enviar" id="login">Enviar</a>
+                                </div>
+                                <div class="recuperar">Recuperar Contraseña</div>
+                            </div>
+                        </div>
+                    {{end}}
+                </div>
+            </div>
+
+            {{if eq .Page "Inicio"}}
+                {{template "inicio.html" .}}
+            {{else if eq .Page "Libros"}}
+                {{template "libros.html" .}}
+            {{else}}
+                {{template "agenda.html" .}}
+            {{end}}
+            
+        </div>
+    </body>
+</html>
+

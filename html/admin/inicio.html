@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <title></title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="css/sweetalert.css" type="text/css" media="all">
+        <link rel="stylesheet" href="css/reset.css" type="text/css" media="all">
+        <link rel="stylesheet" href="css/admin.css" type="text/css" media="all">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+        <script type="text/javascript" src="/js/sweetalert.min.js"></script>
+        <script type="text/javascript" src="/js/admin.js"></script>
+    </head>
+    <body onload="navlink('/pages/{{.Function}}')">
+        <div class='c'>
+            <div class='t'>
+                <div class='t2'>
+                    <img src="img/hada_chica.png" width="30px" alt="" />
+                    <div class="tt valign">Jardin Valle Encantado</div>
+                </div>
+                <a class='t4 va' href="/salir"></a>
+            </div>
+            <div class='l'>
+                {{if .Permisos.Admin}}
+                <div class='l1'>
+                    <div class='l2 xc1'></div>
+                    <div class='l3'>Administrador</div>
+                </div>
+                <div class='l4' onclick='navlink("/pages/crearUsuario?tipo=2")'>Ingresar Padres</div>
+                <div class='l4' onclick='navlink("/pages/crearUsuario?tipo=3")'>Ingresar Alumnos</div>
+                <div class='l4' onclick='navlink("/pages/crearUsuario?tipo=1")'>Ingresar Educadoras</div>
+                <div class='l4' onclick='navlink("/pages/crearCursos")'>Cursos</div>
+                <div class='l1'>
+                    <div class='l2 xc2'></div>
+                    <div class='l3'>Agenda</div>
+                </div>
+                <div class='l4' onclick='navlink("/pages/verAgenda")'>Información</div>
+                <div class='l1'>
+                    <div class='l2 xc2'></div>
+                    <div class='l3'>Libros</div>
+                </div>
+                <div class='l4' onclick='navlink("/pages/Prestamos")'>Prestamos</div>
+                <div class='l4' onclick='navlink("/pages/CodigosQr")'>Codigos Qr</div>
+                {{end}}
+            </div>
+            <div class='h'></div>
+            <div class='cart'>
+                <div class='cont_cart'>
+                    <div class="titulo_cart clearfix">
+                        <div onclick="show_cart()"></div>
+                        <div>Cotizador</div>
+                        <div></div>
+                        <div class='l4'><a href="/salir" style="color: #fff; text-decoration: none;">Salir</a></div>
+                    </div>
+                    <div class="data_cart clearfix">
+                        <div class="list_cart"></div>
+                    </div>
+                    <div class="accion_cart">
+                        <div class="cart_enviar">Enviar</div>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </body>
+</html>

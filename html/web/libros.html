@@ -1,0 +1,82 @@
+<script>
+    {{if ne .Alumnos ""}}
+    lista_alu = JSON.parse({{.Alumnos}});
+    {{end}}
+    code = "{{.Libro.Code}}";
+    id_lib = "{{.Libro.Id_Lib}}";
+</script>
+<div class="contlibros respdim vhalign">
+    <div class="titulo">
+        <div class="header vhalign">
+            <div class="image"><img src="/img/hada_chica.png" /></div>
+            <div class="text text1">Bilblioteca</div>
+            <div class="text text2">ValleEncantado</div>
+        </div>
+    </div>
+    <div class="form">
+        <div class="inputs vhalign">
+            {{if .Register}}
+                {{if or .Permisos.Admin .Permisos.Educadora}}
+                    {{if .Libro.Found}}
+                        {{if .Libro.Prestado}}
+                            <div class="librotitulo3">Libro</div>
+                            <div class="librotitulo">{{.Libro.Nombre}}</div>
+                            <div class="librotitulo3">Alumno</div>
+                            <div class="librotitulo">{{.Libro.NombreAlu}}</div>
+                            <div class="librotitulo3">Fecha</div>
+                            <div class="librotitulo">{{.Libro.FechaPrestamo}}</div>
+                            <div class="libroinputs">
+                                <a class="enviar" id="devolver_libro">Devolver</a>
+                            </div>
+                        {{else}}
+                            <div class="librotitulo3">Libro</div>
+                            <div class="librotitulo">{{.Libro.Nombre}}</div>
+                            <div class="libroinputs selectalum">
+                                <div class="d1">Seleccionar Alumno:</div>
+                                <div class="d2">
+                                    <input type="text" class="" id="alu_nom" value="">
+                                    <div class="lista_busqueda"></div>
+                                </div>
+                            </div>
+                            <div class="libroinputs selectedalum nodisplay">
+                                <div class="d1">Alumno Seleccionado:</div>
+                                <div class="d3"></div>
+                                <div class="d4 icon valign delete_prestamo"></div>
+                            </div>
+                            <div class="libroinputs">
+                                <a class="enviar" id="prestar_libro">Prestar</a>
+                            </div>
+                        {{end}}
+                    {{else}}
+                        <div class="librotitulo">Libro no encontrado</div>
+                        <div class="librotitulo2">Debe ingresar el nombre en la base de datos</div>
+                        <div class="libroinputs">
+                            <div class="d1">Nombre Libro:</div>
+                            <div class="d2"><input type="text" class="" id="libro_nom" value=""></div>
+                        </div>
+                        <div class="libroinputs">
+                            <a class="enviar" id="guardar_libro">Enviar</a>
+                        </div>
+                    {{end}}
+                {{else}}
+                    <div class="librotitulo3">Libro</div>
+                    <div class="librotitulo">{{.Libro.Nombre}}</div>
+                    <div class="librotitulo3">Alumno</div>
+                    <div class="librotitulo">{{.Libro.NombreAlu}}</div>
+                    <div class="librotitulo3">Fecha</div>
+                    <div class="librotitulo">{{.Libro.FechaPrestamo}}</div>
+                {{end}}
+            {{else}}
+                <div class="librotitulo3">Libro</div>
+                <div class="librotitulo">{{.Libro.Nombre}}</div>
+                <div class="librotitulo3">Alumno</div>
+                <div class="librotitulo">{{.Libro.NombreAlu}}</div>
+                <div class="librotitulo3">Fecha</div>
+                <div class="librotitulo">Eres Apoderado?</div>
+                <div class="libroinputs">
+                    <a class="enviar" href="/?login=1">Login</a>
+                </div>
+            {{end}}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,52 @@
+
+
+<div class="mt">
+    <h1>{{.Titulo}}</h1>
+    <ul class="clearfix valign">
+        <a class="back icn r1" title="Mis Cotizaciones" onclick="backurl()"></a>
+    </ul>
+</div>
+<hr>
+<div class="i">
+    <div class="fc" id="info-0">
+        <div class="fct">
+            <h1>{{.SubTitulo}}</h1>
+            <h2>{{.SubTitulo2}}</h2>
+            <ul class="clearfix valign"></ul>
+        </div>
+        <div class="delete_user">
+            <div class="bloque">
+                {{if .UsuarioComplete.Prestamos}}
+                    <div class="bloque_titulo">Prestamos</div>
+                    <div class="bloque_lista">
+                    {{range .UsuarioComplete.Prestamos}}
+                        <div class="lista_opcion">- {{.Nombre}}</div>
+                    {{end}}
+                    </div>
+                {{end}}
+                </div>
+            <div class="bloque">
+            {{if .UsuarioComplete.Cursos}}
+                <div class="bloque_titulo">Curso</div>
+                <div class="bloque_lista">
+                {{range .UsuarioComplete.Cursos}}
+                    <div class="lista_opcion">- {{.Nombre}}</div>
+                {{end}}
+                </div>
+            {{end}}
+            </div>
+            <div class="bloque">
+                {{if .UsuarioComplete.Parentesco}}
+                    <div class="bloque_titulo">Parentesco</div>
+                    <div class="bloque_lista">
+                    {{range .UsuarioComplete.Parentesco}}
+                        <div class="lista_opcion">- {{.Nombre}}</div>
+                    {{end}}
+                    </div>
+                {{end}}
+            </div>
+        </div>
+        <div style="display: block;"><a class="btn_eliminar" onclick="eliminar('{{$.DelAccion}}', '{{$.FormId}}/{{$.UsuarioComplete.Tipo}}', '{{$.DelObj}}', '{{$.UsuarioComplete.Nombre}}')">Eliminar</a>
+    </div>
+    </div>
+</div>

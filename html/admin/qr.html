@@ -1,0 +1,11 @@
+<script> window.print(); </script>
+<style>
+    img{
+        padding: 2px;
+    }
+</style>
+<div style='display: block'>
+    {{ range $Id, $Num := .List }}
+        <img src='/qr/{{$Id}}' alt='' />
+    {{end}}
+</div>

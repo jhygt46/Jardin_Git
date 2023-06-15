@@ -1,0 +1,50 @@
+
+
+<div class="mt">
+    <h1>{{.Titulo}}</h1>
+    <ul class="clearfix valign">
+        {{if eq .Agenda.FechaIsPrev 1}}
+        <a class="back icn prev" title="{{.Agenda.FechaPrev}}" onclick='navlink("/pages/verAgenda?fecha={{.Agenda.FechaPrev}}")'></a>
+        {{else}}
+        <a class="back icn opa" title="{{.Agenda.FechaPrev}}"></a>
+        {{end}}
+        <div class="fecha">{{.Agenda.FechaStr}}</div>
+        {{if eq .Agenda.FechaIsNext 1}}
+        <a class="back icn next" title="{{.Agenda.FechaNext}}" onclick='navlink("/pages/verAgenda?fecha={{.Agenda.FechaNext}}")'></a>
+        {{else}}
+        <a class="back icn next opa" title="{{.Agenda.FechaNext}}"></a>
+        {{end}}
+    </ul>
+</div>
+<hr>
+<div class="i">
+    <div class="fc" id="info-0">
+        <div class="fct">
+            <h1>Situación Municipal</h1>
+        </div>
+    </div>
+    <div class="lista_agenda">
+        {{ if .Agenda.AgendaCurso.Cursos }}
+            {{ range $Id_cur, $Curso := .Agenda.AgendaCurso.Cursos }}
+            <div class="agenda_cont">
+                <div class="agenda_curso">{{$Curso.Nombre}}</div>
+                {{ range $Id_usr, $User := $Curso.Users }}
+                <div class="agenda_curso_cont">
+                    <div class="agenda_curso_nom clearfix" onclick="agenda_detail(this)"><div class="acn acn1">{{$User.Nombre}}</div><div class="acn acn2 {{$User.UltimaActAlert}}">{{$User.UltimaAct}}</div></div>
+                    <div class="agenda_curso_detalle clearfix" style="display: none">
+                        <div class="acd1">Desayuno: {{$User.Ali1}}</div>
+                        <div class="acd1">Almuerzo: {{$User.Ali2}}</div>
+                        <div class="acd1">Once: {{$User.Ali3}}</div>
+                        <div class="acd1">Orina: {{$User.Dep1}}</div>
+                        <div class="acd1">Deposicion: {{$User.Dep2}}</div>
+                        <div class="acd2">Comentario: {{$User.Comentario}}</div>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+            {{end}}
+        {{end}}
+    </div>
+</div>
+<br />
+<br />

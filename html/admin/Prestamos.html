@@ -1,0 +1,34 @@
+
+
+<div class="mt">
+    <h1>{{.Titulo}}</h1>
+    <ul class="clearfix valign">
+        <a class="back icn r1" title="Mis Cotizaciones" onclick="backurl()"></a>
+    </ul>
+</div>
+<hr>
+
+{{if .Prestamos}}
+<div class="i">
+    <div class="fc" id="info-0">
+        <div class="fct">
+            <h1>{{.SubTitulo}}</h1>
+            <h2>{{.SubTitulo2}}</h2>
+            <ul class="clearfix valign"></ul>
+        </div>
+        <ul class='lu'>
+            {{range .Prestamos}}
+            <li class="u" rel="{{.Id}}">                
+                <div class="no">{{.Nombre}}</div>
+                <div class="btns clearfix valign">
+                    <a title="Eliminar" class="icn del" onclick="eliminar('{{$.DelAccion}}', {{.Id}}, '{{$.DelObj}}', '{{.Nombre}}')"></a>
+                    <a title="Modificar" class="icn mod" onclick="navlink('{{$.PageMod}}?id={{.Id}}')"></a>
+                </div>
+            </li>
+            {{end}}
+        </ul>
+    </div>
+</div>
+{{end}}
+<br />
+<br />

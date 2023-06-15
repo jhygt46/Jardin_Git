@@ -1,0 +1,718 @@
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td,span{
+	margin:0;
+	padding:0;
+	outline:none;
+}
+html{
+    height: 100%;
+}
+body{
+    margin: 0px;
+    background: #CCC;
+    font-family: "Baloo Tamma", cursive;
+    height: 100%;
+}
+.container{
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.container .user{
+    position: fixed;
+    z-index: 1;
+    width: 38px;
+    height: 38px;
+    right: 20px;
+    top: 16px;
+    background: #999;
+    border-radius: 19px;
+    cursor: pointer;
+}
+.container .user .avatar{
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    margin: 4px;
+    background: #eee;
+}
+.container .menu{
+    position: fixed;
+    z-index: 1;
+    width: 230px;
+    left: -230px;
+    background: #fff;
+    height: 100%;
+    -webkit-box-shadow: -3px 0px 27px -2px rgba(0,0,0,0.75);
+    -moz-box-shadow: -3px 0px 27px -2px rgba(0,0,0,0.75);
+    box-shadow: -3px 0px 27px -2px rgba(0,0,0,0.75);
+}
+.container .mensaje{
+    position: fixed;
+    z-index: 4;
+    width: 100%;
+    height: 30px;
+    bottom: -30px;
+}
+.container .mensaje .msg{
+    font-size: 14px;
+    line-height: 14px;
+}
+.container .msgerr{
+    background: rgba(255, 0, 0, 0.3);
+    color: #f00;
+}
+.container .msgok{
+    background: rgba(0, 255, 0, 0.3);
+    color: #0f0;
+}
+.container .msgwar{
+    background: rgba(255, 255, 0, 0.3);
+    color: #ff0;
+}
+.container .login{
+    position: fixed;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.5);
+}
+.nodisplay{
+    display: none;
+}
+.container .login .clogin{
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 27px rgb(8 7 16 / 60%);
+    -moz-box-shadow: 0px 0px 27px rgb(8 7 16 / 60%);
+    -webkit-box-shadow: 0px 0px 27px rgb(8 7 16 / 60%);
+    position: relative;
+}
+.container .respdim .titulo{
+    position: absolute;
+    z-index: 1;
+}
+.container .login .clogin .close{
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    rotate: 45deg;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    cursor: pointer;
+}
+.container .login .clogin .close div{
+    position: absolute;
+    background: #009;
+}
+.container .login .clogin .close div:nth-child(1){
+    width: 4px;
+    height: 24px;
+    margin: 0px 10px;
+}
+.container .login .clogin .close div:nth-child(2){
+    width: 24px;
+    height: 4px;
+    margin: 10px 0px;
+}
+
+.container .respdim .titulo .header .image{
+    text-align: center;
+    height: 100px;
+    padding-top: 5px;
+}
+.container .respdim .titulo .header .text{
+    text-align: center;
+    color: #009;
+}
+.container .respdim .titulo .header .text1{
+    font-size: 20px;
+    line-height: 16px;
+}
+.container .respdim .titulo .header .text2{
+    font-size: 26px;
+    line-height: 22px;
+}
+.container .respdim .form{
+    position: absolute;
+    z-index: 1;
+}
+.container .login .clogin .form .inputs{
+    padding: 0px 10%;
+    width: 80%;
+}
+.container .login .clogin .form .inputs .input{
+    padding-top: 10px;
+}
+.container .login .clogin .form .inputs .input .name{
+    font-size: 18px;
+    line-height: 15px;
+    color: #009;
+}
+.container .login .clogin .form .inputs .input .enviar{
+    font-size: 14px;
+    background: #009;
+    padding: 5px 10px;
+    color: #fff;
+    display: block;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+}
+.container .login .clogin .form .inputs .input input{
+    width: 100%;
+    height: 35px;
+    border: 0px;
+    border-radius: 3px;
+    background: #fff;
+}
+.container .login .clogin .form .inputs .recuperar{
+    font-size: 12px;
+    text-align: center;
+    padding-top: 15px;
+    cursor: pointer;
+}
+.container .login .clogin .form .inputs .recuperar a{
+    text-decoration: none;
+    color: #00f;
+    font-size: 14px;
+}
+.container .login .clogin .form .inputs .data{
+    position: relative;
+    margin-top: 10px;
+}
+.container .login .clogin .form .inputs .data .d1{
+    font-size: 14px;
+    line-height: 14px;
+}
+.container .login .clogin .form .inputs .data .d2{
+    height: 33px;
+}
+.container .login .clogin .form .inputs .data .d3{
+    display: none;
+}
+.container .login .clogin .form .inputs .data .d3 input{
+    width: calc(100% - 4px);
+    border: 1px solid #99c;
+    padding: 3px 2px;
+    height: 25px;
+}
+.container .login .clogin .form .inputs .data .d4{
+    right: 0px;
+    width: 30px;
+    height: 30px;
+    background-position: -176px -431px;
+}
+
+.container .menu .button{
+    width: 46px;
+    height: 40px;
+    position: absolute;
+    top: 15px;
+    left: 250px;
+    cursor: pointer;
+}
+.container .menu .button p{
+    width: 40px;
+    height: 8px;
+    background: #999;
+    margin: 4px 3px 0px 3px;
+    border-radius: 2px;
+    /*
+    -webkit-box-shadow: -3px 0px 27px -2px rgba(0,0,0,0.75);
+    -moz-box-shadow: -3px 0px 27px -2px rgba(0,0,0,0.75);
+    box-shadow: -3px 0px 27px -2px rgba(0,0,0,0.75);
+    */
+}
+.container .contmodulos{
+    position: relative;
+    width: 80%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+.container .contmodulos .modulos{
+    width: 100%;
+    display: block;
+    height: 50px;
+    border-radius: 10px;
+    position: absolute;
+    -webkit-box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+}
+.container .contmodulos .modulos .txt{
+    left: 10px;
+    color: #000;
+}
+.container .contmodulos .modulos .img{
+    width: 50px;
+    height: 55px;
+    background: #999;
+    top: -10px;
+    right: 10px;
+    position: absolute;
+}
+.container .contmodulos .mod1{
+    
+}
+.container .contmodulos .mod2{
+    
+}
+.container .contmodulos .mod3{
+    
+}
+.container .contmodulos .mdl0{
+    top: 20px;
+    background: #ddd;
+}
+.container .contmodulos .mdl1{
+    top: 85px;
+    background: #ddd;
+}
+.container .contmodulos .mdl2{
+    top: 150px;
+    background: #ddd;
+}
+
+.container .contlibros{
+    background: #fff;
+    -webkit-box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+}
+.container .contlibros .form .inputs{
+    padding: 0px 10% 20px 10%;
+    width: 80%;
+}
+.container .contlibros .librotitulo{
+    display: block;
+    text-align: center;
+    font-size: 22px;
+    line-height: 28px;
+}
+.container .contlibros .librotitulo2{
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    line-height: 14px;
+    padding-bottom: 10px;
+}
+.container .contlibros .librotitulo3{
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    line-height: 14px;
+}
+.container .contlibros .libroinputs{
+    margin-top: 15px;
+    position: relative;
+}
+.container .contlibros .libroinputs .d1{
+    font-size: 14px;
+    line-height: 14px;
+}
+.container .contlibros .libroinputs .d2{
+    position: relative;
+}
+.container .contlibros .libroinputs .d3{
+
+}
+.container .contlibros .libroinputs .d4{
+    width: 30px;
+    height: 30px;
+    right: 0px;
+    background-position: -176px -431px;
+}
+.container .contlibros .libroinputs .d2 .lista_busqueda{
+    position: absolute;
+    top: 33px;
+    background: #ddd;
+    width: calc(100% - 2px);
+    border-right: 1px solid #999;
+    border-left: 1px solid #999;
+    z-index: 999;
+}
+.container .contlibros .libroinputs .d2 .lista_busqueda .alu{
+    font-size: 12px;
+    padding: 2px 5px;
+    border-bottom: 1px solid #999;
+}
+.container .contlibros .libroinputs .d2 input{
+    width: calc(100% - 6px);
+    border: 1px solid #99c;
+    height: 25px;
+    padding: 3px 2px;
+}
+.container .contlibros .libroinputs .enviar{
+    font-size: 14px;
+    background: #009;
+    padding: 5px 10px;
+    color: #fff;
+    display: block;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.container .contagenda{
+    background: #fff;
+    -webkit-box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+}
+.container .contagenda .cont_agenda{
+
+}
+.container .contagenda .cont_agenda .agenda_fecha{
+    text-align: center;
+    font-size: 20px;
+    padding-top: 10px;
+}
+.container .contagenda .form .inputs{
+    width: 90%;
+    height: 100%;
+}
+.container .contagenda .form .inputs .agenda_top{
+    width: 100%;
+    height: 35px;
+    position: relative;
+    margin-top: 13px;
+}
+.container .contagenda .form .inputs .agenda_top .fecha_prev{
+    width: 26px;
+    height: 30px;
+    position: absolute;
+    background-position: -359px -672px;
+}
+.container .contagenda .form .inputs .agenda_top .fecha_nom{
+    width: calc(100% - 52px);
+    height: 30px;
+    position: absolute;
+    left: 26px;
+    text-align: center;
+    font-size: 19px;
+}
+.container .contagenda .form .inputs .agenda_top .fecha_next{
+    width: 26px;
+    height: 30px;
+    position: absolute;
+    right: 0px;
+    background-position: -538px -672px;
+}
+
+
+.container .contagenda .form .inputs .agenda_bottom{
+    width: 100%;
+    max-height: calc(100% - 59px);
+    margin-bottom: 13px;
+    overflow-y: auto;
+}
+.container .contagenda .form .inputs .agenda_bottom .cont_agenda{
+    width: 100%;
+}
+
+.container .contagenda .form .inputs .agenda_bottom .cont_agenda .apo_alu:not(:first-child){
+    margin-top: 5px;
+}
+
+.container .contagenda .form .inputs .agenda_bottom .cont_agenda .apo_alu{
+    border-left: 1px solid #669;
+    border-right: 1px solid #669;
+    border-top: 1px solid #669;
+    border-bottom: 1px solid #669;
+}
+.container .contagenda .form .inputs .agenda_bottom .cont_agenda .apo_alu .apo_alu_nom{
+    background: #99c;
+    border-bottom: 1px solid #669;
+    padding: 4px 0px 0px 4px;
+    font-size: 14px;
+    line-height: 18px;
+}
+.container .contagenda .form .inputs .agenda_bottom .cont_agenda .apo_alu .apo_alu_det{
+    background: #ccf;
+    padding: 4px 4px;
+}
+.container .contagenda .form .inputs .agenda_bottom .ca1 .apo_alu .apo_alu_det{
+    min-height: 170px;
+}
+.container .contagenda .form .inputs .agenda_bottom .ca2 .apo_alu .apo_alu_det{
+    min-height: 80px;
+}
+.container .contagenda .form .inputs .agenda_bottom .cont_agenda .apo_alu .apo_alu_det .cont_alu_det{
+    width: 100%;
+}
+.container .contagenda .form .inputs .agenda_bottom .cont_agenda .apo_alu .apo_alu_det .mtop{
+    margin-top: 4px;
+}
+.container .contagenda .form .inputs .agenda_bottom .cont_agenda .apo_alu .apo_alu_det .cont_alu_det .alu_info{
+    text-align: center;
+    float: left;
+}
+.container .contagenda .form .inputs .agenda_bottom .ca1 .apo_alu .apo_alu_det .cont_alu_det .alu_info{
+    font-size: 14px;
+    line-height: 24px;
+}
+.container .contagenda .form .inputs .agenda_bottom .ca2 .apo_alu .apo_alu_det .cont_alu_det .alu_info{
+    font-size: 13px;
+    line-height: 19px;
+}
+.container .contagenda .form .inputs .agenda_bottom .cont_agenda .apo_alu .apo_alu_det .cont_alu_det .col1{
+    width: 33.33%;
+}
+.container .contagenda .form .inputs .agenda_bottom .cont_agenda .apo_alu .apo_alu_det .cont_alu_det .col2{
+    width: 50%;
+}
+.container .contagenda .form .inputs .agenda_bottom .cont_agenda .apo_alu .apo_alu_det .cont_alu_det .col3a{
+    width: 96%;
+    text-align: left;
+    padding: 0px 2%;
+}
+.container .contagenda .form .inputs .agenda_bottom .cont_agenda .apo_alu .apo_alu_det .cont_alu_det .col3b{
+    width: 96%;
+    height: 39px !important;
+    line-height: 18px !important;
+    text-align: left;
+    padding: 2px 2%;
+}
+.container .contagenda .form .inputs .agenda_bottom .cont_agenda .apo_alu .apo_alu_det .cont_alu_det .b1{
+    background: #bbd;
+}
+.container .contagenda .form .inputs .agenda_bottom .cont_agenda .apo_alu .apo_alu_det .cont_alu_det .b2{
+    background: #eef;
+}
+
+.container .contagenda .cont_agenda .agenda_cursos{
+    width: 90%;
+    margin: 0 auto 10px auto;
+    background: #99c;
+    border-top: 1px solid #669;
+    border-left: 1px solid #669;
+    border-right: 1px solid #669;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso{
+    border-bottom: 1px solid #669;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_nombre{
+    font-size: 18px;
+    padding: 5px 0px 0px 5px;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos{
+    
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno{
+    border-top: 1px solid #669;
+    background: #ccf;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_nombre{
+    padding: 5px 0px 0px 5px;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle{
+    background: #eef;
+    font-size: 14px;
+    border-top: 1px solid #669;
+    padding: 5px 0px 7px 0px;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda1{
+    position: relative;
+    height: 23px;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda1 div{
+    position: absolute;
+    text-align: center;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda1 div:nth-child(1){
+    width: 42%;
+    text-align: left;
+    padding-left: 2%;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda1 div:nth-child(2){
+    width: 18%;
+    left: 44%;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda1 div:nth-child(3){
+    width: 18%;
+    left: 62%;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda1 div:nth-child(4){
+    width: 18%;
+    left: 80%;
+    padding-right: 2%;
+}
+
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agendaespacio{
+    padding-top: 5px;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda2{
+    position: relative;
+    height: 23px;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda2 div{
+    position: absolute;
+    text-align: center;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda2 div:nth-child(1){
+    width: 38%;
+    text-align: left;
+    padding-left: 2%;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda2 div:nth-child(2){
+    width: 12%;
+    left: 40%;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda2 div:nth-child(3){
+    width: 12%;
+    left: 52%;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda2 div:nth-child(4){
+    width: 12%;
+    left: 64%;
+    padding-right: 2%;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda2 div:nth-child(5){
+    width: 12%;
+    left: 76%;
+    padding-right: 2%;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda2 div:nth-child(6){
+    width: 12%;
+    left: 88%;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda3{
+    width: 96%;
+    padding: 0% 2%;
+    height: 37px;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle .tipo_agenda3 textarea{
+    width: 100%;
+    height: 35px;
+}
+
+.container .contagenda .cont_agenda .cont_apo_alu{
+    margin-top: 10px;
+    background: #99c;
+    border-bottom: 1px solid #669;
+    border-left: 1px solid #669;
+    border-right: 1px solid #669;
+}
+.container .contagenda .cont_agenda .cont_apo_alu .apo_alu{
+    border-top: 1px solid #669;
+}
+.container .contagenda .cont_agenda .cont_apo_alu .apo_alu .apo_alu_nom{
+    padding: 3px 3px 0px 3px;
+    font-size: 14px;
+}
+.container .contagenda .cont_agenda .cont_apo_alu .apo_alu .apo_alu_det{
+    background: #eef;
+    border-top: 1px solid #669;
+    height: 60px;
+}
+
+
+.opacity{
+    opacity: 0.5;
+}
+
+
+@media only screen and (min-width: 768px) {
+    
+}
+@media only screen and (max-width: 768px) {
+    
+}
+
+@media (max-height: 500px) {
+    /* Estilos para una altura máxima de 500px */
+    .container .respdim{
+        width: 90%;
+        max-width: 500px;
+        height: 70%;
+        max-height: 300px;
+    }
+    .container .respdim .titulo{
+        height: 100%;
+        width: 40%;
+        top: 0%;
+        left: 0%;
+    }
+    .container .respdim .form{
+        height: 100%;
+        width: 60%;
+        top: 0%;
+        left: 40%;
+    }
+}
+
+@media (min-height: 500px) {
+    /* Estilos para una altura mínima de 500px */
+    .container .respdim{
+        width: 80%;
+        max-width: 300px;
+        height: 80%;
+        max-height: 450px;
+    }
+    .container .respdim .titulo{
+        height: 35%;
+        top: 0%;
+        width: 100%;
+    }
+    .container .respdim .form{
+        height: 65%;
+        top: 35%;
+        width: 100%;
+    }
+}
+
+@media (min-height: 500px) and (max-height: 700px) {
+/* Estilos para una altura entre 500px y 700px */
+}
+
+@media (orientation: landscape) {
+    /* Estilos para la orientación horizontal (landscape) */
+}
+
+@media (orientation: portrait) {
+    /* Estilos para la orientación vertical (portrait) */
+}
+
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 0px;
+}
+::-webkit-scrollbar-track-piece {
+    background: #eee;
+}
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+.clearfix:after{
+	visibility: hidden;
+	display: block;
+	font-size: 0;
+	content: " ";
+	clear: both;
+	height: 0;
+}
+.clearfix{
+	display: inline-block;
+}
+/*\*/* html .clearfix {
+    height: 1%;
+}
+.clearfix {
+    display: block;
+}/**/
+.vhalign{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.valign{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.icon{
+    background-image: url("../img/icons-set.png");
+    background-repeat: no-repeat;
+}
