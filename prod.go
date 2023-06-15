@@ -64,16 +64,17 @@ type MyHandler struct {
 	Conf Config `json:"Conf"`
 }
 type Indexs struct {
-	Login    int           `json:"Login"`
-	Function string        `json:"Nombre"`
-	Page     string        `json:"Page"`
-	User     IndexUser     `json:"User"`
-	Modulos  []Modulo      `json:"Modulos"`
-	Register bool          `json:"Register"`
-	Permisos IndexPermisos `json:"Permisos"`
-	Libro    Libro         `json:"Libro"`
-	Agenda   Agenda        `json:"Agenda"`
-	Alumnos  string        `json:"Alumnos"`
+	Login     int           `json:"Login"`
+	Function  string        `json:"Nombre"`
+	Page      string        `json:"Page"`
+	User      IndexUser     `json:"User"`
+	Modulos   []Modulo      `json:"Modulos"`
+	Register  bool          `json:"Register"`
+	Permisos  IndexPermisos `json:"Permisos"`
+	Libro     Libro         `json:"Libro"`
+	Agenda    Agenda        `json:"Agenda"`
+	Alumnos   string        `json:"Alumnos"`
+	Prestamos []Prestamo    `json:"Prestamos"`
 }
 type IndexPermisos struct {
 	Admin     bool `json:"Admin"`
@@ -272,13 +273,13 @@ func main() {
 		r.GET("/qrhtml/{name}", HtmlQr)
 
 		// ANTES
-		fasthttp.ListenAndServe(port, r.Handler)
+		//fasthttp.ListenAndServe(port, r.Handler)
 
 		// DESPUES
-		//secureMiddleware := secure.New(secure.Options{SSLRedirect: true})
-		//secureHandler := secureMiddleware.Handler(r.Handler)
-		//go func() { log.Fatal(fasthttp.ListenAndServe(":80", secureHandler)) }()
-		//log.Fatal(fasthttp.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.redigo.cl/fullchain.pem", "/etc/letsencrypt/live/www.redigo.cl/privkey.pem", secureHandler))
+		secureMiddleware := secure.New(secure.Options{SSLRedirect: true})
+		secureHandler := secureMiddleware.Handler(r.Handler)
+		go func() { log.Fatal(fasthttp.ListenAndServe(":80", secureHandler)) }()
+		log.Fatal(fasthttp.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.valleencantado.cl/fullchain.pem", "/etc/letsencrypt/live/www.valleencantado.cl/privkey.pem", secureHandler))
 
 	}()
 	if err := run(con, pass, os.Stdout); err != nil {
@@ -1110,7 +1111,7 @@ func Index(ctx *fasthttp.RequestCtx) {
 	index.Login = Read_uint32bytes(ctx.FormValue("login"))
 	index.Page = "Inicio"
 
-	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html")
+	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html")
 	ErrorCheck(err)
 	err = t.Execute(ctx, index)
 	ErrorCheck(err)
@@ -1169,8 +1170,22 @@ func LibroInicio(ctx *fasthttp.RequestCtx) {
 	ErrorCheck(err)
 
 	index := GetPermisoUser(db, string(ctx.Request.Header.Cookie("cu")), false)
+	index.Page = "LibroBase"
 
-	t, err := TemplatePage("html/web/librosbase.html")
+	if index.Permisos.Admin || index.Permisos.Educadora {
+		prestamos, found := GetTodosLibroPrestados(db)
+		if found {
+			index.Prestamos = prestamos
+		}
+	}
+	if index.Permisos.Apoderado {
+		prestamos, found := GetLibroPrestadosUser(db, index.User.Id_usr)
+		if found {
+			index.Prestamos = prestamos
+		}
+	}
+
+	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html")
 	ErrorCheck(err)
 	err = t.Execute(ctx, index)
 	ErrorCheck(err)
@@ -1202,7 +1217,7 @@ func LibroPage(ctx *fasthttp.RequestCtx) {
 	}
 	index.Libro.Code = code
 
-	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html")
+	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html")
 	ErrorCheck(err)
 	err = t.Execute(ctx, index)
 	ErrorCheck(err)
@@ -1238,7 +1253,7 @@ func AgendaPage(ctx *fasthttp.RequestCtx) {
 		}
 	}
 
-	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html")
+	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html")
 	ErrorCheck(err)
 	err = t.Execute(ctx, index)
 	ErrorCheck(err)
@@ -1290,8 +1305,8 @@ func HtmlQr(ctx *fasthttp.RequestCtx) {
 // FUNCTION DB //
 func GetMySQLDB() (db *sql.DB, err error) {
 	//CREATE DATABASE redigo CHARACTER SET utf8 COLLATE utf8_spanish2_ci;
-	//db, err = sql.Open("mysql", "root:xFpsM6E1bda@tcp(127.0.0.1:3306)/redigo")
-	db, err = sql.Open("mysql", "root:12345678@tcp(127.0.0.1:3306)/jardin")
+	db, err = sql.Open("mysql", "root:xFpsM6E1bda@tcp(127.0.0.1:3306)/jardin")
+	//db, err = sql.Open("mysql", "root:12345678@tcp(127.0.0.1:3306)/jardin")
 	return
 }
 
@@ -2024,6 +2039,31 @@ func GetTodosLibroPrestados(db *sql.DB) ([]Prestamo, bool) {
 	}
 	return Prestamos, true
 }
+func GetLibroPrestadosUser(db *sql.DB, id int) ([]Prestamo, bool) {
+
+	Prestamos := []Prestamo{}
+	Prestamo := Prestamo{}
+
+	//cn := 0
+	res, err := db.Query("SELECT t2.id_pre, t2.fecha_prestamo, t3.nombre FROM parentensco t1, prestamos t2, libros t3 WHERE t1.id_apo = ? AND t1.id_usr=t2.id_usr AND t2.fecha_devolucion = '0000-00-00 00:00:00' AND t2.id_lib=t3.id_lib")
+	defer res.Close()
+	if err != nil {
+		ErrorCheck(err)
+		return Prestamos, false
+	}
+
+	for res.Next() {
+
+		err := res.Scan(&Prestamo.Id, &Prestamo.Fecha_Prestamos, &Prestamo.Nombre)
+		if err != nil {
+			ErrorCheck(err)
+			return Prestamos, false
+		}
+		Prestamos = append(Prestamos, Prestamo)
+	}
+	return Prestamos, true
+}
+
 func GetAgendaCurso(db *sql.DB, id int, fecha string) (Agenda, bool) {
 
 	var Agenda Agenda
@@ -2535,9 +2575,9 @@ func TemplatePage(v string) (*template.Template, error) {
 	}
 	return t, nil
 }
-func TemplatePages(v1 string, v2 string, v3 string, v4 string) (*template.Template, error) {
+func TemplatePages(v1 string, v2 string, v3 string, v4 string, v5 string) (*template.Template, error) {
 
-	t, err := template.ParseFiles(v1, v2, v3, v4)
+	t, err := template.ParseFiles(v1, v2, v3, v4, v5)
 	if err != nil {
 		log.Print(err)
 		return t, err

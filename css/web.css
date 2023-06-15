@@ -352,6 +352,25 @@ body{
     cursor: pointer;
     text-decoration: none;
 }
+.container .contagenda .libroinputs{
+    width: 100%;
+}
+.container .contagenda .libroinputs .miembro{
+    text-align: center;
+    font-size: 16px;
+    line-height: 18px;
+    padding: 0px 5% 10px 0px;
+}
+.container .contagenda .libroinputs .enviar{
+    font-size: 14px;
+    background: #009;
+    padding: 5px 10px;
+    color: #fff;
+    display: block;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+}
 
 .container .contagenda{
     background: #fff;

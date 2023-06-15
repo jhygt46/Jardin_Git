@@ -1,0 +1,29 @@
+<div class="contlibros respdim vhalign">
+    <div class="titulo">
+        <div class="header vhalign">
+            <div class="image"><img src="/img/hada_chica.png" /></div>
+            <div class="text text1">Bilblioteca</div>
+            <div class="text text2">ValleEncantado</div>
+        </div>
+    </div>
+    <div class="form">
+        <div class="inputs vhalign">
+            {{if .Register}}
+                {{if or .Permisos.Admin .Permisos.Educadora}}
+                    {{range .Prestamos}}
+                        <div>{{.Nombre}} {{.Fecha_Prestamos}}</div>
+                    {{end}}
+                {{else}}
+                    {{range .Prestamos}}
+                        <div>{{.Nombre}} {{.Fecha_Prestamos}}</div>
+                    {{end}}
+                {{end}}
+            {{else}}
+                <div class="librotitulo">Eres Apoderado?</div>
+                <div class="libroinputs">
+                    <a class="enviar" href="/?login=1">Login</a>
+                </div>
+            {{end}}
+        </div>
+    </div>
+</div>

@@ -80,8 +80,10 @@
                 {{template "inicio.html" .}}
             {{else if eq .Page "Libros"}}
                 {{template "libros.html" .}}
-            {{else}}
+            {{else if eq .Page "Agenda"}}
                 {{template "agenda.html" .}}
+            {{else}}
+                {{template "librobase.html" .}}
             {{end}}
             
         </div>
