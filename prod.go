@@ -28,7 +28,6 @@ import (
 	"github.com/fasthttp/router"
 	_ "github.com/go-sql-driver/mysql"
 
-	"github.com/unrolled/secure"
 	"github.com/valyala/fasthttp"
 )
 
@@ -274,18 +273,7 @@ func main() {
 		r.GET("/qrhtml/{name}", HtmlQr)
 
 		// ANTES
-		//fasthttp.ListenAndServe(port, r.Handler)
-
-		// DESPUES
-		secureMiddleware := secure.New(secure.Options{SSLRedirect: true})
-		secureHandler := secureMiddleware.Handler(r.Handler)
-		go func() {
-			log.Fatal(fasthttp.ListenAndServe(":80", secureHandler))
-		}()
-		go func() {
-			log.Fatal(fasthttp.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.valleencantado.cl/fullchain.pem", "/etc/letsencrypt/live/www.valleencantado.cl/privkey.pem", secureHandler))
-		}()
-		select {}
+		fasthttp.ListenAndServe(port, r.Handler)
 
 		//secureMiddleware := secure.New(secure.Options{SSLRedirect: true})
 		//secureHandler := secureMiddleware.Handler(r.Handler)
