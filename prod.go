@@ -276,13 +276,6 @@ func main() {
 		fasthttp.ListenAndServe(port, r.Handler)
 
 		// DESPUES
-		go func() {
-			if err := fasthttp.ListenAndServe(":80", redirectHTTP); err != nil {
-				panic(err)
-			} else {
-				fmt.Println("START HTTP")
-			}
-		}()
 
 		server := &fasthttp.Server{
 			Handler: r.Handler,
