@@ -284,13 +284,9 @@ func main() {
 
 		server := &fasthttp.Server{
 			Handler: r.Handler,
-			TLSConfig: &fasthttp.ServerTLSConfig{
-				CertFile: "/etc/letsencrypt/live/www.valleencantado.cl/fullchain.pem", // Ruta al archivo de certificado público
-				KeyFile:  "/etc/letsencrypt/live/www.valleencantado.cl/privkey.pem",   // Ruta al archivo de clave privada
-			},
 		}
 
-		if err := server.ListenAndServeTLS(":443", ""); err != nil {
+		if err := server.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.valleencantado.cl/fullchain.pem", "/etc/letsencrypt/live/www.valleencantado.cl/privkey.pem"); err != nil {
 			panic(err)
 		}
 
