@@ -1638,7 +1638,7 @@ func Index(ctx *fasthttp.RequestCtx) {
 	index.Login = Read_uint32bytes(ctx.FormValue("login"))
 	index.Page = "Inicio"
 
-	PrintJson(index)
+	//PrintJson(index)
 
 	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html", "html/web/cursosonline.html")
 	ErrorCheck(err)
