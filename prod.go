@@ -402,10 +402,14 @@ func main() {
 	}
 }
 func redirectHTTP(ctx *fasthttp.RequestCtx) {
-
-	fmt.Println("Host:", string(ctx.Host()))
-
-	redirectURL := fmt.Sprintf("https://%v%v", string(ctx.Host()), string(ctx.URI().RequestURI()))
+	redirectURL := ""
+	if string(ctx.Host()) == "valleencantado.cl" {
+		redirectURL = fmt.Sprintf("https://www.%v%v", string(ctx.Host()), string(ctx.URI().RequestURI()))
+	} else if string(ctx.Host()) == "jardinvalleencantado.cl" {
+		redirectURL = fmt.Sprintf("https://www.%v%v", string(ctx.Host()), string(ctx.URI().RequestURI()))
+	} else {
+		redirectURL = fmt.Sprintf("https://%v%v", string(ctx.Host()), string(ctx.URI().RequestURI()))
+	}
 	ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
 }
 func Accion(ctx *fasthttp.RequestCtx) {
