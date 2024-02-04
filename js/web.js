@@ -574,7 +574,7 @@ function login(){
     formData.append('user', GI("correo").value);
     formData.append('pass', GI("password").value);
 
-    postData2("http://localhost:81/login", formData).then((resp) => {
+    postData2("/login", formData).then((resp) => {
         if (resp.Op == 1){
             mensaje(1, "Ingreso Exitoso", function(){ location.reload(true); });
         } else if (resp.Op == 2){

@@ -402,16 +402,7 @@ func main() {
 	}
 }
 func redirectHTTP(ctx *fasthttp.RequestCtx) {
-	redirectURL := ""
-	if string(ctx.Host()) == "valleencantado.cl" {
-		redirectURL = fmt.Sprintf("https://www.%v%v", string(ctx.Host()), string(ctx.URI().RequestURI()))
-	} else if string(ctx.Host()) == "jardinvalleencantado.cl" {
-		redirectURL = fmt.Sprintf("https://www.%v%v", string(ctx.Host()), string(ctx.URI().RequestURI()))
-	} else {
-		redirectURL = fmt.Sprintf("https://%v%v", string(ctx.Host()), string(ctx.URI().RequestURI()))
-	}
-	fmt.Println(string(ctx.Host()), redirectURL)
-	ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
+	ctx.Redirect("https://www.valleencantado.cl", fasthttp.StatusMovedPermanently)
 }
 func Accion(ctx *fasthttp.RequestCtx) {
 
@@ -1630,21 +1621,27 @@ func Favicon(ctx *fasthttp.RequestCtx) {
 }
 func Index(ctx *fasthttp.RequestCtx) {
 
-	db, err := GetMySQLDB()
-	defer db.Close()
-	ErrorCheck(err)
+	if string(ctx.Host()) != "www.valleencantado.cl" {
 
-	ctx.SetContentType("text/html; charset=utf-8")
-	index := GetPermisoUser(db, string(ctx.Request.Header.Cookie("cu")), true)
-	index.Login = Read_uint32bytes(ctx.FormValue("login"))
-	index.Page = "Inicio"
+		redirectURL := fmt.Sprintf("https://www.valleencantado.cl%v", string(ctx.URI().RequestURI()))
+		ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
 
-	//PrintJson(index)
+	} else {
 
-	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html", "html/web/cursosonline.html")
-	ErrorCheck(err)
-	err = t.Execute(ctx, index)
-	ErrorCheck(err)
+		db, err := GetMySQLDB()
+		defer db.Close()
+		ErrorCheck(err)
+
+		ctx.SetContentType("text/html; charset=utf-8")
+		index := GetPermisoUser(db, string(ctx.Request.Header.Cookie("cu")), true)
+		index.Login = Read_uint32bytes(ctx.FormValue("login"))
+		index.Page = "Inicio"
+
+		t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html", "html/web/cursosonline.html")
+		ErrorCheck(err)
+		err = t.Execute(ctx, index)
+		ErrorCheck(err)
+	}
 }
 func SetCurso(ref *MyHandler) error {
 
