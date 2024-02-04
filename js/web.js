@@ -81,7 +81,7 @@ function guardar_libro(){
     formData.append('code', code);
     formData.append('nombre', GI("libro_nom").value);
 
-    postData2("http://localhost:81/save", formData).then((resp) => {
+    postData2("/save", formData).then((resp) => {
         if (resp.Op == 1){
             mensaje(1, "Cambio Exitoso", function(){
                 window.location.reload();
@@ -100,7 +100,7 @@ function prestar_libro(){
     formData.append('id_alu', prestar_id_alu);
     formData.append('id_lib', id_lib);
 
-    postData2("http://localhost:81/save", formData).then((resp) => {
+    postData2("/save", formData).then((resp) => {
         if (resp.Op == 1){
             mensaje(1, "Cambio Exitoso", function(){
                 window.location.reload();
@@ -118,7 +118,7 @@ function devolver_libro(){
     formData.append('accion', 'devolver_libro');
     formData.append('id_lib', id_lib);
 
-    postData2("http://localhost:81/save", formData).then((resp) => {
+    postData2("/save", formData).then((resp) => {
         if (resp.Op == 1){
             mensaje(1, "Cambio Exitoso", function(){
                 window.location.reload();
@@ -157,7 +157,7 @@ function sendAgenda(id, val, tipo){
     formData.append('tipo', tipo);
     formData.append('value', val);
 
-    postData2("http://localhost:81/accion", formData).then((resp) => {
+    postData2("/accion", formData).then((resp) => {
         if (resp.Op == 1){
             mensaje(1, "Cambio Exitoso", function(){});
         } else if (resp.Op == 2){
@@ -185,7 +185,7 @@ function search_agenda(that, n){
             formData.append('fecha', fecha_agenda.fecha_prev);
         }
 
-        postData2("http://localhost:81/accion", formData).then((resp) => {
+        postData2("/accion", formData).then((resp) => {
             if (resp.Op == 1){
                 mensaje(1, "Datos Actualizados", function(){});
 
@@ -377,7 +377,7 @@ function change_user(){
     formData.append('accion', id);
     formData.append('value', value);
 
-    postData2("http://localhost:81/accion", formData).then((resp) => {
+    postData2("/accion", formData).then((resp) => {
         if (resp.Op == 1){
             mensaje(1, "Cambio Exitoso", function(){});
             el[1].innerHTML = value;
