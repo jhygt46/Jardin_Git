@@ -1,0 +1,215 @@
+<script>
+    document.getElementById('nombre').addEventListener('keyup', function() {
+        document.getElementById('url').value = process(this.value);
+    });
+    function process(value) {
+        var res = "";
+        for(var i=0; i<value.length; i++){
+            res = res + urlvalue(value[i].toLowerCase());
+        }
+        return res;
+    }
+    function urlvalue(c){
+        if(c.charCodeAt(0) > 96 && c.charCodeAt(0) < 122){
+            return c;
+        }
+        switch (c) {
+        case "á":
+            return "a";
+        case "é":
+            return "e";
+        case "í":
+            return "i";
+        case "ó":
+            return "o";
+        case "ú":
+            return "u";
+        case "ñ":
+            return "n";
+        default:
+            return "_";
+        }
+    }
+    document.getElementById('cat').addEventListener('change', function() {
+        var lista = document.getElementsByClassName('lista_cat')[0].children;
+        for(var i=0; i<lista.length; i++){
+            if(lista[i].id == "cat-"+this.value){
+                lista[i].style.display = "block";
+            }else{
+                lista[i].style.display = "none";
+            }
+        }
+    });
+    document.getElementById('tipo').addEventListener('change', function() {
+        
+        var url = document.getElementById('urlitem');
+        var file = document.getElementById('fileitem');
+        var url_titulo = document.getElementById('url_titulo');
+
+        if (this.value == 0){
+            url.style.display = "none";
+            file.style.display = "none";
+            url_titulo.innerHTML = "";
+        }else if(this.value == 1){
+            url.style.display = "none";
+            file.style.display = "block";
+            url_titulo.innerHTML = "";
+        }else if(this.value == 2){
+            url.style.display = "block";
+            file.style.display = "none";
+            url_titulo.innerHTML = "Url Video";
+        }else if(this.value == 3){
+            url.style.display = "block";
+            file.style.display = "none";
+            url_titulo.innerHTML = "Url Youtube";
+        }else if(this.value == 4){
+            url.style.display = "none";
+            file.style.display = "none";
+            url_titulo.innerHTML = "";
+        }else if(this.value == 5){
+            url.style.display = "block";
+            file.style.display = "none";
+            url_titulo.innerHTML = "Url Pagina Web";
+        }else{
+            url.style.display = "none";
+            file.style.display = "none";
+            url_titulo.innerHTML = "";
+        }
+    });
+    document.getElementById('origen').addEventListener('change', function() {
+        if (this.value == 1){
+            document.getElementsByClassName('nuevo')[0].style.display = "block";
+            document.getElementsByClassName('existente')[0].style.display = "none";
+        }else{
+            document.getElementsByClassName('nuevo')[0].style.display = "none";
+            document.getElementsByClassName('existente')[0].style.display = "block";
+        }
+    });
+</script>
+<div class="mt">
+    <h1>{{.Titulo}}</h1>
+    <ul class="clearfix valign">
+        <a class="back icn r1" title="Mis Cotizaciones" onclick="backurl()"></a>
+    </ul>
+</div>
+<hr>
+<div class="i">
+    <div class="fc" id="info-0">
+        <div class="fct">
+            <h1>{{.SubTitulo}}</h1>
+            <h2>{{.SubTitulo2}}</h2>
+            <ul class="clearfix valign"></ul>
+        </div>
+        <form action="" method="post" class="basic-grey">
+            <fieldset>
+                <input id="id" type="hidden" value="{{.FormId}}" />
+                <input id="id2" type="hidden" value="{{.FormId2}}" />
+                <input id="accion" type="hidden" value="{{.FormAccion}}" />
+                <label>
+                    <span>Origen:</span>
+                    <select id="origen">
+                        <option value="0">Seleccionar</option>
+                        <option value="1" {{if eq .CursosItems.Tipo 1}}selected{{end}}>Nuevo</option>
+                        <option value="2" {{if eq .CursosItems.Tipo 2}}selected{{end}}>Existente</option>
+                    </select>
+                    <div class="mensaje"></div>
+                </label>
+                <div class="nuevo" style="display: {{if eq .CursosItems.Tipo 1}}block{{else}}none{{end}}">
+                    <label>
+                        <span>Nombre:</span>
+                        <input id="nombre" type="text" value="{{.CursosItems.Nombre}}" require="" placeholder="" />
+                        <div class="mensaje"></div>
+                    </label>
+                    <label>
+                        <span>Url Jardin:</span>
+                        <input id="url" type="text" value="{{.CursosItems.Url}}" require="" placeholder="" />
+                        <div class="mensaje"></div>
+                    </label>
+                    <label>
+                        <span>Tipo:</span>
+                        <select id="tipo">
+                            <option value="0">Seleccionar</option>
+                            <option value="1" {{if eq .CursosItems.Tipo 1}}selected{{end}}>Subir Video</option>
+                            <option value="2" {{if eq .CursosItems.Tipo 2}}selected{{end}}>Url Video</option>
+                            <option value="3" {{if eq .CursosItems.Tipo 3}}selected{{end}}>Url Youtube</option>
+                            <option value="4" {{if eq .CursosItems.Tipo 4}}selected{{end}}>Cuento Imagenes</option>
+                            <option value="5" {{if eq .CursosItems.Tipo 5}}selected{{end}}>Pagina Web</option>
+                        </select>
+                        <div class="mensaje"></div>
+                    </label>
+                    <label id="urlitem" style="display: none;">
+                        <span id="url_titulo">Url Youtube:</span>
+                        <input id="url" type="text" value="{{.CursosItems.UrlExterno}}" require="" placeholder="" />
+                        <div class="mensaje"></div>
+                    </label>
+                    <label id="fileitem" style="display: none;">
+                        <span>Video:</span>
+                        <input id="preview" type="file" require="" placeholder="" />
+                        <div class="mensaje"></div>
+                    </label>
+                </div>
+                <div class="existente" style="display: none">
+                    <label>
+                        <span>Categoria:</span>
+                        <select id="cat">
+                            <option value="0">Seleccionar</option>
+                            {{range .CursosCat2}}
+                                {{if ne .Id $.FormId}}
+                                    <option value="{{.Id}}">{{.Nombre}}</option>
+                                {{end}}
+                            {{end}}
+                        </select>
+                        <div class="mensaje"></div>
+                    </label>
+                    <div class="lista_cat">
+                        {{range .CursosCat2}}
+                            {{if ne .Id $.FormId}}
+                                <label style="display: none" id="cat-{{.Id}}">
+                                    <span>{{.Nombre}}</span>
+                                    <select id="catitem-{{.Id}}">
+                                        <option value="0">Seleccionar</option>
+                                        {{range .CursosItems}}
+                                            <option value="{{.Id}}">{{.Nombre}}</option>
+                                        {{end}}
+                                    </select>
+                                    <div class="mensaje"></div>
+                                </label>
+                            {{end}}
+                        {{end}}
+                    </div>
+                </div>
+                <div>
+                    <input type="button" onclick="fm(this)" value="Enviar">
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+{{if .CursosCat.CursosItems}}
+<div class="i">
+    <div class="fc" id="info-0">
+        <div class="fct">
+            <h1>{{.SubTitulo}}</h1>
+            <h2>{{.SubTitulo2}}</h2>
+            <ul class="clearfix valign"></ul>
+        </div>
+        <ul class='lu'>
+            {{range .CursosCat.CursosItems}}
+            <li class="u" rel="{{.Id}}">                
+                <div class="no">{{.Nombre}}</div>
+                <div class="btns clearfix valign">
+                    <a title="Eliminar" class="icn del" onclick="eliminar('{{$.DelAccion}}', '{{.Id}}', '{{$.DelObj}}', '{{.Nombre}}')"></a>
+                    <a title="Modificar" class="icn mod" onclick="navlink('{{$.PageMod}}?id_item={{.Id}}&id={{$.FormId}}')"></a>
+                    {{if eq .Tipo 3}}
+                    <a title="Resize" class="icn img1" onclick="navlink('/pages/uploadCuentosImage?id={{.Id}}')"></a>
+                    {{end}}
+                </div>
+            </li>
+            {{end}}
+        </ul>
+    </div>
+</div>
+{{end}}
+<br />
+<br />

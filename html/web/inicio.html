@@ -1,3 +1,4 @@
+<!--
 <div class="contmodulos">
     {{if .Register}}
         {{range $I, $Modulo := .Modulos}}
@@ -8,3 +9,77 @@
         {{end}}
     {{end}}
 </div>
+-->
+<div class="background">
+    <div class="back1"></div>
+    <div class="back2"></div>
+</div>
+<div class="site">
+    <div class="cont_site">
+        <div class="a1 halign"><img class="vhalign" src="/img/hada_chica.png" alt="" /></div>
+        <div class="a2">
+            <div class="a2a">
+                <div class="page conozcanos" style="top: 2px">
+                    <div class="info">
+                        <div class="info2">
+                            <div class="t1">Conózcanos</div>
+                            <div class="t2">Trabajamos desde 1996 comprometidos con la educación inicial</div>
+                            <div class="t3">Calefacción Central</div>
+                            <div class="t3">Calefacción Central</div>
+                            <div class="t3">Calefacción Central</div>
+                            <ul>
+                                <li>Atendemos niños y niñas desde los 3 meses hasta los 4 años de edad.</li>
+                                <li>Implementamos un proyecto educativo actualizado que responde a las necesidades e intereses de los niños.</li>
+                                <li>Nuestro equipo está formado por educadoras profesionales y técnicos comprometidas con su trabajo. Además, cumplen con altos estándares pedagógicos y disciplinares.</li>
+                                <li>Tenemos una infraestructura especialmente diseñada para Jardín Infantil y Salas Cunas.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="imagen"></div>
+                </div>
+                <div class="page propuestaeducativa">
+                    <div class="info">
+                        <div class="info2">
+                            <div class="t1">Propuesta Educativa</div>
+                            <div class="t2">TRABAJAMOS CON UN MODELO PEDAGOGICO QUE NOS PERMITE:</div>
+                        </div>
+                    </div>
+                    <div class="imagen"></div>
+                </div>
+                <div class="page horarios">
+                    <div class="info">
+                        <div class="info2">
+                            <div class="t1">Horarios</div>
+                            <div class="t2">Atendemos niños y niñas desde las 7:30 a las 18:30 hrs.</div>
+                        </div>
+                    </div>
+                    <div class="imagen"></div>
+                </div>
+                <div class="page contacto">
+                    <div class="form">
+                        <div class="formulario">
+                            <div class="titulo">Contacto</div>
+                            <div class="input"><span>Nombre:</span><input id="nombre" type="text" value=""></div>
+                            <div class="input"><span>Correo:</span><input id="correo" type="text" value=""></div>
+                            <div class="input"><span>Telefono:</span><input id="telefono" type="text" value=""></div>
+                            <div class="input" style="height: 85px"><span>Mensaje:</span><textarea id="mensaje"></textarea></div>
+                            <div class="input"><input id="enviar" type="button" value="Enviar"></div>
+                            <div class="leyenda pt">Whatsapp +56962856227</div>
+                            <div class="leyenda">227589500</div>
+                        </div>
+                    </div>
+                    <div class="mapa"><div id="map"></div></div>
+                </div>
+                <div class="page page5"></div>
+            </div>
+        </div>
+        <div class="a3">
+            <div class="bp b ba" id="conozcanos" selected="1"><div class="icn icn1"></div></div>
+            <div class="bp b bb" id="propuestaeducativa" selected="0"><div class="icn icn2"></div></div>
+            <div class="bp b bc" id="horarios" selected="0"><div class="icn icn1"></div></div>
+            <div class="bp b bd" id="contacto" selected="0"><div class="icn icn1"></div></div>
+            <div class="bp b be" id="page5" selected="0"><div class="icn icn1"></div></div>
+        </div>
+    </div>
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIXenuYoczpO6oh4uzeOj11b7Nvg8zrFM&callback=initMap" async defer></script>

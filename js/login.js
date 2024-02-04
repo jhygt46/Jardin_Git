@@ -50,6 +50,7 @@ function btn_recuperar(){
         type: "POST",
         data: "accion=recuperar_password&user="+$('#correo').val(),
         success: function(data){
+            
             if(data.op == 1){
                 bien(data.message);
                 setTimeout(function () {

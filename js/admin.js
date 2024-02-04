@@ -62,6 +62,11 @@ function navlinks(href){
     });
     return false;
 }
+function openqr(that){
+    var cantidad = that.parentElement.parentElement.children[2].children[1].value;
+    openwn("/qrhtml/"+cantidad, 800, 800);
+    return false;
+}
 function fm(that){
     
     var data = new FormData();
@@ -167,7 +172,6 @@ function fm(that){
             cache: false,
             success: function(data){
                 if(data != null){
-                    console.log(data);
                     if(data.Reload == 1)
                         navlinks('pages/'+data.Page);
                     if(data.Op != null)

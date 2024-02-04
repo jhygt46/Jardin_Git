@@ -19,7 +19,7 @@ body{
 }
 .container .user{
     position: fixed;
-    z-index: 1;
+    z-index: 6;
     width: 38px;
     height: 38px;
     right: 20px;
@@ -71,7 +71,7 @@ body{
 }
 .container .login{
     position: fixed;
-    z-index: 3;
+    z-index: 7;
     width: 100%;
     height: 100%;
     background: rgba(255, 255, 255, 0.5);
@@ -179,10 +179,13 @@ body{
 .container .login .clogin .form .inputs .data{
     position: relative;
     margin-top: 10px;
+    display: block;
+    text-decoration: none;
 }
 .container .login .clogin .form .inputs .data .d1{
     font-size: 14px;
     line-height: 14px;
+    
 }
 .container .login .clogin .form .inputs .data .d2{
     height: 33px;
@@ -278,6 +281,51 @@ body{
     -webkit-box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
     box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+}
+.container .contlibros .form .inputs2{
+    height: 100%;
+    width: 90%;
+}
+.container .contlibros .form .inputs2 .list_libros_titulo{
+    width: 100%;
+    height: 30px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 20px;
+}
+.container .contlibros .form .inputs2 .list_libros{
+    width: 100%;
+    height: calc(100% - 50px);
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+.container .contlibros .form .inputs2 .list_libros .cont_list_libros{
+    border-top: 1px solid #669;
+    border-left: 1px solid #669;
+    border-right: 1px solid #669;
+}
+.container .contlibros .form .inputs2 .list_libros .list_libros_item{
+    width: 100%;
+    background: #ccf;
+    border-bottom: 1px solid #669;
+    height: 40px;
+    position: relative;
+}
+.container .contlibros .form .inputs2 .list_libros .list_libros_item .libro_item1{
+    position: absolute;
+    width: 67%;
+    left: 3%;
+}
+.container .contlibros .form .inputs2 .list_libros .list_libros_item .libro_item2{
+    width: 30%;
+    left: 70%;
+}
+.container .contlibros .form .inputs2 .list_libros .list_libros_item .libro_item3{
+    position: absolute;
+    width: 97%;
+    top: 20px;
+    font-size: 14px;
+    left: 3%;
 }
 .container .contlibros .form .inputs{
     padding: 0px 10% 20px 10%;
@@ -731,7 +779,370 @@ body{
     top: 50%;
     transform: translateY(-50%);
 }
+.halign {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
 .icon{
     background-image: url("../img/icons-set.png");
     background-repeat: no-repeat;
+}
+
+.background{
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    position: absolute;
+}
+.background .back1{
+    width: 100%;
+    height: 75%;
+    background: rgb(204,204,204);
+    background: linear-gradient(0deg, rgba(204,204,204,1) 0%, rgba(238,238,238,1) 100%);
+}
+.background .back2{
+    width: 100%;
+    height: calc(25% - 1px);
+    border-top: 1px solid #bbb;
+    background: rgb(238,238,238);
+    background: linear-gradient(0deg, rgba(238,238,238,1) 0%, rgba(249,249,249,1) 100%);
+}
+.site{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    position: absolute;
+}
+.site .cont_site{
+    width: 85%;
+    max-width: 800px;
+    height: 600px;
+    position: relative;
+}
+.site .cont_site .a1{
+    width: 130px;
+    height: 130px;
+    border-radius: 65px;
+    background: #fff;
+    z-index: 3;
+    border: 2px solid #ddd;
+}
+.site .cont_site .a2{
+    width: 100%;
+    height: 440px;
+    border-radius: 10px;
+    background: #D19F40;
+    position: absolute;
+    top: 70px;
+    z-index: 1;
+    box-shadow: 1px -1px 20px -2px rgba(0,0,0,0.42);
+    -webkit-box-shadow: 1px -1px 20px -2px rgba(0,0,0,0.42);
+    -moz-box-shadow: 1px -1px 20px -2px rgba(0,0,0,0.42);
+}
+.site .cont_site .a2a{
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+    margin: 10px;
+    background: #fff;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+}
+.site .cont_site .a2a .page{
+    width: calc(100% - 6px);
+    height: calc(100% - 4px);
+    position: absolute;
+    left: 3px;
+    border-radius: 10px;
+    top: 100%;
+}
+
+.site .cont_site .a2a .page .info{
+    width: 50%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+}
+.site .cont_site .a2a .page .info .info2{
+    padding: 10px 20px;
+}
+.site .cont_site .a2a .page .info .info2 .t1{
+    font-size: 25px;
+    line-height: 25px;
+    padding-top: 10px;
+    padding-bottom: 15px;
+}
+.site .cont_site .a2a .page .info .info2 .t2{
+    font-size: 15px;
+    line-height: 15px;
+    padding-bottom: 10px;
+}
+.site .cont_site .a2a .page .info .info2 .t3{
+    font-size: 14px;
+    line-height: 14px;
+}
+.site .cont_site .a2a .page .info .info2 ul{
+    padding: 0px 0px 0px 17px;
+}
+.site .cont_site .a2a .page .info .info2 ul li{
+    font-size: 14px;
+    line-height: 14px;
+}
+
+.site .cont_site .a2a .page .imagen{
+    width: calc(50% - 3px);
+    height: calc(100% - 6px);
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    background: rgba(100, 100, 100, 0.4);
+}
+
+.site .cont_site .a2a .conozcanos{
+    background: rgba(249, 72, 39, 0.4);
+}
+.site .cont_site .a2a .propuestaeducativa{
+    background: rgba(249, 128, 14, 0.4);
+}
+.site .cont_site .a2a .horarios{
+    background: rgba(255, 204, 0, 0.4);
+}
+
+
+
+
+.site .cont_site .a2a .contacto{
+    background: rgba(155, 202, 0, 0.4);
+}
+.site .cont_site .a2a .contacto .form{
+    width: 50%;
+    height: 100%;
+}
+.site .cont_site .a2a .contacto .form .formulario{
+    padding: 10px 20px;
+}
+.site .cont_site .a2a .contacto .form .formulario .titulo{
+    font-size: 25px;
+}
+.site .cont_site .a2a .contacto .form .formulario .input{
+    padding-top: 8px;
+}
+.site .cont_site .a2a .contacto .form .formulario .input span{
+    display: block;
+    line-height: 15px;
+    font-size: 14px;
+}
+.site .cont_site .a2a .contacto .form .formulario .input input[type=text]{
+    width: calc(100% - 2px);
+    border: 0px;
+    height: 30px;
+    border: 1px solid #666;
+}
+.site .cont_site .a2a .contacto .form .formulario .input textarea{
+    width: calc(100% - 2px);
+    border: 0px;
+    height: 68px;
+    border: 1px solid #666;
+}
+.site .cont_site .a2a .contacto .form .formulario .input input[type=button]{
+    padding: 5px 15px;
+    font-size: 14px;
+}
+.site .cont_site .a2a .contacto .form .formulario .pt{
+    padding-top: 10px;
+}
+.site .cont_site .a2a .contacto .form .formulario .leyenda{
+    line-height: 14px;
+    font-size: 14px;
+}
+
+
+.site .cont_site .a2a .contacto .mapa{
+    width: calc(50% - 3px);
+    height: calc(100% - 6px);
+    position: absolute;
+    top: 3px;
+    right: 3px;
+}
+.site .cont_site .a2a .contacto .mapa #map{
+    width: 100%;
+    height: 100%;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+.site .cont_site .a2a .cr{
+    width: 145px;
+    height: 100%;
+    overflow-y: auto;
+    position: absolute;
+    z-index: 2;
+    right: -145px;
+    background: #fff;
+}
+.site .cont_site .a2a .cr .lista{
+    padding: 5px 5px 0px 5px;
+}
+.site .cont_site .a2a .cr .lista .items{
+    width: 100%;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+.site .cont_site .a2a .cr .lista .items .itemsimage{
+    width: 100%;
+    height: 80px;
+}
+.site .cont_site .a2a .cr .lista .items .itemsimage img{
+    width: 100%;
+    height: 80px;
+}
+.site .cont_site .a2a .cr .lista .items .itemstext{
+    width: 100%;
+    height: 20px;
+    font-size: 12px;
+    text-align: center;
+    line-height: 20px;
+}
+.site .cont_site .a2a .cl{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+}
+.site .cont_site .a2a .cl #flipbook{
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+.site .cont_site .a2a .cl #player{
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+.site .cont_site .a2a .cl #video{
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+.site .cont_site .a2a .cl #iframe{
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.site .cont_site .a3{
+    width: 100%;
+    top: 465px;
+    height: 150px;
+    position: absolute;
+    z-index: 2;
+}
+.site .cont_site .a3 .b{
+    position: absolute;
+    height: 100%;
+}
+.site .cont_site .a3 .b .icn{
+    position: absolute;
+    width: calc(100% - 10px);
+    height: calc(100% - 10px);
+    top: 5px;
+    left: 5px;
+    background-size: contain;
+    background-position-x: center;
+    background-repeat: no-repeat;
+}
+.site .cont_site .a3 .b .icn1{
+    background-image: url("/img/nino1.png");
+}
+.site .cont_site .a3 .b .icn1:hover{
+    background-image: url("/img/nino1.png"), radial-gradient(circle, rgba(248,251,63,1) 0%, rgba(255,255,255,0) 80%);
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+}
+.site .cont_site .a3 .b .icn2{
+    background-image: url("/img/nino1.png");
+}
+.site .cont_site .a3 .b .icn2:hover{
+    background-image: url("/img/nino1.png"), radial-gradient(circle, rgba(248,251,63,1) 0%, rgba(255,255,255,0) 80%);
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+}
+.gm-style-cc, .gm-style-cc-in, .gm-style-mtc {
+    display: none;
+}
+@keyframes AnimateTop {
+    0% {
+        top: 100px;
+        opacity: 0;
+        z-index: 0;
+    }
+    100% {
+        top: 2px;
+        opacity: 1;
+        z-index: 1;
+    }
+}
+@keyframes AnimateBottom {
+    0% {
+        top: 2px;
+        opacity: 1;
+        z-index: 1;
+    }
+    100% {
+        top: 100px;
+        opacity: 0;
+        z-index: 0;
+    }
+}
+.AnimateTopclass {
+    animation: AnimateTop 1s ease forwards;
+}
+.AnimateBottomclass {
+    animation: AnimateBottom 1s ease forwards;
+}
+
+.wrapper {
+    align-items: center;
+    display: flex;
+    height: 90%;
+    justify-content: center;
+    margin: 5%;
+    width: 90%;
+}
+.aspect {
+    padding-bottom: 70%;
+    position: relative;
+    width: 100%;
+}
+.aspect-inner {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.flipbook {
+    height: 100%;
+    transition: margin-left 0.25s ease-out;
+    width: 100%;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.flipbook .page {
+    height: 100%;
+    width: 100%;
+}
+.flipbook .page img {
+    max-width: 100%;
+    height: 100%;
 }

@@ -1,0 +1,50 @@
+
+<script>
+
+    var cursos = JSON.parse({{.UrlOnline.ListaCursos}});
+    var items = JSON.parse({{.UrlOnline.ListaItems}});
+    {{if gt .UrlOnline.Cat.Id 0}}
+        {{if gt .UrlOnline.Item.Id 0}}
+            var open_lista = false;
+            setTimeout(function(){ 
+                showContent({{.UrlOnline.Item.Id}}, 0, 0);
+            }, 50);
+        {{else}}
+            var open_lista = true;
+            setTimeout(function(){  
+                showMenuCursos({{.UrlOnline.Cat.Id}},"{{.UrlOnline.Cat.Url}}", 0);     
+            }, 50);
+        {{end}}
+    {{else}}
+        var open_lista = false;
+    {{end}}
+</script>
+<div class="background">
+    <div class="back1"></div>
+    <div class="back2"></div>
+</div>
+<div class="site">
+    <div class="cont_site">
+        <div class="a1 halign"><img class="vhalign" src="/img/hada_chica.png" alt="" /></div>
+        <div class="a2">
+            <div class="a2a">
+                <div class="cl">
+                    <div class="flipbook" id="flipbook"></div>
+                    <div id="player"></div>
+                    <video id="video"></video>
+                    <iframe id="iframe"></iframe>
+                </div>
+                <div class="cr">
+                    <div class="lista">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="a3">
+            {{ range .UrlOnline.Cats }}
+                <div class="b ba" onclick="showMenuCursos({{.Id}},'{{.Url}}')"><div class="icn icn1"></div></div>
+            {{end}}
+        </div>
+    </div>
+</div>

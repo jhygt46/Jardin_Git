@@ -9,11 +9,15 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
+	"image"
+	"image/jpeg"
+	"image/png"
+	"io/ioutil"
 	"math/rand"
+	"mime/multipart"
+	"net/smtp"
 	"strconv"
 	"strings"
-
-	//"image/draw"
 
 	"io"
 	"log"
@@ -22,6 +26,8 @@ import (
 	"runtime"
 	"syscall"
 	"time"
+
+	"github.com/nfnt/resize"
 
 	qrcode "github.com/skip2/go-qrcode"
 
@@ -37,10 +43,14 @@ type TemplateConf struct {
 	SubTitulo2      string          `json:"SubTitulo2"`
 	TituloLista     string          `json:"SubTitulo"`
 	FormId          int             `json:"FormId"`
+	FormId2         int             `json:"FormId2"`
+	Num             int             `json:"Num"`
+	Tipo            int             `json:"Tipo"`
 	FormAccion      string          `json:"FormAccion"`
 	PageMod         string          `json:"PageMod"`
 	DelAccion       string          `json:"DelAccion"`
 	DelObj          string          `json:"DelObj"`
+	Resize          Resize          `json:"Resize"`
 	UsuarioTipo     int             `json:"UsuarioTipo"`
 	Usuario         Usuario         `json:"Usuario"`
 	Curso           Curso           `json:"Curso"`
@@ -51,6 +61,18 @@ type TemplateConf struct {
 	Padres          []Padres        `json:"Padres"`
 	Padre           Padres          `json:"Padre"`
 	UsuarioComplete UsuarioComplete `json:"UsuarioComplete"`
+	CursosCat       CursosCat       `json:"CursosCat"`
+	CursosCat2      []CursosCat     `json:"CursosCat2"`
+	CursosItems     CursosItems     `json:"CursosItems"`
+	ListaUsers      []ListaUsers    `json:"ListaUsers"`
+}
+type Resize struct {
+	Ok    bool   `json:"Ok"`
+	Image string `json:"Image"`
+	Path  string `json:"Path"`
+	Block bool   `json:"Block"`
+	Dx    int    `json:"Dx"`
+	Dy    int    `json:"Dy"`
 }
 type Lista struct {
 	Id     int    `json:"Id"`
@@ -61,20 +83,63 @@ type Config struct {
 	Tiempo time.Duration `json:"Tiempo"`
 }
 type MyHandler struct {
-	Conf Config `json:"Conf"`
+	Conf         Config              `json:"Conf"`
+	Passwords    Passwords           `json:"Passwords"`
+	CursosOnline *CursosOnlineStruct `json:"CursosOnline"`
+	ListaDel     []DelImages         `json:"Lista"`
+	VideoPath    string              `json:"VideoPath"`
+}
+type CursosOnlineStruct struct {
+	CursosCat []CursosCat `json:"CursosCat"`
+}
+type CursosCat struct {
+	Id          int           `json:"Id"`
+	Nombre      string        `json:"Nombre"`
+	Url         string        `json:"Url"`
+	Nino        int           `json:"Nino"`
+	Visible     int           `json:"Visible"`
+	CursosItems []CursosItems `json:"CursosItems"`
+}
+type CursosItems struct {
+	Id          int    `json:"Id"`
+	Nombre      string `json:"Nombre"`
+	Url         string `json:"Url"`
+	Image       string `json:"Image"`
+	Tipo        int    `json:"Tipo"`
+	Dx          int    `json:"Dx"`
+	Dy          int    `json:"Dy"`
+	ListaImagen string `json:"ListaImagen"`
+	Urlext      string `json:"Urlext"`
+	Id_cat      int    `json:"Id_cat"`
+}
+type ListaImagen struct {
+	Nom string `json:"Nom"`
+}
+type Passwords struct {
+	PassDb    string `json:"PassDb"`
+	PassEmail string `json:"PassEmail"`
 }
 type Indexs struct {
-	Login     int           `json:"Login"`
-	Function  string        `json:"Nombre"`
-	Page      string        `json:"Page"`
-	User      IndexUser     `json:"User"`
-	Modulos   []Modulo      `json:"Modulos"`
-	Register  bool          `json:"Register"`
-	Permisos  IndexPermisos `json:"Permisos"`
-	Libro     Libro         `json:"Libro"`
-	Agenda    Agenda        `json:"Agenda"`
-	Alumnos   string        `json:"Alumnos"`
-	Prestamos []Prestamo    `json:"Prestamos"`
+	Login        int                `json:"Login"`
+	Function     string             `json:"Nombre"`
+	Page         string             `json:"Page"`
+	User         IndexUser          `json:"User"`
+	Modulos      []Modulo           `json:"Modulos"`
+	Register     bool               `json:"Register"`
+	Permisos     IndexPermisos      `json:"Permisos"`
+	Libro        Libro              `json:"Libro"`
+	Agenda       Agenda             `json:"Agenda"`
+	Alumnos      string             `json:"Alumnos"`
+	Prestamos    []Prestamo         `json:"Prestamos"`
+	CursosOnline CursosOnlineStruct `json:"CursosOnline"`
+	UrlOnline    UrlOnline          `json:"UrlOnline"`
+}
+type UrlOnline struct {
+	Cat         CursosCat   `json:"Cat"`
+	Cats        []CursosCat `json:"Cats"`
+	Item        CursosItems `json:"Item"`
+	ListaCursos string      `json:"ListaCursos"`
+	ListaItems  string      `json:"CursosItems"`
 }
 type IndexPermisos struct {
 	Admin     bool `json:"Admin"`
@@ -82,14 +147,16 @@ type IndexPermisos struct {
 	Apoderado bool `json:"Apoderado"`
 }
 type IndexUser struct {
-	Id_usr    int    `json:"Id_usr"`
-	Tipo      int    `json:"Tipo"`
-	Nombre    string `json:"Nombre"`
-	Correo    string `json:"Correo"`
-	Telefono  string `json:"Telefono"`
-	Telefono2 string `json:"Telefono2"`
+	Id_usr     int    `json:"Id_usr"`
+	Tipo       int    `json:"Tipo"`
+	CantAgenda int    `json:"CantAgenda"`
+	Nombre     string `json:"Nombre"`
+	Correo     string `json:"Correo"`
+	Telefono   string `json:"Telefono"`
+	Telefono2  string `json:"Telefono2"`
 }
 type Modulo struct {
+	Id     int    `json:"Id"`
 	Titulo string `json:"Titulo"`
 	Text   string `json:"Text"`
 	Icon   string `json:"Icon"`
@@ -183,6 +250,7 @@ type Prestamo struct {
 	Fecha_Prestamos  string `json:"Fecha_Prestamos"`
 	Fecha_Devolucion string `json:"Fecha_Devolucion"`
 	Nombre_Alu       string `json:"Nombre_Alu"`
+	Duration         string `json:"Duration"`
 }
 type Response struct {
 	Op     uint8  `json:"Op"`
@@ -197,28 +265,64 @@ type Response struct {
 type Html_Qr struct {
 	List []int `json:"List"`
 }
+type SubImager interface {
+	SubImage(r image.Rectangle) image.Image
+}
+type ListaImagenes struct {
+	I     int     `json:"I"`
+	Ok    bool    `json:"Ok"`
+	Nom   string  `json:"Nom"`
+	Dx    int     `json:"Dx"`
+	Dy    int     `json:"Dy"`
+	Ratio float64 `json:"Ratio"`
+}
+type DelImages struct {
+	Time  time.Time `json:"Time"`
+	Image string    `json:"Image"`
+}
 
 var (
-	imgHandler fasthttp.RequestHandler
-	cssHandler fasthttp.RequestHandler
-	jsHandler  fasthttp.RequestHandler
-	port       string
-	favicon    *[]byte
+	imgHandler        fasthttp.RequestHandler
+	imgPreviewHandler fasthttp.RequestHandler
+	imgCuentosHandler fasthttp.RequestHandler
+	cssHandler        fasthttp.RequestHandler
+	jsHandler         fasthttp.RequestHandler
+	port              string
+	favicon           *[]byte
 )
-var pass = &MyHandler{Conf: Config{}}
+var pass = &MyHandler{Conf: Config{}, CursosOnline: &CursosOnlineStruct{}, ListaDel: make([]DelImages, 0)}
 
 func main() {
 
+	//SendEmail("diego.gomez.bezmalinovic@gmail.com", "prueba", "mensaje de prueba")
+
 	if runtime.GOOS == "windows" {
-		imgHandler = fasthttp.FSHandler("C:/Go/Jardin/img", 1)
-		cssHandler = fasthttp.FSHandler("C:/Go/Jardin/css", 1)
-		jsHandler = fasthttp.FSHandler("C:/Go/Jardin/js", 1)
+		imgHandler = fasthttp.FSHandler("C:/Go/Jardin_Git/img", 1)
+		imgPreviewHandler = fasthttp.FSHandler("C:/Go/Jardin_Git/img/preview", 1)
+		imgCuentosHandler = fasthttp.FSHandler("C:/Go/Jardin_Git/img/cuentos", 1)
+		cssHandler = fasthttp.FSHandler("C:/Go/Jardin_Git/css", 1)
+		jsHandler = fasthttp.FSHandler("C:/Go/Jardin_Git/js", 1)
+		pass.VideoPath = "C:/Go/Jardin_Git/videos"
 		port = ":81"
 	} else {
 		imgHandler = fasthttp.FSHandler("/var/Jardin_Git/img", 1)
+		imgPreviewHandler = fasthttp.FSHandler("/var/Jardin_Git/img/preview", 1)
+		imgCuentosHandler = fasthttp.FSHandler("/var/Jardin_Git/img/cuentos", 1)
 		cssHandler = fasthttp.FSHandler("/var/Jardin_Git/css", 1)
 		jsHandler = fasthttp.FSHandler("/var/Jardin_Git/js", 1)
+		pass.VideoPath = "/var/Jardin_Git/videos"
 		port = ":80"
+	}
+
+	passwords, err := os.ReadFile("../password_valleencantado.json")
+	if err == nil {
+		if err := json.Unmarshal(passwords, &pass.Passwords); err == nil {
+			//fmt.Println("Passwords Ok")
+		}
+	}
+
+	if err := SetCurso(pass); err == nil {
+		//fmt.Println("Cursos Online Ok")
 	}
 
 	fav_bytes, err := os.ReadFile("./img/favicon.png")
@@ -258,6 +362,8 @@ func main() {
 		r.GET("/css/{name}", Css)
 		r.GET("/js/{name}", Js)
 		r.GET("/img/{name}", Img)
+		r.GET("/images_preview/{name}", ImgPreview)
+		r.GET("/images_cuentos/{name}", ImgCuentos)
 		r.GET("/pages/{name}", Pages)
 		r.POST("/login", Login)
 		r.POST("/nueva", Nueva)
@@ -266,32 +372,29 @@ func main() {
 		r.POST("/accion", Accion)
 		r.GET("/salir", Salir)
 		r.GET("/admin", Admin)
-		r.GET("/libro", LibroInicio)
+		r.GET("/libros", LibroInicio)
 		r.GET("/libro/{name}", LibroPage)
+		r.GET("/videos/{name}", VideoPage)
+
+		r.GET("/cursos_online", CursosOnline)
+		r.GET("/cursos_online/{cat}", CursosOnline)
+		r.GET("/cursos_online/{cat}/{item}", CursosOnline)
+
 		r.GET("/agenda", AgendaPage)
 		r.GET("/qr/{name}", Qr)
 		r.GET("/qrhtml/{name}", HtmlQr)
 
 		// ANTES
-		//fasthttp.ListenAndServe(port, r.Handler)
+		fasthttp.ListenAndServe(port, r.Handler)
 
 		// DESPUES
-		go func() {
-			if err := fasthttp.ListenAndServe(":80", redirectHTTP); err != nil {
-				panic(err)
-			} else {
-				fmt.Println("START HTTP")
-			}
-		}()
-
-		server := &fasthttp.Server{Handler: r.Handler}
-
-		if err := server.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.valleencantado.cl/fullchain.pem", "/etc/letsencrypt/live/www.valleencantado.cl/privkey.pem"); err != nil {
-			panic(err)
-		} else {
-			fmt.Println("START HTTPS")
-		}
-
+		/*
+			go func() {
+				fasthttp.ListenAndServe(":80", redirectHTTP)
+			}()
+			server := &fasthttp.Server{Handler: r.Handler}
+			server.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.valleencantado.cl/fullchain.pem", "/etc/letsencrypt/live/www.valleencantado.cl/privkey.pem")
+		*/
 	}()
 	if err := run(con, pass, os.Stdout); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
@@ -395,7 +498,7 @@ func Pages(ctx *fasthttp.RequestCtx) {
 
 			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
 			tipo := Read_uint32bytes(ctx.QueryArgs().Peek("tipo"))
-			obj := GetTemplateConf("Crear Usuario", "Formulario", "Complete los campos", "Titulo Lista", "guardar_usuarios", fmt.Sprintf("/pages/%s", name), "borrar_usuario", "Usuario")
+			obj := GetTemplateConf("Crear Usuario", "Formulario", "Complete los campos", "Lista Usuarios", "guardar_usuarios", fmt.Sprintf("/pages/%s", name), "borrar_usuario", "Usuario")
 
 			if tipo == 1 {
 				obj.Titulo = "Crear Educadora"
@@ -445,7 +548,7 @@ func Pages(ctx *fasthttp.RequestCtx) {
 		if perms.Permisos.Admin {
 
 			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
-			obj := GetTemplateConf("Crear Cursos", "Subtitulo", "Subtitulo2", "Titulo Lista", "guardar_cursos", fmt.Sprintf("/pages/%s", name), "borrar_curso", "Curso")
+			obj := GetTemplateConf("Crear Cursos", "Formulario", "Complete los campos", "Lista Cursos", "guardar_cursos", fmt.Sprintf("/pages/%s", name), "borrar_curso", "Curso")
 
 			t, err := TemplatePage(fmt.Sprintf("html/admin/%s.html", name))
 			ErrorCheck(err)
@@ -473,7 +576,7 @@ func Pages(ctx *fasthttp.RequestCtx) {
 		if perms.Permisos.Admin {
 
 			fecha := string(ctx.QueryArgs().Peek("fecha"))
-			obj := GetTemplateConf("Crear Empresa", "Subtitulo", "Subtitulo2", "Titulo Lista", "guardar_empresa", fmt.Sprintf("/pages/%s", name), "borrar_empresa", "Empresa")
+			obj := GetTemplateConf("Agenda", "Lista de Cursos", "Ultima actualización", "Titulo Lista", "", fmt.Sprintf("/pages/%s", name), "", "")
 
 			t, err := TemplatePage(fmt.Sprintf("html/admin/%s.html", name))
 			ErrorCheck(err)
@@ -489,7 +592,7 @@ func Pages(ctx *fasthttp.RequestCtx) {
 	case "Prestamos":
 		perms := GetPermisoUser(db, token, false)
 		if perms.Permisos.Admin {
-			obj := GetTemplateConf("Crear Empresa", "Subtitulo", "Subtitulo2", "Titulo Lista", "guardar_empresa", fmt.Sprintf("/pages/%s", name), "borrar_empresa", "Empresa")
+			obj := GetTemplateConf("Libros", "Prestamos", "Libros prestados", "", "", fmt.Sprintf("/pages/%s", name), "borrar_prestamo", "Prestamo")
 
 			t, err := TemplatePage(fmt.Sprintf("html/admin/%s.html", name))
 			ErrorCheck(err)
@@ -508,7 +611,7 @@ func Pages(ctx *fasthttp.RequestCtx) {
 
 			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
 			id_apo := Read_uint32bytes(ctx.QueryArgs().Peek("id_apo"))
-			obj := GetTemplateConf("Crear Empresa", "Subtitulo", "Subtitulo2", "Titulo Lista", "guardar_parentesco", fmt.Sprintf("/pages/%s", name), "borrar_parentesco1", "Empresa")
+			obj := GetTemplateConf("Relacionar Padres", "Formulario", "Complete los campos", "Listado de Padres", "guardar_parentesco", fmt.Sprintf("/pages/%s", name), "borrar_parentesco1", "Padre")
 
 			if id > 0 {
 
@@ -517,7 +620,6 @@ func Pages(ctx *fasthttp.RequestCtx) {
 					padre, found := GetPadreUser(db, id, id_apo)
 					if found {
 						obj.Padre = padre
-						fmt.Println(padre.Id_usr)
 					}
 				}
 
@@ -542,17 +644,15 @@ func Pages(ctx *fasthttp.RequestCtx) {
 		if perms.Permisos.Admin {
 
 			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
-			obj := GetTemplateConf("Crear Empresa", "Subtitulo", "Subtitulo2", "Titulo Lista", "guardar_parentesco2", fmt.Sprintf("/pages/%s", name), "borrar_parentesco2", "Empresa")
+			obj := GetTemplateConf("Relacionar Alumnos", "Formulario", "Complete los campos", "Listado de Alumnos", "guardar_parentesco2", fmt.Sprintf("/pages/%s", name), "borrar_parentesco2", "Alumno")
 
 			if id > 0 {
 
 				obj.FormId = id
-
 				padres, found := GetAlumnosUser(db, id)
 				if found {
 					obj.Padres = padres
 				}
-
 				aux2, found2 := GetUsuarios(db, 3)
 				if found2 {
 					obj.Lista = aux2
@@ -569,7 +669,7 @@ func Pages(ctx *fasthttp.RequestCtx) {
 		if perms.Permisos.Admin {
 
 			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
-			obj := GetTemplateConf("Crear Empresa", "Subtitulo", "Subtitulo2", "Titulo Lista", "guardar_edu_curso", fmt.Sprintf("/pages/%s", name), "borrar_cur_edu1", "Empresa")
+			obj := GetTemplateConf("Relacionar Educadora", "Formulario", "Complete los campos", "Listado de Educadoras", "guardar_edu_curso", fmt.Sprintf("/pages/%s", name), "borrar_cur_edu1", "Educadora")
 			obj.FormId = id
 
 			educadoras, found := GetUserCursos(db, id)
@@ -593,7 +693,7 @@ func Pages(ctx *fasthttp.RequestCtx) {
 		if perms.Permisos.Admin {
 
 			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
-			obj := GetTemplateConf("Crear Empresa", "Subtitulo", "Subtitulo2", "Titulo Lista", "guardar_edu_curso2", fmt.Sprintf("/pages/%s", name), "borrar_cur_edu2", "Empresa")
+			obj := GetTemplateConf("Relacionar Curso", "Formulario", "Complete los campos", "Listado de Cursos", "guardar_edu_curso2", fmt.Sprintf("/pages/%s", name), "borrar_cur_edu2", "Curso")
 			obj.FormId = id
 
 			educadoras, found := GetCursosUser(db, id)
@@ -612,17 +712,159 @@ func Pages(ctx *fasthttp.RequestCtx) {
 			err = t.Execute(ctx, obj)
 			ErrorCheck(err)
 		}
+	case "resizeImage":
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+
+			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
+			num := Read_uint32bytes(ctx.QueryArgs().Peek("num"))
+			tipo := Read_uint32bytes(ctx.QueryArgs().Peek("tipo"))
+			obj := GetTemplateConf("Recortar Imagen", "Formulario", "Complete los campos", "Listado de Cursos", "guardar_resize", fmt.Sprintf("/pages/%s", name), "borrar_resize", "Imagen")
+
+			obj.Resize.Ok = false
+			item, found := GetCursoOnlineItem(db, id)
+
+			if found {
+				obj.FormId = id
+				obj.Num = num
+				if tipo == 0 {
+					obj.Resize.Ok = true
+					obj.Resize.Path = "images_preview"
+					obj.Resize.Image = item.Image
+					obj.Resize.Block = true
+					obj.Resize.Dx = 130
+					obj.Resize.Dy = 90
+				} else {
+					lista_imagen := []ListaImagen{}
+					if err := json.Unmarshal([]byte(item.ListaImagen), &lista_imagen); err == nil {
+						if len(lista_imagen) >= num {
+							obj.Resize.Ok = true
+							obj.Resize.Path = "images_cuentos"
+							obj.Resize.Image = lista_imagen[num-1].Nom
+							if item.Dx > 0 && item.Dy > 0 {
+								obj.Resize.Block = true
+								obj.Resize.Dx = item.Dx
+								obj.Resize.Dy = item.Dy
+							} else {
+								obj.Resize.Block = false
+							}
+						}
+					}
+				}
+			}
+
+			fmt.Println(obj.Resize)
+
+			t, err := TemplatePage(fmt.Sprintf("html/admin/%s.html", name))
+			ErrorCheck(err)
+
+			err = t.Execute(ctx, obj)
+			ErrorCheck(err)
+		}
+	case "uploadCuentosImage":
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+
+			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
+			id2 := Read_uint32bytes(ctx.QueryArgs().Peek("id2"))
+			obj := GetTemplateConf("Recortar Imagen", "Formulario", "Complete los campos", "Listado de Cursos", "guardar_image_cuentos", fmt.Sprintf("/pages/%s", name), "borrar_cuentos_image", "Imagen")
+
+			item, found := GetCursoOnlineItem(db, id)
+			if found {
+				obj.FormId = id
+				obj.FormId2 = id2
+
+				lista_imagen := []ListaImagen{}
+				if err := json.Unmarshal([]byte(item.ListaImagen), &lista_imagen); err == nil {
+					for i, x := range lista_imagen {
+						obj.Lista = append(obj.Lista, Lista{Id: i, Nombre: x.Nom})
+					}
+				}
+			}
+
+			t, err := TemplatePage(fmt.Sprintf("html/admin/%s.html", name))
+			ErrorCheck(err)
+
+			err = t.Execute(ctx, obj)
+			ErrorCheck(err)
+		}
+	case "verCursosOnline":
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+
+			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
+			obj := GetTemplateConf("Cursos Online", "Formulario", "Complete los campos", "Lista de Categorias", "guardar_cursos_online", fmt.Sprintf("/pages/%s", name), "borrar_cursos_online", "Curso Online")
+
+			t, err := TemplatePage(fmt.Sprintf("html/admin/%s.html", name))
+			ErrorCheck(err)
+
+			if id > 0 {
+				aux, found1 := GetCursoOnline(db, id)
+				if found1 {
+					obj.FormId = id
+					obj.CursosCat = aux
+				}
+			} else {
+				obj.FormId = 0
+			}
+
+			aux2, found2 := GetCursosOnline(db)
+			if found2 {
+				obj.Lista = aux2
+			}
+
+			err = t.Execute(ctx, obj)
+			ErrorCheck(err)
+		}
+	case "verItemCursoOnline":
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+
+			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
+			id_i := Read_uint32bytes(ctx.QueryArgs().Peek("id_item"))
+			obj := GetTemplateConf("Items Cursos Online", "Formulario", "Complete los campos", "Lista de Categorias", "guardar_cursos_online_items", fmt.Sprintf("/pages/%s", name), "borrar_cursos_online_item", "Curso Online Items")
+
+			t, err := TemplatePage(fmt.Sprintf("html/admin/%s.html", name))
+			ErrorCheck(err)
+
+			if id > 0 {
+				aux2, found2 := GetCursoOnline1(db)
+				if found2 {
+					obj.CursosCat2 = aux2
+				}
+				aux, found1 := GetCursoOnline2(db, id)
+				if found1 {
+					obj.FormId2 = id
+					obj.CursosCat.CursosItems = aux
+				}
+				if id_i > 0 {
+					aux2, found2 := GetCursoOnlineItem(db, id_i)
+					if found2 {
+						obj.FormId = id
+						obj.CursosItems = aux2
+					}
+				}
+			}
+			err = t.Execute(ctx, obj)
+			ErrorCheck(err)
+		}
 	case "borrarUsuario":
 		perms := GetPermisoUser(db, token, false)
 		if perms.Permisos.Admin {
 
 			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
-			obj := GetTemplateConf("Crear Empresa", "Subtitulo", "Subtitulo2", "Titulo Lista", "guardar_edu_curso", fmt.Sprintf("/pages/%s", name), "borrar_user23", "Usuario")
+			obj := GetTemplateConf("Borrar", "", "Información a eliminar", "", "", fmt.Sprintf("/pages/%s", name), "borrar_user23", "Usuario")
 
 			obj.FormId = id
 
 			Usuario, found := GetUsuarioComplete(db, id)
 			if found {
+				if Usuario.Tipo == 3 {
+					obj.SubTitulo = "Borrar Alumno"
+				}
+				if Usuario.Tipo == 2 {
+					obj.SubTitulo = "Borrar Apoderado"
+				}
 				obj.UsuarioComplete = Usuario
 			}
 
@@ -637,8 +879,11 @@ func Pages(ctx *fasthttp.RequestCtx) {
 		if perms.Permisos.Admin {
 
 			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
-			obj := GetTemplateConf("Eliminar Curso", "Subtitulo", "Subtitulo2", "Titulo Lista", "guardar_edu_curso", fmt.Sprintf("/pages/%s", name), "borrar_curso", "Curso")
+			nombre := string(ctx.QueryArgs().Peek("nombre"))
+			obj := GetTemplateConf("", "Borrar Curso", "Información a eliminar", "", "", fmt.Sprintf("/pages/%s", name), "borrar_curso", "Curso")
 			obj.FormId = id
+
+			obj.Titulo = fmt.Sprintf("Borrar %v", nombre)
 
 			Usuarios, found := GetUserCurso(db, id)
 			if found {
@@ -655,7 +900,56 @@ func Pages(ctx *fasthttp.RequestCtx) {
 		perms := GetPermisoUser(db, token, false)
 		if perms.Permisos.Admin {
 
-			obj := GetTemplateConf("Crear Empresa", "Subtitulo", "Subtitulo2", "Titulo Lista", "guardar_cursos", fmt.Sprintf("/pages/%s", name), "borrar_empresa", "Empresa")
+			obj := GetTemplateConf("Codigos Qr", "Formulario", "Complete los campos", "", "", fmt.Sprintf("/pages/%s", name), "", "")
+			t, err := TemplatePage(fmt.Sprintf("html/admin/%s.html", name))
+			ErrorCheck(err)
+			err = t.Execute(ctx, obj)
+			ErrorCheck(err)
+		}
+	case "listaCursos":
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+
+			obj := GetTemplateConf("Codigos Qr", "Formulario", "Complete los campos", "", "", fmt.Sprintf("/pages/%s", name), "", "")
+
+			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
+			lcursos, found := GetUserCurso(db, id)
+			if found {
+				obj.Lista = lcursos
+			}
+
+			t, err := TemplatePage(fmt.Sprintf("html/admin/%s.html", name))
+			ErrorCheck(err)
+			err = t.Execute(ctx, obj)
+			ErrorCheck(err)
+		}
+	case "resumenAlumnos1":
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+
+			obj := GetTemplateConf("Codigos Qr", "Formulario", "Complete los campos", "", "", fmt.Sprintf("/pages/%s", name), "", "")
+
+			lcursos, found := GetAllCurso(db)
+			if found {
+				obj.ListaUsers = lcursos
+			}
+
+			t, err := TemplatePage(fmt.Sprintf("html/admin/%s.html", name))
+			ErrorCheck(err)
+			err = t.Execute(ctx, obj)
+			ErrorCheck(err)
+		}
+	case "resumenAlumnos2":
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+
+			obj := GetTemplateConf("Codigos Qr", "Formulario", "Complete los campos", "", "", fmt.Sprintf("/pages/%s", name), "", "")
+
+			lcursos, found := GetAllCurso(db)
+			if found {
+				obj.ListaUsers = lcursos
+			}
+
 			t, err := TemplatePage(fmt.Sprintf("html/admin/%s.html", name))
 			ErrorCheck(err)
 			err = t.Execute(ctx, obj)
@@ -728,7 +1022,6 @@ func Save(ctx *fasthttp.RequestCtx) {
 				resp.Page = fmt.Sprintf("crearUsuario?tipo=%v", tipo)
 				resp.Reload = 1
 			}
-
 		} else {
 			resp.Msg = "No tiene permisos"
 		}
@@ -751,7 +1044,192 @@ func Save(ctx *fasthttp.RequestCtx) {
 				resp.Page = "crearCursos"
 				resp.Reload = 1
 			}
+		} else {
+			resp.Msg = "No tiene permisos"
+		}
+		json.NewEncoder(ctx).Encode(resp)
+	case "guardar_resize":
+		ctx.Response.Header.Set("Content-Type", "application/json")
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+			picture := string(ctx.FormValue("picture"))
+			path := string(ctx.FormValue("path"))
+			x := BytesDim(ctx.FormValue("x"))
+			y := BytesDim(ctx.FormValue("y"))
+			w := BytesDim(ctx.FormValue("w"))
+			h := BytesDim(ctx.FormValue("h"))
 
+			dx := Read_uint32bytes(ctx.FormValue("dx"))
+			dy := Read_uint32bytes(ctx.FormValue("dy"))
+
+			var path2 string
+			if path == "images_preview" {
+				path2 = "preview"
+			}
+			if path == "images_cuentos" {
+				path2 = "cuentos"
+			}
+
+			found, w1, h1 := GetDims(path, w, h)
+			if dx > 0 && dy > 0 {
+				w1 = uint(dx)
+				h1 = uint(dy)
+			}
+
+			if found {
+				resp.Op, resp.Msg = CropResizeImage(fmt.Sprintf("img/%v", path2), picture, x, y, w, h, w1, h1)
+				if resp.Op == 1 {
+					op, msg := ActualizarDimensiones(db, id, w1, h1)
+					if op == 1 {
+						pass.ListaDel = append(pass.ListaDel, DelImages{Time: time.Now(), Image: fmt.Sprintf("img/%v/x%v", path2, picture)})
+						resp.Reload = 1
+						if path == "images_preview" {
+							resp.Page = fmt.Sprintf("verItemCursoOnline?id=%v", id)
+						}
+						if path == "images_cuentos" {
+							resp.Page = fmt.Sprintf("uploadCuentosImage?id=%v", id)
+						}
+					} else {
+						resp.Op = 2
+						resp.Msg = msg
+					}
+				} else {
+					resp.Msg = "Error al cortar la imagen"
+				}
+			} else {
+				resp.Msg = "Error Dimensiones"
+			}
+		} else {
+			resp.Msg = "No tiene permisos"
+		}
+		json.NewEncoder(ctx).Encode(resp)
+	case "guardar_cursos_online":
+
+		ctx.Response.Header.Set("Content-Type", "application/json")
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+
+			nombre := string(ctx.FormValue("nombre"))
+			url := string(ctx.FormValue("url"))
+			visible := string(ctx.FormValue("visible"))
+			nino := string(ctx.FormValue("id_nin"))
+
+			if id > 0 {
+				resp.Op, resp.Msg = UpdateCursoOnline(db, id, nombre, url, visible, nino)
+			}
+			if id == 0 {
+				resp.Op, resp.Msg = InsertCursoOnline(db, nombre, url, visible, nino)
+			}
+			if resp.Op == 1 {
+				resp.Page = "verCursosOnline"
+				resp.Reload = 1
+			}
+
+		} else {
+			resp.Msg = "No tiene permisos"
+		}
+		json.NewEncoder(ctx).Encode(resp)
+	case "guardar_cursos_online_items":
+
+		ctx.Response.Header.Set("Content-Type", "application/json")
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+			origen := string(ctx.FormValue("origen"))
+			id_cuo := string(ctx.FormValue("id2"))
+			if origen == "1" {
+
+				nombre := string(ctx.FormValue("nombre"))
+				url := string(ctx.FormValue("url"))
+				tipo := string(ctx.FormValue("tipo"))
+				if id > 0 {
+					if IsUrl1(db, id_cuo, url, id) {
+						resp.Op, resp.Msg = UpdateCursoOnlineItem(db, id, nombre, url, tipo)
+						files, err := ctx.MultipartForm()
+						if err == nil {
+							errup1, imagen := UploadFile("./img/preview", files.File["preview"], []string{"JPG", "PNG", "JPEG"}, fmt.Sprintf("prev%v.jpg", id_cuo))
+							if errup1 {
+								UpdateCursoOnlineItemImage(db, id, imagen.Nom)
+							}
+						}
+					} else {
+						resp.Op, resp.Msg = 2, "Url existente #1"
+					}
+				}
+				if id == 0 {
+					if IsUrl1(db, id_cuo, url, 0) {
+						var ids int64
+						resp.Op, resp.Msg, ids = InsertCursoOnlineItem(db, id_cuo, nombre, url, tipo)
+						files, err := ctx.MultipartForm()
+						if err == nil {
+							errup1, imagen := UploadFile("./img/preview", files.File["preview"], []string{"JPG", "PNG", "JPEG"}, fmt.Sprintf("prev%v.jpg", id_cuo))
+							if errup1 {
+								UpdateCursoOnlineItemImage(db, int(ids), imagen.Nom)
+							}
+						}
+					} else {
+						resp.Op, resp.Msg = 2, "Url existente #2"
+					}
+				}
+			} else {
+				id_coi := string(ctx.FormValue(fmt.Sprintf("catitem-%v", string(ctx.FormValue("cat")))))
+				if IsUrl2(db, id_cuo, id_coi) {
+					resp.Op, resp.Msg = AsociarCursoOnlineItem(db, id_cuo, id_coi)
+				} else {
+					resp.Op, resp.Msg = 2, "Url existente #3"
+				}
+			}
+			if resp.Op == 1 && resp.Reload == 0 {
+				resp.Page = fmt.Sprintf("verItemCursoOnline?id=%v", id_cuo)
+				resp.Reload = 1
+			}
+		} else {
+			resp.Msg = "No tiene permisos"
+		}
+		json.NewEncoder(ctx).Encode(resp)
+	case "guardar_image_cuentos":
+
+		ctx.Response.Header.Set("Content-Type", "application/json")
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+
+			id := Read_uint32bytes(ctx.FormValue("id"))
+			id2 := Read_uint32bytes(ctx.FormValue("id2"))
+			item, found := GetCursoOnlineItem(db, id)
+			if found {
+				files, err := ctx.MultipartForm()
+				if err == nil {
+
+					var name string
+					if id2 == 0 {
+						lista_imagen := []ListaImagen{}
+						if item.ListaImagen != "" {
+							if err := json.Unmarshal([]byte(item.ListaImagen), &lista_imagen); err == nil {
+								name = fmt.Sprintf("%v_%v.jpg", id, len(lista_imagen))
+							}
+						} else {
+							name = fmt.Sprintf("%v_0.jpg", id)
+						}
+					} else {
+						name = fmt.Sprintf("%v_%v.jpg", id, id2)
+					}
+
+					if name != "" {
+						errup1, imagen := UploadFile("./img/cuentos", files.File["cuentos"], []string{"JPG", "PNG", "JPEG"}, name)
+
+						fmt.Println(errup1, imagen)
+
+						if errup1 {
+							resp.Op, resp.Msg, resp.Reload, resp.Page = UpdateCursoImage(db, id, item, imagen, id2)
+						} else {
+							resp.Msg = "Error al subir el archivo"
+						}
+					} else {
+						resp.Msg = "Error nombre de archivo"
+					}
+				}
+			} else {
+				resp.Msg = "Curso no encontrado"
+			}
 		} else {
 			resp.Msg = "No tiene permisos"
 		}
@@ -764,17 +1242,17 @@ func Save(ctx *fasthttp.RequestCtx) {
 			id_apo := Read_uint32bytes(ctx.FormValue("id_apo"))
 			apoderado := Read_uint32bytes(ctx.FormValue("apoderado"))
 			if id_apo == 0 {
-				resp.Op, resp.Msg = UpdateParentesco(db, id_apo, id, apoderado)
-			} else {
 				if id_usr == 0 {
+					resp.Msg = "Debe Seleccionar Padre"
+				} else {
 					if !SelectParentesco(db, id_apo, id) {
 						resp.Op, resp.Msg = InsertParentesco(db, id_usr, id, apoderado)
 					} else {
 						resp.Msg = "Padre ya esta asociado"
 					}
-				} else {
-					resp.Msg = "Debe Seleccionar Padre"
 				}
+			} else {
+				resp.Op, resp.Msg = UpdateParentesco(db, id_apo, id, apoderado)
 			}
 			if resp.Op == 1 {
 				resp.Page = fmt.Sprintf("verPadres?id=%v", id)
@@ -869,7 +1347,6 @@ func Save(ctx *fasthttp.RequestCtx) {
 		if perms.Permisos.Admin || perms.Permisos.Educadora {
 			id_alu := Read_uint32bytes(ctx.FormValue("id_alu"))
 			id_lib := Read_uint32bytes(ctx.FormValue("id_lib"))
-			fmt.Println("PRESTAR LIBRO", id_alu, id_lib)
 			resp.Op, resp.Msg = PrestarLibro(db, id_lib, id_alu, perms.User.Id_usr)
 		} else {
 			resp.Msg = "No tiene permisos"
@@ -939,7 +1416,7 @@ func Delete(ctx *fasthttp.RequestCtx) {
 				resp.Tipo, resp.Titulo, resp.Texto = BorrarParentesco(db, res[0], res[1])
 				if resp.Tipo == "success" {
 					resp.Reload = 1
-					resp.Page = "verPadres?tipo=1"
+					resp.Page = fmt.Sprintf("verPadres?id=%v", res[0])
 				}
 			} else {
 				resp.Tipo, resp.Titulo, resp.Texto = "error", "Error al eliminar Usuario", "Error inesperado"
@@ -956,7 +1433,7 @@ func Delete(ctx *fasthttp.RequestCtx) {
 				resp.Tipo, resp.Titulo, resp.Texto = BorrarParentesco(db, res[0], res[1])
 				if resp.Tipo == "success" {
 					resp.Reload = 1
-					resp.Page = "verAlumnos?tipo=1"
+					resp.Page = fmt.Sprintf("verAlumnos?id=%v", res[1])
 				}
 			} else {
 				resp.Tipo, resp.Titulo, resp.Texto = "error", "Error al eliminar Usuario", "Error inesperado"
@@ -973,7 +1450,7 @@ func Delete(ctx *fasthttp.RequestCtx) {
 				resp.Tipo, resp.Titulo, resp.Texto = BorrarCursoEdu(db, res[0], res[1])
 				if resp.Tipo == "success" {
 					resp.Reload = 1
-					resp.Page = "verEducadoras?tipo=1"
+					resp.Page = fmt.Sprintf("verEducadoras?id=%v", res[0])
 				}
 			} else {
 				resp.Tipo, resp.Titulo, resp.Texto = "error", "Error al eliminar Usuario", "Error inesperado"
@@ -990,7 +1467,7 @@ func Delete(ctx *fasthttp.RequestCtx) {
 				resp.Tipo, resp.Titulo, resp.Texto = BorrarCursoEdu(db, res[0], res[1])
 				if resp.Tipo == "success" {
 					resp.Reload = 1
-					resp.Page = "verCursos?tipo=1"
+					resp.Page = fmt.Sprintf("verCursos?id=%v", res[1])
 				}
 			} else {
 				resp.Tipo, resp.Titulo, resp.Texto = "error", "Error al eliminar Usuario", "Error inesperado"
@@ -1009,6 +1486,35 @@ func Delete(ctx *fasthttp.RequestCtx) {
 			}
 		} else {
 			resp.Tipo, resp.Titulo, resp.Texto = "error", "Error al eliminar Curso", "No tiene permiso para esta acción"
+		}
+	case "borrar_prestamo":
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+			id := string(ctx.FormValue("id"))
+			resp.Tipo, resp.Titulo, resp.Texto = BorrarPrestamo(db, id)
+			if resp.Tipo == "success" {
+				resp.Reload = 1
+				resp.Page = "Prestamos"
+			}
+		} else {
+			resp.Tipo, resp.Titulo, resp.Texto = "error", "Error al eliminar Prestamos", "No tiene permiso para esta acción"
+		}
+	case "borrar_cuentos_image":
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+			id := string(ctx.FormValue("id"))
+			res := strings.Split(id, "/")
+			if len(res) == 2 {
+				resp.Tipo, resp.Titulo, resp.Texto = BorrarImageCuentos(db, res[0], res[1])
+				if resp.Tipo == "success" {
+					resp.Reload = 1
+					resp.Page = fmt.Sprintf("uploadCuentosImage?id=%v", res[0])
+				}
+			} else {
+				resp.Tipo, resp.Titulo, resp.Texto = "error", "Error al eliminar Usuario", "Error inesperado"
+			}
+		} else {
+			resp.Tipo, resp.Titulo, resp.Texto = "error", "Error al eliminar Prestamos", "No tiene permiso para esta acción"
 		}
 	default:
 	}
@@ -1059,7 +1565,6 @@ func Login(ctx *fasthttp.RequestCtx) {
 		}
 
 	} else {
-		fmt.Println("USER NO ENCONTRADO")
 		resp.Msg = "Usuario Contraseña no existen"
 	}
 
@@ -1126,7 +1631,164 @@ func Index(ctx *fasthttp.RequestCtx) {
 	index.Login = Read_uint32bytes(ctx.FormValue("login"))
 	index.Page = "Inicio"
 
-	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html")
+	PrintJson(index)
+
+	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html", "html/web/cursosonline.html")
+	ErrorCheck(err)
+	err = t.Execute(ctx, index)
+	ErrorCheck(err)
+}
+func SetCurso(ref *MyHandler) error {
+
+	db, err := GetMySQLDB()
+	defer db.Close()
+	ErrorCheck(err)
+
+	cursos := CursosOnlineStruct{}
+
+	rescats, found := GetCursoOnline1(db)
+	if found {
+		cursos.CursosCat = rescats
+		ref.CursosOnline = &cursos
+		return nil
+	} else {
+		return fmt.Errorf("Buena")
+	}
+}
+func GetCursoOnline1(db *sql.DB) ([]CursosCat, bool) {
+
+	Resp := []CursosCat{}
+
+	res, err := db.Query("SELECT id_cuo, nombre, url, nino FROM curso_online")
+	defer res.Close()
+	if err != nil {
+		ErrorCheck(err)
+		return Resp, false
+	}
+
+	for res.Next() {
+
+		re := CursosCat{}
+		err := res.Scan(&re.Id, &re.Nombre, &re.Url, &re.Nino)
+		if err != nil {
+			ErrorCheck(err)
+			return Resp, false
+		}
+
+		items, found := GetCursoOnline2(db, re.Id)
+		if found {
+			re.CursosItems = items
+		}
+
+		Resp = append(Resp, re)
+	}
+	return Resp, true
+}
+func GetCursoOnline2(db *sql.DB, id int) ([]CursosItems, bool) {
+
+	Resp := []CursosItems{}
+
+	res, err := db.Query("SELECT t2.id_coi, t2.nombre, t2.url, t2.image, t2.tipo, t2.Dx, t2.Dy, t2.lista_imagen, t2.url_externo FROM curso_online t1, curso_online_items t2, curso_online_rel t3 WHERE t1.id_cuo = ? AND t1.id_cuo = t3.id_cuo AND t3.id_coi = t2.id_coi", id)
+	defer res.Close()
+	if err != nil {
+		ErrorCheck(err)
+		return Resp, false
+	}
+
+	for res.Next() {
+		re := CursosItems{}
+		err := res.Scan(&re.Id, &re.Nombre, &re.Url, &re.Image, &re.Tipo, &re.Dx, &re.Dy, &re.ListaImagen, &re.Urlext)
+		if err != nil {
+			ErrorCheck(err)
+			return Resp, false
+		}
+		Resp = append(Resp, re)
+	}
+	return Resp, true
+}
+func GetCursoOnlineItem(db *sql.DB, id int) (CursosItems, bool) {
+
+	Resp := CursosItems{}
+
+	res, err := db.Query("SELECT id_coi, nombre, url, image, tipo, lista_imagen, Dx, Dy FROM curso_online_items WHERE id_coi = ?", id)
+	defer res.Close()
+	if err != nil {
+		ErrorCheck(err)
+		return Resp, false
+	}
+
+	if res.Next() {
+		err := res.Scan(&Resp.Id, &Resp.Nombre, &Resp.Url, &Resp.Image, &Resp.Tipo, &Resp.ListaImagen, &Resp.Dx, &Resp.Dy)
+		if err != nil {
+			ErrorCheck(err)
+			return Resp, false
+		}
+		return Resp, true
+	}
+	return Resp, false
+}
+func CursosOnline(ctx *fasthttp.RequestCtx) {
+
+	db, err := GetMySQLDB()
+	defer db.Close()
+	ErrorCheck(err)
+
+	ctx.SetContentType("text/html; charset=utf-8")
+	index := GetPermisoUser(db, string(ctx.Request.Header.Cookie("cu")), true)
+	index.Login = Read_uint32bytes(ctx.FormValue("login"))
+	index.Page = "CursoOnline"
+	index.CursosOnline = *pass.CursosOnline
+
+	cursos := []CursosCat{}
+	listitems := make(map[int]CursosItems, 0)
+
+	for _, x := range index.CursosOnline.CursosCat {
+		if x.Visible == 0 {
+			items := []CursosItems{}
+			for _, y := range x.CursosItems {
+				items = append(items, CursosItems{Id: y.Id})
+				listitems[y.Id] = CursosItems{Tipo: y.Tipo, Nombre: y.Nombre, Image: y.Image, ListaImagen: y.ListaImagen, Dx: y.Dx, Dy: y.Dy, Urlext: y.Urlext}
+			}
+			cursos = append(cursos, CursosCat{Id: x.Id, Url: x.Url, Nombre: x.Nombre, CursosItems: items})
+		}
+	}
+
+	index.UrlOnline.Cats = cursos
+
+	str1, err := json.Marshal(cursos)
+	ErrorCheck(err)
+	index.UrlOnline.ListaCursos = string(str1)
+
+	str2, err := json.Marshal(listitems)
+	ErrorCheck(err)
+	index.UrlOnline.ListaItems = string(str2)
+
+	cat := ctx.UserValue("cat")
+	if cat != nil {
+		index.UrlOnline.Cat.Url = fmt.Sprintf("%v", ctx.UserValue("cat"))
+		for _, x := range index.CursosOnline.CursosCat {
+			if x.Url == index.UrlOnline.Cat.Url {
+				index.UrlOnline.Cat.Id = x.Id
+			}
+		}
+	}
+
+	item := ctx.UserValue("item")
+	if item != nil {
+		index.UrlOnline.Item.Url = fmt.Sprintf("%v", ctx.UserValue("item"))
+		for _, x := range index.CursosOnline.CursosCat {
+			if x.Url == index.UrlOnline.Cat.Url {
+				for _, y := range x.CursosItems {
+					if y.Url == index.UrlOnline.Item.Url {
+						index.UrlOnline.Item.Id = y.Id
+						index.UrlOnline.Item.Tipo = y.Tipo
+					}
+				}
+			}
+		}
+	}
+
+	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html", "html/web/cursosonline.html")
 	ErrorCheck(err)
 	err = t.Execute(ctx, index)
 	ErrorCheck(err)
@@ -1156,9 +1818,6 @@ func Admin(ctx *fasthttp.RequestCtx) {
 	ctx.SetContentType("text/html; charset=utf-8")
 	index := GetPermisoUser(db, string(ctx.Request.Header.Cookie("cu")), false)
 
-	fmt.Println("Cookie:", string(ctx.Request.Header.Cookie("cu")))
-	PrintJson(index)
-
 	if index.Permisos.Admin {
 		t, err := TemplatePage("html/admin/inicio.html")
 		ErrorCheck(err)
@@ -1177,6 +1836,12 @@ func Css(ctx *fasthttp.RequestCtx) {
 func Img(ctx *fasthttp.RequestCtx) {
 	imgHandler(ctx)
 }
+func ImgPreview(ctx *fasthttp.RequestCtx) {
+	imgPreviewHandler(ctx)
+}
+func ImgCuentos(ctx *fasthttp.RequestCtx) {
+	imgCuentosHandler(ctx)
+}
 func LibroInicio(ctx *fasthttp.RequestCtx) {
 
 	ctx.SetContentType("text/html; charset=utf-8")
@@ -1186,6 +1851,8 @@ func LibroInicio(ctx *fasthttp.RequestCtx) {
 
 	index := GetPermisoUser(db, string(ctx.Request.Header.Cookie("cu")), false)
 	index.Page = "LibroBase"
+
+	fmt.Println(index.Permisos.Admin, index.Permisos.Educadora, index.Permisos.Apoderado)
 
 	if index.Permisos.Admin || index.Permisos.Educadora {
 		prestamos, found := GetTodosLibroPrestados(db)
@@ -1200,10 +1867,26 @@ func LibroInicio(ctx *fasthttp.RequestCtx) {
 		}
 	}
 
-	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html")
+	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html", "html/web/cursosonline.html")
 	ErrorCheck(err)
 	err = t.Execute(ctx, index)
 	ErrorCheck(err)
+}
+func VideoPage(ctx *fasthttp.RequestCtx) {
+
+	// Lee el archivo de video
+	video, err := ioutil.ReadFile(fmt.Sprintf("%v/%v", pass.VideoPath, ctx.UserValue("name")))
+	if err != nil {
+		ctx.Error("Error al leer el archivo de video", fasthttp.StatusInternalServerError)
+		return
+	}
+
+	// Establece las cabeceras para el video
+	ctx.Response.Header.Set("Content-Type", "video/mp4")
+	ctx.Response.Header.Set("Content-Length", fmt.Sprint(len(video)))
+
+	// Escribe el video en el cuerpo de la respuesta
+	ctx.Write(video)
 }
 func LibroPage(ctx *fasthttp.RequestCtx) {
 
@@ -1232,7 +1915,7 @@ func LibroPage(ctx *fasthttp.RequestCtx) {
 	}
 	index.Libro.Code = code
 
-	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html")
+	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html", "html/web/cursosonline.html")
 	ErrorCheck(err)
 	err = t.Execute(ctx, index)
 	ErrorCheck(err)
@@ -1268,7 +1951,7 @@ func AgendaPage(ctx *fasthttp.RequestCtx) {
 		}
 	}
 
-	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html")
+	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html", "html/web/cursosonline.html")
 	ErrorCheck(err)
 	err = t.Execute(ctx, index)
 	ErrorCheck(err)
@@ -1277,7 +1960,6 @@ func Qr(ctx *fasthttp.RequestCtx) {
 
 	id, err := strconv.Atoi(fmt.Sprintf("%v", ctx.UserValue("name")))
 	if err != nil {
-		fmt.Println("Error during conversion")
 		return
 	}
 
@@ -1304,7 +1986,6 @@ func HtmlQr(ctx *fasthttp.RequestCtx) {
 
 	cant, err := strconv.Atoi(fmt.Sprintf("%v", ctx.UserValue("name")))
 	if err != nil {
-		fmt.Println("Error during conversion")
 		return
 	}
 
@@ -1319,9 +2000,8 @@ func HtmlQr(ctx *fasthttp.RequestCtx) {
 
 // FUNCTION DB //
 func GetMySQLDB() (db *sql.DB, err error) {
-	//CREATE DATABASE redigo CHARACTER SET utf8 COLLATE utf8_spanish2_ci;
-	db, err = sql.Open("mysql", "root:xFpsM6E1bda@tcp(127.0.0.1:3306)/jardin")
-	//db, err = sql.Open("mysql", "root:12345678@tcp(127.0.0.1:3306)/jardin")
+	//CREATE DATABASE jardin CHARACTER SET utf8 COLLATE utf8_spanish2_ci;
+	db, err = sql.Open("mysql", fmt.Sprintf("root:%v@tcp(127.0.0.1:3306)/jardin", pass.Passwords.PassDb))
 	return
 }
 
@@ -1343,6 +2023,146 @@ func UpdateUsuario(db *sql.DB, tipo string, id int, nombre string, telefono stri
 	} else {
 		ErrorCheck(err)
 		return 2, "El Usuario no pudo ser actualizada"
+	}
+}
+func ActualizarDimensiones(db *sql.DB, id int, w1 uint, h1 uint) (uint8, string) {
+
+	stmt, err := db.Prepare("UPDATE curso_online_items SET Dx = ?, Dy = ? WHERE id_coi = ?")
+	ErrorCheck(err)
+	_, err = stmt.Exec(w1, h1, id)
+	if err == nil {
+		return 1, "Item modificado correctamente"
+	} else {
+		ErrorCheck(err)
+		return 2, "El Item no pudo ser actualizado"
+	}
+}
+func IsUrl1(db *sql.DB, id_cuo string, url string, id_coi int) bool {
+
+	if id_coi == 0 {
+		res, err := db.Query("SELECT * FROM curso_online_rel t1, curso_online_items t2 WHERE t2.url = ? AND t2.id_coi = t1.id_coi AND t1.id_cuo = ?", url, id_cuo)
+		defer res.Close()
+		if err != nil {
+			ErrorCheck(err)
+			return false
+		}
+		if res.Next() {
+			return false
+		} else {
+			return true
+		}
+	} else {
+		res, err := db.Query("SELECT * FROM curso_online_rel t1, curso_online_items t2 WHERE t2.url = ? AND t2.id_coi = t1.id_coi AND t1.id_cuo = ? AND t2.id_coi <> ?", url, id_cuo, id_coi)
+		defer res.Close()
+		if err != nil {
+			ErrorCheck(err)
+			return false
+		}
+		if res.Next() {
+			return false
+		} else {
+			return true
+		}
+	}
+}
+func IsUrl2(db *sql.DB, id_cuo string, id_coi string) bool {
+	res, err := db.Query("SELECT url FROM curso_online_items WHERE id_coi = ?", id_coi)
+	defer res.Close()
+	if err != nil {
+		ErrorCheck(err)
+	}
+	if res.Next() {
+		var url string
+		err := res.Scan(&url)
+		if err != nil {
+			ErrorCheck(err)
+			return false
+		}
+		res2, err := db.Query("SELECT * FROM curso_online_rel t1, curso_online_items t2 WHERE t2.url = ? AND t2.id_coi = t1.id_coi AND t1.id_cuo = ?", url, id_cuo)
+		defer res2.Close()
+		if err != nil {
+			ErrorCheck(err)
+		}
+		if res2.Next() {
+			return false
+		} else {
+			return true
+		}
+	} else {
+		return false
+	}
+}
+func InsertCursoOnlineItem(db *sql.DB, id_cuo string, nombre string, url string, tipo string) (uint8, string, int64) {
+
+	stmt, err := db.Prepare("INSERT INTO curso_online_items (nombre, url, tipo) VALUES (?,?,?)")
+	ErrorCheck(err)
+	defer stmt.Close()
+	r, err := stmt.Exec(nombre, url, tipo)
+	if err == nil {
+		id_coi, err := r.LastInsertId()
+		if err == nil {
+			stmt2, err := db.Prepare("INSERT INTO curso_online_rel (id_cuo, id_coi) VALUES (?,?)")
+			ErrorCheck(err)
+			defer stmt2.Close()
+			r, err = stmt2.Exec(id_cuo, id_coi)
+			if err == nil {
+				return 1, "Item ingresado correctamente", id_coi
+			} else {
+				return 2, "Se produjo un Error", 0
+			}
+		} else {
+			return 2, "Se produjo un Error", 0
+		}
+	} else {
+		ErrorCheck(err)
+		return 2, "Se produjo un Error", 0
+	}
+}
+func UpdateCursoOnlineItem(db *sql.DB, id_coi int, nombre string, url string, tipo string) (uint8, string) {
+
+	stmt, err := db.Prepare("UPDATE curso_online_items SET nombre = ?, url = ?, tipo = ? WHERE id_coi = ?")
+	ErrorCheck(err)
+	_, err = stmt.Exec(nombre, url, tipo, id_coi)
+	if err == nil {
+		return 1, "Item modificado correctamente"
+	} else {
+		ErrorCheck(err)
+		return 2, "El Item no pudo ser actualizado"
+	}
+}
+func UpdateCursoOnlineItemImage(db *sql.DB, id_coi int, image string) (uint8, string) {
+
+	stmt, err := db.Prepare("UPDATE curso_online_items SET image = ? WHERE id_coi = ?")
+	ErrorCheck(err)
+	_, err = stmt.Exec(image, id_coi)
+	if err == nil {
+		return 1, "Item modificado correctamente"
+	} else {
+		ErrorCheck(err)
+		return 2, "El Item no pudo ser actualizado"
+	}
+}
+func AsociarCursoOnlineItem(db *sql.DB, id_cuo string, id_coi string) (uint8, string) {
+
+	res, err := db.Query("SELECT * FROM curso_online_rel WHERE id_cuo = ? AND id_coi = ?", id_cuo, id_coi)
+	defer res.Close()
+	if err != nil {
+		ErrorCheck(err)
+	}
+
+	if res.Next() {
+		return 2, "Ya existe este Item"
+	} else {
+		stmt, err := db.Prepare("INSERT INTO curso_online_rel (id_cuo, id_coi) VALUES (?,?)")
+		ErrorCheck(err)
+		defer stmt.Close()
+		_, err = stmt.Exec(id_cuo, id_coi)
+		if err == nil {
+			return 1, "Usuario ingresado correctamente"
+		} else {
+			ErrorCheck(err)
+			return 2, "Se produjo un Error"
+		}
 	}
 }
 func InsertUsuario(db *sql.DB, tipo string, nombre string, telefono string, correo string, nmatricula string, rut string, apellido1 string, apellido2 string, genero string, reglamento string, fecha_nacimiento string, fecha_matricula string, fecha_ingreso string, direccion string, fecha_retiro string, motivo_retiro string, observaciones string, id_cur int) (uint8, string) {
@@ -1495,7 +2315,10 @@ func GetUsuarioComplete(db *sql.DB, id int) (UsuarioComplete, bool) {
 			}
 		}
 		if Usuario.Tipo == 2 {
-
+			parentesco, found := GetAlumnosUser(db, Usuario.Id_usr)
+			if found {
+				Usuario.Parentesco = parentesco
+			}
 		}
 
 	} else {
@@ -1624,6 +2447,49 @@ func UpdateParentesco(db *sql.DB, id_apo int, id_alu int, apoderado int) (uint8,
 	} else {
 		ErrorCheck(err)
 		return 2, "El Usuario no pudo ser actualizada"
+	}
+}
+func UpdateCursoImage(db *sql.DB, id int, item CursosItems, imagen ListaImagenes, id2 int) (uint8, string, int, string) {
+
+	var page string
+
+	lista_imagen := []ListaImagen{}
+	if item.ListaImagen != "" {
+		if err := json.Unmarshal([]byte(item.ListaImagen), &lista_imagen); err != nil {
+			return 2, "Error unmarshal", 0, page
+		}
+	}
+
+	if id2 == 0 {
+		lista_imagen = append(lista_imagen, ListaImagen{Nom: imagen.Nom})
+		id2 = len(lista_imagen)
+	} else {
+		lista_imagen[id2-1].Nom = imagen.Nom
+	}
+
+	if item.Dx == 0 && item.Dy == 0 {
+		page = fmt.Sprintf("resizeImage?id=%v&num=%v&tipo=1", id, id2)
+	} else {
+		if item.Dx == imagen.Dx && item.Dy == imagen.Dy {
+			page = fmt.Sprintf("verItemCursoOnline?id=%v", id)
+		} else {
+			page = fmt.Sprintf("resizeImage?id=%v&num=%v&tipo=1", id, id2)
+		}
+	}
+
+	data, errm := json.Marshal(lista_imagen)
+	if errm == nil {
+		stmt, err := db.Prepare("UPDATE curso_online_items SET lista_imagen = ? WHERE id_coi = ?")
+		ErrorCheck(err)
+		_, err = stmt.Exec(string(data), id)
+		if err == nil {
+			return 1, "Usuario ingresado correctamente", 1, page
+		} else {
+			ErrorCheck(err)
+			return 2, "El Usuario no pudo ser actualizada", 0, page
+		}
+	} else {
+		return 2, "El Usuario no pudo ser actualizada", 0, page
 	}
 }
 func SelectEducadoraCurso(db *sql.DB, id_cur int, id_edu int) bool {
@@ -1804,6 +2670,141 @@ func ChangeUserTelefono(db *sql.DB, id int, nombre string) (uint8, string) {
 		return 2, "El Telefono no pudo ser actualizada"
 	}
 }
+
+func ExisteUrlCurso(db *sql.DB, url string, id int) (bool, string) {
+
+	cn := 0
+	res, err := db.Query("SELECT id_cuo FROM curso_online WHERE url = ? AND eliminado = ?", url, cn)
+	defer res.Close()
+	if err != nil {
+		ErrorCheck(err)
+		return false, "Error Base de Datos"
+	}
+
+	if res.Next() {
+		var id_cuo int
+		err := res.Scan(&id_cuo)
+		if err != nil {
+			ErrorCheck(err)
+			return false, "Error Base de Datos"
+		}
+		if id == id_cuo {
+			return true, ""
+		} else {
+			return false, "Url Existente"
+		}
+	} else {
+		return true, ""
+	}
+}
+func UpdateCursoOnline(db *sql.DB, id int, nombre string, url string, visible string, nino string) (uint8, string) {
+	i, errs := ExisteUrlCurso(db, url, id)
+	if i {
+		stmt, err := db.Prepare("UPDATE curso_online SET nombre = ?, url = ?, visible = ?, nino = ? WHERE id_cuo = ?")
+		ErrorCheck(err)
+		_, err = stmt.Exec(nombre, url, visible, nino, id)
+		if err == nil {
+			return 1, "Curso Online actualizada correctamente"
+		} else {
+			ErrorCheck(err)
+			return 2, "El Curso Online no pudo ser actualizada"
+		}
+	} else {
+		return 2, errs
+	}
+}
+func InsertCursoOnline(db *sql.DB, nombre string, url string, visible string, nino string) (uint8, string) {
+	i, errs := ExisteUrlCurso(db, url, 0)
+	if i {
+		stmt, err := db.Prepare("INSERT INTO curso_online (nombre, url, visible, nino) VALUES (?,?,?,?)")
+		ErrorCheck(err)
+		defer stmt.Close()
+		_, err = stmt.Exec(nombre, url, visible, nino)
+		if err == nil {
+			return 1, "Curso Online ingresado correctamente"
+		} else {
+			ErrorCheck(err)
+			return 2, "El Curso Online no pudo ser ingresado"
+		}
+	} else {
+		return 2, errs
+	}
+}
+
+type ListaUsers struct {
+	Id_usr       int    `json:"Id_usr"`
+	Nombre       string `json:"Nombre"`
+	Rut          string `json:"Rut"`
+	MamaNom      string `json:"MamaNom"`
+	MamaTelefono string `json:"MamaTelefono"`
+	PapaNom      string `json:"PapaNom"`
+	PapaTelefono string `json:"PapaTelefono"`
+	NMatricula   string `json:"NMatricula"`
+	FechaNac     string `json:"FechaNac"`
+	Direccion    string `json:"Direccion"`
+}
+
+func GetAllCurso(db *sql.DB) ([]ListaUsers, bool) {
+
+	LUsers := make([]ListaUsers, 0)
+
+	cn := 0
+	res, err := db.Query("SELECT id_usr, nombre, nmatricula, rut, fecha_nacimiento, direccion FROM usuarios WHERE tipo = 3 AND eliminado = ?", cn)
+	defer res.Close()
+	if err != nil {
+		ErrorCheck(err)
+		return LUsers, false
+	}
+
+	for res.Next() {
+		User := ListaUsers{}
+		err := res.Scan(&User.Id_usr, &User.Nombre, &User.NMatricula, &User.Rut, &User.FechaNac, &User.Direccion)
+		if err != nil {
+			ErrorCheck(err)
+			return LUsers, false
+		}
+
+		padres, found := GetInfoPadres(db, User.Id_usr)
+		if found {
+			for _, x := range padres {
+				fmt.Println(x)
+				if x.Tipo == 0 {
+					User.MamaNom = x.Nombre
+					User.MamaTelefono = x.Telefono
+				} else {
+					User.PapaNom = x.Nombre
+					User.PapaTelefono = x.Telefono
+				}
+			}
+		}
+
+		LUsers = append(LUsers, User)
+	}
+	return LUsers, true
+}
+func GetInfoPadres(db *sql.DB, id int) ([]Padres, bool) {
+
+	LPadres := make([]Padres, 0)
+
+	cn := 0
+	res, err := db.Query("SELECT t1.nombre, t1.telefono, t1.correo, t2.tipo, t2.apoderado FROM usuarios t1, parentensco t2 WHERE t2.id_alu = ? AND t2.id_apo=t1.id_usr AND t1.eliminado = ?", cn)
+	defer res.Close()
+	if err != nil {
+		ErrorCheck(err)
+		return LPadres, false
+	}
+	for res.Next() {
+		User := Padres{}
+		err := res.Scan(&User.Nombre, &User.Telefono, &User.Email, &User.Tipo, &User.Apoderado)
+		if err != nil {
+			ErrorCheck(err)
+			return LPadres, false
+		}
+		LPadres = append(LPadres, User)
+	}
+	return LPadres, true
+}
+
 func UpdateCurso(db *sql.DB, id int, nombre string) (uint8, string) {
 	stmt, err := db.Prepare("UPDATE cursos SET nombre = ? WHERE id_cur = ?")
 	ErrorCheck(err)
@@ -1850,12 +2851,58 @@ func GetCurso(db *sql.DB, id int) (Curso, bool) {
 	}
 	return Curso, true
 }
+func GetCursoOnline(db *sql.DB, id int) (CursosCat, bool) {
+
+	Curso := CursosCat{}
+
+	cn := 0
+	res, err := db.Query("SELECT id_cuo, nombre, nino, url, visible FROM curso_online WHERE id_cuo = ? AND eliminado = ?", id, cn)
+	defer res.Close()
+	if err != nil {
+		ErrorCheck(err)
+		return Curso, false
+	}
+
+	if res.Next() {
+		err := res.Scan(&Curso.Id, &Curso.Nombre, &Curso.Nino, &Curso.Url, &Curso.Visible)
+		if err != nil {
+			ErrorCheck(err)
+			return Curso, false
+		}
+	} else {
+		return Curso, false
+	}
+	return Curso, true
+}
 func GetCursos(db *sql.DB) ([]Lista, bool) {
 
 	Listas := []Lista{}
 
 	cn := 0
 	res, err := db.Query("SELECT id_cur, nombre FROM cursos WHERE eliminado = ?", cn)
+	defer res.Close()
+	if err != nil {
+		ErrorCheck(err)
+		return Listas, false
+	}
+
+	for res.Next() {
+		Lista := Lista{}
+		err := res.Scan(&Lista.Id, &Lista.Nombre)
+		if err != nil {
+			ErrorCheck(err)
+			return Listas, false
+		}
+		Listas = append(Listas, Lista)
+	}
+	return Listas, true
+}
+func GetCursosOnline(db *sql.DB) ([]Lista, bool) {
+
+	Listas := []Lista{}
+
+	cn := 0
+	res, err := db.Query("SELECT id_cuo, nombre FROM curso_online WHERE eliminado = ?", cn)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
@@ -2050,6 +3097,12 @@ func GetTodosLibroPrestados(db *sql.DB) ([]Prestamo, bool) {
 			ErrorCheck(err)
 			return Prestamos, false
 		}
+
+		date, err := time.Parse("2006-01-02", Prestamo.Fecha_Prestamos)
+		if err != nil {
+			ErrorCheck(err)
+		}
+		Prestamo.Duration = GetDuration2(int(time.Since(date).Minutes()))
 		Prestamos = append(Prestamos, Prestamo)
 	}
 	return Prestamos, true
@@ -2059,8 +3112,7 @@ func GetLibroPrestadosUser(db *sql.DB, id int) ([]Prestamo, bool) {
 	Prestamos := []Prestamo{}
 	Prestamo := Prestamo{}
 
-	//cn := 0
-	res, err := db.Query("SELECT t2.id_pre, t2.fecha_prestamo, t3.nombre FROM parentensco t1, prestamos t2, libros t3 WHERE t1.id_apo = ? AND t1.id_usr=t2.id_usr AND t2.fecha_devolucion = '0000-00-00 00:00:00' AND t2.id_lib=t3.id_lib")
+	res, err := db.Query("SELECT t2.id_pre, t2.fecha_prestamo, t3.nombre FROM parentensco t1, prestamos t2, libros t3 WHERE t1.id_apo = ? AND t1.id_alu=t2.id_alu AND t2.fecha_devolucion = '0000-00-00 00:00:00' AND t2.id_lib=t3.id_lib", id)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
@@ -2074,11 +3126,15 @@ func GetLibroPrestadosUser(db *sql.DB, id int) ([]Prestamo, bool) {
 			ErrorCheck(err)
 			return Prestamos, false
 		}
+		date, err := time.Parse("2006-01-02", Prestamo.Fecha_Prestamos)
+		if err != nil {
+			ErrorCheck(err)
+		}
+		Prestamo.Duration = GetDuration2(int(time.Since(date).Minutes()))
 		Prestamos = append(Prestamos, Prestamo)
 	}
 	return Prestamos, true
 }
-
 func GetAgendaCurso(db *sql.DB, id int, fecha string) (Agenda, bool) {
 
 	var Agenda Agenda
@@ -2087,8 +3143,6 @@ func GetAgendaCurso(db *sql.DB, id int, fecha string) (Agenda, bool) {
 
 		Agenda = aux
 		Agenda.AgendaCurso = AgendaCurso{Cursos: make(map[int]Curso, 0)}
-
-		fmt.Println("Fecha:", Agenda.Fecha)
 
 		//cn := 0
 		res, err := db.Query("SELECT t3.id_usr, t1.id_cur, t3.nombre, t4.nombre FROM educadora_curso t1, curso_usuarios t2, usuarios t3, cursos t4 WHERE t1.id_usr = ? AND t1.id_cur=t2.id_cur AND t2.id_usr=t3.id_usr AND t1.id_cur=t4.id_cur", id)
@@ -2181,6 +3235,24 @@ func GetDuration(minutes int) string {
 	}
 	if minutes > 0 {
 		result += fmt.Sprintf("%v Mins ", minutes)
+	}
+
+	return result
+}
+func GetDuration2(minutes int) string {
+
+	months := minutes / (30 * 24 * 60)
+	minutes %= 30 * 24 * 60
+	days := minutes / (24 * 60)
+
+	result := ""
+	if months > 0 {
+		result += fmt.Sprintf("%v Meses ", months)
+	}
+	if days > 0 {
+		result += fmt.Sprintf("%v Dias ", days)
+	} else {
+		result += fmt.Sprintf("%v Dias ", days)
 	}
 
 	return result
@@ -2297,6 +3369,50 @@ func BorrarUsuarioEducadora(db *sql.DB, id string) (string, string, string) {
 		return "success", "Educadora eliminada", "Educadora eliminada correctamente"
 	} else {
 		return "error", "Error al eliminar Educadora", "La Educadora no pudo ser eliminada"
+	}
+}
+func BorrarImageCuentos(db *sql.DB, id_cois string, nums string) (string, string, string) {
+
+	id_coi, err := strconv.Atoi(fmt.Sprintf("%v", id_cois))
+	if err != nil {
+		return "error", "", ""
+	}
+
+	num, err := strconv.Atoi(fmt.Sprintf("%v", nums))
+	if err != nil {
+		return "error", "", ""
+	}
+
+	item, found := GetCursoOnlineItem(db, id_coi)
+
+	if found {
+		var listaImage []ListaImagen
+		var listaImage2 []ListaImagen
+		if err := json.Unmarshal([]byte(item.ListaImagen), &listaImage); err == nil {
+			for i, x := range listaImage {
+				if i == num {
+					pass.ListaDel = append(pass.ListaDel, DelImages{Time: time.Now(), Image: fmt.Sprintf("img/cuentos/%v", x.Nom)})
+				} else {
+					listaImage2 = append(listaImage2, ListaImagen{Nom: x.Nom})
+				}
+			}
+			u, err := json.Marshal(listaImage2)
+			if err == nil {
+				stmt, err := db.Prepare("UPDATE curso_online_items SET lista_imagen = ? WHERE id_coi = ?")
+				_, err = stmt.Exec(string(u), id_coi)
+				if err == nil {
+					return "success", "Imagen eliminada", "Imagen eliminada correctamente"
+				} else {
+					return "error", "Error al eliminar la Imagen", "La Imagen no pudo ser eliminada"
+				}
+			} else {
+				return "error", "", ""
+			}
+		} else {
+			return "error", "", ""
+		}
+	} else {
+		return "error", "", ""
 	}
 }
 func GetPadresUser(db *sql.DB, id int) ([]Padres, bool) {
@@ -2438,9 +3554,25 @@ func BorrarCurso(db *sql.DB, id string) (string, string, string) {
 		return "error", "Error al eliminar el curso", "El curso no pudo ser eliminada"
 	}
 }
+func BorrarPrestamo(db *sql.DB, id string) (string, string, string) {
+
+	delForm, err := db.Prepare("DELETE FROM prestamos WHERE id_pre = ?")
+	ErrorCheck(err)
+	_, e := delForm.Exec(id)
+	defer db.Close()
+
+	ErrorCheck(e)
+	if e == nil {
+		return "success", "Prestamo eliminado", "Prestamo eliminado correctamente"
+	} else {
+		return "error", "Error al eliminar el Prestamo", "El Prestamo no pudo ser eliminada"
+	}
+}
 func BorrarCursoEdu(db *sql.DB, id1 string, id2 string) (string, string, string) {
 
-	delForm, err := db.Prepare("DELETE FROM curso_usuarios WHERE id_cur = ? AND id_usr = ?")
+	fmt.Printf("ID_CUR %v - ID_USR %v\n", id1, id2)
+
+	delForm, err := db.Prepare("DELETE FROM educadora_curso WHERE id_cur = ? AND id_usr = ?")
 	ErrorCheck(err)
 	_, e := delForm.Exec(id1, id2)
 	defer db.Close()
@@ -2590,9 +3722,9 @@ func TemplatePage(v string) (*template.Template, error) {
 	}
 	return t, nil
 }
-func TemplatePages(v1 string, v2 string, v3 string, v4 string, v5 string) (*template.Template, error) {
+func TemplatePages(v1 string, v2 string, v3 string, v4 string, v5 string, v6 string) (*template.Template, error) {
 
-	t, err := template.ParseFiles(v1, v2, v3, v4, v5)
+	t, err := template.ParseFiles(v1, v2, v3, v4, v5, v6)
 	if err != nil {
 		log.Print(err)
 		return t, err
@@ -2657,13 +3789,13 @@ func GetPermisoUser(db *sql.DB, tkn string, complete bool) Indexs {
 	if len(tkn) > 32 {
 
 		cn := 0
-		res, err := db.Query("SELECT t1.id_usr, t1.tipo, t1.nombre, t1.correo, t1.telefono, t1.telefono2 FROM usuarios t1, sesiones t2 WHERE t2.id_ses = ? AND t2.cookie = ? AND t2.id_usr=t1.id_usr AND t1.eliminado = ?", Read_uint32bytes([]byte(tkn[33:])), tkn[0:32], cn)
+		res, err := db.Query("SELECT t1.id_usr, t1.cant_agenda, t1.tipo, t1.nombre, t1.correo, t1.telefono, t1.telefono2 FROM usuarios t1, sesiones t2 WHERE t2.id_ses = ? AND t2.cookie = ? AND t2.id_usr=t1.id_usr AND t1.eliminado = ?", Read_uint32bytes([]byte(tkn[33:])), tkn[0:32], cn)
 		defer res.Close()
 		ErrorCheck(err)
 
 		if res.Next() {
 			Index.Register = true
-			err := res.Scan(&Index.User.Id_usr, &Index.User.Tipo, &Index.User.Nombre, &Index.User.Correo, &Index.User.Telefono, &Index.User.Telefono2)
+			err := res.Scan(&Index.User.Id_usr, &Index.User.CantAgenda, &Index.User.Tipo, &Index.User.Nombre, &Index.User.Correo, &Index.User.Telefono, &Index.User.Telefono2)
 			ErrorCheck(err)
 
 			if Index.User.Tipo == 0 {
@@ -2714,9 +3846,20 @@ func GetPermisoUser(db *sql.DB, tkn string, complete bool) Indexs {
 
 // DAEMON //
 func (h *MyHandler) StartDaemon() {
-
 	h.Conf.Tiempo = 10 * time.Second
+	for i, x := range h.ListaDel {
+		e1 := os.Remove(x.Image)
+		if e1 == nil {
+			h.ListaDel = removeSlice(h.ListaDel, i)
+			break
+		}
+	}
 }
+func removeSlice(s []DelImages, i int) []DelImages {
+	s[i] = s[len(s)-1]
+	return s[:len(s)-1]
+}
+
 func (c *Config) init() {
 	var tick = flag.Duration("tick", 1*time.Second, "Ticking interval")
 	c.Tiempo = *tick
@@ -2735,3 +3878,202 @@ func run(con context.Context, c *MyHandler, stdout io.Writer) error {
 }
 
 // DAEMON //
+func SendEmail(to string, subject string, body string) bool {
+
+	from := "valleencantado.cl@gmail.com"
+	sub := fmt.Sprintf("From:%v\nTo:%v\nSubject:%v\n", from, to, subject)
+	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+
+	err := smtp.SendMail("smtp.gmail.com:587", smtp.PlainAuth("", from, pass.Passwords.PassEmail, "smtp.gmail.com"), from, []string{to}, []byte(sub+mime+body))
+	if err != nil {
+		return false
+	}
+	return true
+}
+func CropResizeImage(path string, files string, x int, y int, w int, h int, w1 uint, h1 uint) (uint8, string) {
+
+	fmt.Println(png.UnsupportedError("aa"))
+	fmt.Println(jpeg.UnsupportedError("aa"))
+
+	file, err := os.Open(fmt.Sprintf("%v/x%v", path, files))
+	if err != nil {
+		fmt.Println("ERROR OPEN IMAGE", err)
+		return 2, ""
+	}
+	defer file.Close()
+
+	originalImage, _, err := image.Decode(file)
+	if err != nil {
+		fmt.Println("ERROR DECODE IMAGE", err)
+		return 2, ""
+	}
+
+	img := originalImage.(SubImager).SubImage(image.Rect(x, y, w+x, h+y))
+
+	rgbaImg := image.NewRGBA(img.Bounds())
+	for y := img.Bounds().Min.Y; y < img.Bounds().Max.Y; y++ {
+		for x := img.Bounds().Min.X; x < img.Bounds().Max.X; x++ {
+			rgbaImg.Set(x, y, img.At(x, y))
+		}
+	}
+
+	resizedImg := resize.Resize(w1, h1, rgbaImg, resize.Lanczos3)
+
+	croppedImageFile, err := os.Create(fmt.Sprintf("%v/%v", path, files))
+	if err != nil {
+		fmt.Println("ERROR CREATE IMAGE", err)
+		return 2, ""
+	}
+
+	defer croppedImageFile.Close()
+	if err := jpeg.Encode(croppedImageFile, resizedImg, &jpeg.Options{Quality: 75}); err != nil {
+		fmt.Println("ERROR ENCODE IMAGE", err)
+		return 2, ""
+	}
+
+	return 1, "Imagen ha sido redimensionada con exito"
+}
+func Extension(filename string, extends []string) bool {
+
+	upper := strings.ToUpper(filename)
+	bupper := []byte(upper)
+	point := -1
+	for i, x := range bupper {
+		if x == 46 {
+			point = i
+		}
+	}
+	if point > 0 {
+		for _, x := range extends {
+			if x == string(bupper[point+1:]) {
+				return true
+			}
+		}
+	}
+	return false
+}
+func NombreExtension(filename string) (bool, string, string) {
+
+	upper := strings.ToUpper(filename)
+	bupper := []byte(upper)
+	point := -1
+	for i, x := range bupper {
+		if x == 46 {
+			point = i
+		}
+	}
+	if point > 0 {
+		return true, strings.ToLower(string(bupper[:point])), strings.ToLower(string(bupper[point+1:]))
+	}
+	return false, "", ""
+}
+func ImageDimenciones(path string) (bool, int, int, float64) {
+
+	archivoImagen, err := os.Open(path)
+	if err != nil {
+		fmt.Println("Error al abrir la imagen:", err)
+		return false, 0, 0, 0
+	}
+	defer archivoImagen.Close()
+
+	img, _, err := image.Decode(archivoImagen)
+	if err != nil {
+		fmt.Println("Error al decodificar la imagen:", err)
+		return false, 0, 0, 0
+	}
+
+	return true, img.Bounds().Dx(), img.Bounds().Dy(), float64(img.Bounds().Dx()) / float64(img.Bounds().Dy())
+}
+func BytesDim(data []byte) int {
+	var x int
+	for _, c := range data {
+		if c == 46 {
+			return x
+		} else {
+			x = x*10 + int(c-'0')
+		}
+	}
+	return x
+}
+func FileExist(path string, file string) bool {
+	if _, serr := os.Stat(path); serr != nil {
+		err := os.MkdirAll(path, os.ModeDir)
+		if err != nil {
+			return true
+		}
+	}
+	return false
+}
+func UploadFile(path string, files []*multipart.FileHeader, extends []string, filename string) (bool, ListaImagenes) {
+
+	if len(files) == 0 {
+		return false, ListaImagenes{}
+	}
+
+	fexist := false
+
+	file, err := files[0].Open()
+	if err != nil {
+		return false, ListaImagenes{}
+	}
+	defer file.Close()
+	if filename == "" {
+		filename = files[0].Filename
+	}
+
+	if FileExist(path, filename) {
+		fexist = true
+		e := os.Rename(fmt.Sprintf("%v/%v", path, filename), fmt.Sprintf("%v/temp_%v", path, filename))
+		if e != nil {
+			return false, ListaImagenes{}
+		}
+	}
+
+	if Extension(filename, extends) {
+		out, err := os.Create(fmt.Sprintf("%v/x%v", path, filename))
+		defer out.Close()
+		if err == nil {
+			_, err = io.Copy(out, file)
+			if err == nil {
+				if fexist {
+					e1 := os.Remove(fmt.Sprintf("%v/temp_%v", path, filename))
+					if e1 != nil {
+						return false, ListaImagenes{}
+					}
+				}
+				found, dx, dy, ratio := ImageDimenciones(fmt.Sprintf("%v/x%v", path, filename))
+				if found {
+					return true, ListaImagenes{Nom: filename, Dx: dx, Dy: dy, Ratio: ratio}
+				} else {
+					return false, ListaImagenes{}
+				}
+			} else {
+				return false, ListaImagenes{}
+			}
+		} else {
+			return false, ListaImagenes{}
+		}
+	} else {
+		return false, ListaImagenes{}
+	}
+}
+func GetDims(path string, w int, h int) (bool, uint, uint) {
+	if path == "images_preview" {
+		return true, 135, 90
+	}
+	if path == "images_cuentos" {
+
+		var maxwidth float32 = 500
+		var maxheight float32 = 400
+
+		newheight := float32(maxwidth) * float32(h) / float32(w)
+
+		if newheight <= maxheight {
+			return true, uint(maxwidth), uint(newheight)
+		} else {
+			newwidth := uint(float32(w) * float32(maxheight) / float32(h))
+			return true, uint(newwidth), uint(maxheight)
+		}
+	}
+	return false, 0, 0
+}

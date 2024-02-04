@@ -13,6 +13,10 @@
             <h1>{{.SubTitulo}}</h1>
             <h2>{{.SubTitulo2}}</h2>
             <ul class="clearfix valign">
+                {{if eq .UsuarioTipo 3}}
+                <li class="icn ic3"><a title="Padres" onclick="openwn('/pages/resumenAlumnos1', 1320, 650)"></a></li>
+                <li class="icn ic3"><a title="Padres" onclick="openwn('/pages/resumenAlumnos2', 1320, 650)"></a></li>
+                {{end}}
                 {{if ne .FormId 0}}
                     {{if eq .UsuarioTipo 3}}
                         <li class="icn ic3"><a title="Padres" onclick="navlink('/pages/verPadres?id={{.FormId}}')"></a></li>
@@ -74,7 +78,7 @@
                     <div class="mensaje"></div>
                 </label>
                 {{end}}
-                {{if eq .UsuarioTipo 3}}
+                {{if or (eq .UsuarioTipo 2) (eq .UsuarioTipo 3)}}
                 <label>
                     <span>Genero:</span>
                     <select id="genero">
@@ -185,9 +189,9 @@
                     {{if eq $.UsuarioTipo 3}}<a title="Eliminar" class="icn del" onclick="navlink('/pages/borrarUsuario?id={{.Id}}')"></a>{{end}}
                     {{if eq $.UsuarioTipo 2}}<a title="Eliminar" class="icn del" onclick="navlink('/pages/borrarUsuario?id={{.Id}}')"></a>{{end}}
                     {{if eq $.UsuarioTipo 1}}<a title="Eliminar" class="icn del" onclick="eliminar('borrar_educadora', {{.Id}}, '{{$.DelObj}}', '{{.Nombre}}')"></a>{{end}}
-                    {{if eq $.UsuarioTipo 3}}<a title="Modificar" class="icn pad" onclick="navlink('/pages/verPadres?id={{.Id}}')"></a>{{end}}
+                    {{if eq $.UsuarioTipo 3}}<a title="Padres" class="icn pad" onclick="navlink('/pages/verPadres?id={{.Id}}')"></a>{{end}}
                     {{if eq $.UsuarioTipo 1}}<a title="Cursos" class="icn mdl" onclick="navlink('/pages/verCursos?id={{.Id}}')"></a>{{end}}
-                    {{if eq $.UsuarioTipo 2}}<a title="Educadoras" class="icn pad" onclick="navlink('/pages/verAlumnos?id={{.Id}}')"></a>{{end}}
+                    {{if eq $.UsuarioTipo 2}}<a title="Alumnos" class="icn pad" onclick="navlink('/pages/verAlumnos?id={{.Id}}')"></a>{{end}}
                     <a title="Modificar" class="icn mod" onclick="navlink('{{$.PageMod}}?id={{.Id}}&tipo={{$.UsuarioTipo}}')"></a>
                 </div>
             </li>

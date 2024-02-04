@@ -1,7 +1,7 @@
 
 
 <div class="mt">
-    <h1>{{.Titulo}}</h1>
+    <h1>{{.Titulo}} {{$.UsuarioComplete.Nombre}}</h1>
     <ul class="clearfix valign">
         <a class="back icn r1" title="Mis Cotizaciones" onclick="backurl()"></a>
     </ul>
@@ -15,35 +15,48 @@
             <ul class="clearfix valign"></ul>
         </div>
         <div class="delete_user">
+
+            {{if eq .UsuarioComplete.Tipo 3}}
             <div class="bloque">
+                <div class="bloque_titulo">Prestamos</div>
+                <div class="bloque_lista">
                 {{if .UsuarioComplete.Prestamos}}
-                    <div class="bloque_titulo">Prestamos</div>
-                    <div class="bloque_lista">
                     {{range .UsuarioComplete.Prestamos}}
                         <div class="lista_opcion">- {{.Nombre}}</div>
                     {{end}}
-                    </div>
+                {{else}}
+                    <div class="lista_opcion">No hay prestamos</div>
                 {{end}}
                 </div>
+            </div>
+            {{end}}
+
+            {{if eq .UsuarioComplete.Tipo 3}}
             <div class="bloque">
-            {{if .UsuarioComplete.Cursos}}
                 <div class="bloque_titulo">Curso</div>
                 <div class="bloque_lista">
-                {{range .UsuarioComplete.Cursos}}
-                    <div class="lista_opcion">- {{.Nombre}}</div>
+                {{if .UsuarioComplete.Cursos}}
+                    {{range .UsuarioComplete.Cursos}}
+                        <div class="lista_opcion">- {{.Nombre}}</div>
+                    {{end}}
+                {{else}}
+                    <div class="lista_opcion">No tiene cursos</div>
                 {{end}}
                 </div>
-            {{end}}
             </div>
+            {{end}}
+
             <div class="bloque">
+                <div class="bloque_titulo">Parentesco</div>
+                <div class="bloque_lista">
                 {{if .UsuarioComplete.Parentesco}}
-                    <div class="bloque_titulo">Parentesco</div>
-                    <div class="bloque_lista">
                     {{range .UsuarioComplete.Parentesco}}
                         <div class="lista_opcion">- {{.Nombre}}</div>
                     {{end}}
-                    </div>
+                {{else}}
+                    <div class="lista_opcion">No hay Parentesco</div>
                 {{end}}
+                </div>
             </div>
         </div>
         <div style="display: block;"><a class="btn_eliminar" onclick="eliminar('{{$.DelAccion}}', '{{$.FormId}}/{{$.UsuarioComplete.Tipo}}', '{{$.DelObj}}', '{{$.UsuarioComplete.Nombre}}')">Eliminar</a>

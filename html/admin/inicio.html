@@ -6,11 +6,13 @@
         <link rel="stylesheet" href="css/sweetalert.css" type="text/css" media="all">
         <link rel="stylesheet" href="css/reset.css" type="text/css" media="all">
         <link rel="stylesheet" href="css/admin.css" type="text/css" media="all">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.0/cropper.min.css" type="text/css" media="all">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.0/cropper.min.js"></script>
         <script type="text/javascript" src="/js/sweetalert.min.js"></script>
         <script type="text/javascript" src="/js/admin.js"></script>
     </head>
-    <body onload="navlink('/pages/{{.Function}}')">
+    <body>
         <div class='c'>
             <div class='t'>
                 <div class='t2'>
@@ -40,6 +42,11 @@
                 </div>
                 <div class='l4' onclick='navlink("/pages/Prestamos")'>Prestamos</div>
                 <div class='l4' onclick='navlink("/pages/CodigosQr")'>Codigos Qr</div>
+                <div class='l1'>
+                    <div class='l2 xc2'></div>
+                    <div class='l3'>Cursos Online</div>
+                </div>
+                <div class='l4' onclick='navlink("/pages/verCursosOnline")'>Ingresar Cursos</div>
                 {{end}}
             </div>
             <div class='h'></div>

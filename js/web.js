@@ -3,7 +3,42 @@ var prestar_id_alu = 0;
 var id_lib = 0;
 var fecha_agenda = {};
 var code = "";
+var open_menu = false;
+
+function icon(i, w, l){
+    GC(i, 0).style.width = w+"px";
+    GC(i, 0).style.left = l+"px";
+}
+function sizeWeb(){
+
+    var width = window.innerWidth;
+    var cont_site = width * 0.85 > 800 ? 800 : width * 0.85
+    var btns = GC("a3", 0).children;
+    var margin = 20;
+    var btn_max_width = 142;
+    
+    var btn_width = (cont_site - margin * 2) / btns.length > btn_max_width ? btn_max_width : (cont_site - margin * 2) / btns.length ;
+    var left = (cont_site - btn_width * btns.length) / 2;
+
+    var i = 0;
+    for (x of btns){
+        x.style.width = btn_width+"px";
+        x.style.left = left+"px";
+        left += btn_width;
+        i++;
+    }
+
+    GC("a3", 0).style.height = btn_width+"px";
+
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+
+    sizeWeb();
+    window.addEventListener("resize", (event) => {
+        sizeWeb();
+    });
+
     GC("user", 0).addEventListener("click", show_login);
     GC("close", 0).addEventListener("click", hide_login);
     GC("button", 0).addEventListener("click", toogle_menu);
@@ -30,6 +65,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     for (x of GCS("d4")){
         x.addEventListener("click", d4);
+    }
+    for (x of GCS("bp")){
+        x.addEventListener("click", a3);
     }
     for (x of GCS("changeuser")){
         x.addEventListener("blur", change_user);
@@ -358,8 +396,80 @@ function d4(){
     el[2].style.display = "block";
     el[3].style.display = "none";
 }
+function a3(){
 
-var open_menu = false;
+    var id = this.getAttribute("id");
+    var selected = this.getAttribute("selected");
+
+    if (selected == 0){
+        for (x of GCS("bp")){
+            if (x.getAttribute("selected") == 1){
+                GC(x.getAttribute("id"), 0).classList.remove("AnimateTopclass");
+                GC(x.getAttribute("id"), 0).classList.add("AnimateBottomclass");
+                x.setAttribute("selected", 0);
+            }
+        }
+        GC(id, 0).classList.remove("AnimateBottomclass");
+        GC(id, 0).classList.add("AnimateTopclass");
+        this.setAttribute("selected", 1);
+    }
+
+    /*
+    if(id == "conozcanos"){
+        GC(id, 0).classList.add("AnimateTopclass");
+        //aparece(id);
+        history.pushState(null, 'Conozcanos', 'conozcanos');
+        //close_menu();
+    }
+    if(id == "propuestaeducativa"){
+        //aparece(id);
+        history.pushState(null, 'Propuesta educativa', 'propuestaeducativa');
+        //close_menu();
+    }
+    if(id == "horarios"){
+        //aparece(id);
+        history.pushState(null, 'Horarios', 'horarios');
+        //close_menu();
+    }
+    if(id == "contacto"){
+        //aparece(id);
+        history.pushState(null, 'Contacto', 'contacto');
+        //close_menu();
+    }
+    */
+}
+
+var btn_active = 1;
+function aparece(pag){
+    if(btn_active == 1){
+        btn_active = 0;
+        //desaparece();
+
+        GC(pag, 0).style.top = "100px";
+
+        obj = { iter: 50, els: [{el: GC(pag, 0), arr: [{pro: "right", tipo: 0, hasta: 0}]}] }
+        animateJs(obj, function(){ btn_active = 1; });
+        /*
+        $("."+pag).animate({
+            top: "0px",
+            opacity: 1
+        }, 1000, function() {
+            pagina = pag;
+            btn_active = 1;
+        });
+        */
+    }
+}
+function desaparece(){
+    var pag = pagina;
+    $("."+pag).animate({
+        top: "100px",
+        opacity: 0
+    }, 1000, function() {
+        $("."+pag ).css({top: "500px"});
+    });
+}
+
 function animateJs(obj, callback){
 
     if (!obj.hasOwnProperty("times")){
@@ -408,7 +518,6 @@ function calcvalue(desde, hasta, i, total, tipo){
     }else{
         return desde + easeInOutSine(i/total) * (hasta - desde);
     }
-    
 }
 function show_login(){
     GC("login", 0).style.display = "block";
@@ -438,6 +547,8 @@ function toogle_menu(){
         open_menu = !open_menu
     });
 }
+
+
 function GC(name, pos){
     return document.getElementsByClassName(name)[pos];
 }
@@ -495,4 +606,34 @@ function mensaje(op, message, func){
         }, 3000);
     });
 
+}
+function initMap(){
+
+    var myCenter = new google.maps.LatLng(-33.480455,-70.5534333);
+    var mapProp = {
+        center: myCenter,
+        zoom: 15,
+        mapTypeControl: false,
+        fullscreenControl: false,
+        streetViewControl: false,
+        zoomControl: false,
+        keyboardShortcuts: false,
+        mapTypeId:google.maps.MapTypeId.ROADMAP
+    };
+    var map = new google.maps.Map(document.getElementById("map"), mapProp);
+    var marker = new google.maps.Marker({
+        position: myCenter,
+    });
+    marker.setMap(map);
+
+    const infowindow = new google.maps.InfoWindow({
+        content: "<strong>Alberto Valenzuela Llanos 2705</strong>",
+        ariaLabel: "Uluru",
+    });
+    infowindow.open({
+        anchor: marker,
+        map,
+    });
+
+    
 }

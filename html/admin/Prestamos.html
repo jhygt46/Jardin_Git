@@ -19,7 +19,7 @@
         <ul class='lu'>
             {{range .Prestamos}}
             <li class="u" rel="{{.Id}}">                
-                <div class="no">{{.Nombre}} {{.Fecha_Prestamos}}</div>
+                <div class="no"><div class="t1a">{{.Nombre_Alu}} <p>{{.Fecha_Prestamos}}</p></div><div class="t2a">{{.Nombre}}</div></div>
                 <div class="btns clearfix valign">
                     <a title="Eliminar" class="icn del" onclick="eliminar('{{$.DelAccion}}', {{.Id}}, '{{$.DelObj}}', '{{.Nombre}}')"></a>
                 </div>

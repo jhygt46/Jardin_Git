@@ -577,6 +577,23 @@ body{
 .h .i .fc .lu .u .btns .edu{
     background-position: -712px -383px;
 }
+.h .i .fc .lu .u .btns .img1{
+    background-position: -173px -576px;
+}
+
+.h .i .fc .lu .u .no .t1a{
+    font-size: 18px;
+}
+.h .i .fc .lu .u .no .t1a p{
+    color: #900;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+}
+.h .i .fc .lu .u .no .t2a{
+    font-size: 15px;
+    line-height: 15px;
+}
 
 .PropBtns{
     margin-bottom: 10px;
@@ -1064,6 +1081,18 @@ body{
     padding: 2px 7px;
 }
 
+.resize{
+    
+}
+.resize .image{
+    float: left;
+    width: calc(100% - 140px);
+    margin-right: 10px;
+}
+.resize .preview{
+    float: left;
+    width: 130px;
+}
 .btn_eliminar{
     color: #fff;
     padding: 8px 16px;

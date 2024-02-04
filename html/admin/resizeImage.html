@@ -1,0 +1,55 @@
+<script>
+    var image = document.getElementById('image');
+    var previewContainer = document.getElementById('preview-container');
+    var cropper = new Cropper(image, {
+        {{if .Resize.Block}}aspectRatio: {{.Resize.Dx}}/{{.Resize.Dy}},{{end}}
+        preview: previewContainer,
+        viewMode: 2,
+        crop(event) {
+            document.getElementById('x').value = event.detail.x;
+            document.getElementById('y').value = event.detail.y;
+            document.getElementById('w').value = event.detail.width;
+            document.getElementById('h').value = event.detail.height;
+        },
+    });
+</script>
+<div class="mt">
+    <h1>{{.Titulo}}</h1>
+    <ul class="clearfix valign">
+        <a class="back icn r1" title="Mis Cotizaciones" onclick="backurl()"></a>
+    </ul>
+</div>
+<hr>
+<div class="i">
+    <div class="fc" id="info-0">
+        <div class="fct">
+            <h1>{{.SubTitulo}}</h1>
+            <h2>{{.SubTitulo2}}</h2>
+        </div>
+        <form action="" method="post" class="basic-grey">
+            <fieldset>
+                <input id="id" type="hidden" value="{{.FormId}}" />
+                <input id="accion" type="hidden" value="{{.FormAccion}}" />
+                <input id="picture" type="hidden" value="{{.Resize.Image}}" />
+                <input id="path" type="hidden" value="{{.Resize.Path}}" />
+                <input id="dx" type="hidden" value="{{.Resize.Dx}}" />
+                <input id="dy" type="hidden" value="{{.Resize.Dy}}" />
+                <input id="x" type="hidden" value="" />
+                <input id="y" type="hidden" value="" />
+                <input id="w" type="hidden" value="" />
+                <input id="h" type="hidden" value="" />
+                <div class="resize cl">
+                    <div class="image">
+                        <img id="image" src="/{{.Resize.Path}}/x{{.Resize.Image}}" style="display: block; max-width: 100%;">
+                    </div>
+                    <div class="preview">
+                        <div id="preview-container" style="width: 130px; height: 90px; overflow: hidden;"></div>
+                    </div>
+                </div>
+                <div>
+                    <input type="button" onclick="fm(this)" value="Enviar">
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>

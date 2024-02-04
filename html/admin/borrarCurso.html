@@ -16,14 +16,16 @@
         </div>
         <div class="delete_user">
             <div class="bloque">
+                <div class="bloque_titulo">Alumnos</div>
+                <div class="bloque_lista">
                 {{if .Lista}}
-                    <div class="bloque_titulo">Alumnos</div>
-                    <div class="bloque_lista">
                     {{range .Lista}}
                         <div class="lista_opcion">- {{.Nombre}}</div>
                     {{end}}
-                    </div>
+                {{else}}
+                    <div class="lista_opcion">No hay Alumnos</div>
                 {{end}}
+                </div>
             </div>
         </div>
         <div style="display: block;"><a class="btn_eliminar" onclick="eliminar('{{$.DelAccion}}', {{$.FormId}}, '{{$.DelObj}}', '{{$.UsuarioComplete.Nombre}}')">Eliminar</a>

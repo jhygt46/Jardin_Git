@@ -7,23 +7,36 @@
         </div>
     </div>
     <div class="form">
-        <div class="inputs vhalign">
-            {{if .Register}}
-                {{if or .Permisos.Admin .Permisos.Educadora}}
-                    {{range .Prestamos}}
-                        <div>{{.Nombre}} {{.Fecha_Prestamos}}</div>
+        <div class="inputs2 vhalign">
+            <div class="list_libros_titulo">Libros Prestados</div>
+            <div class="list_libros">
+                <div class="cont_list_libros">
+                {{if .Register}}
+                    {{if or .Permisos.Admin .Permisos.Educadora}}
+                        {{range .Prestamos}}
+                            <div class="list_libros_item">
+                                <div class="libro_item1">{{.Nombre_Alu}}</div>
+                                <div class="libro_item2 valign">{{.Duration}}</div>
+                                <div class="libro_item3">{{.Nombre}}</div>
+                            </div>
+                        {{end}}
+                    {{else}}
+                        {{range .Prestamos}}
+                            <div class="list_libros_item">
+                                <div class="libro_item1">{{.Nombre_Alu}}</div>
+                                <div class="libro_item2 valign">{{.Duration}}</div>
+                                <div class="libro_item3">{{.Nombre}}</div>
+                            </div>
+                        {{end}}
                     {{end}}
                 {{else}}
-                    {{range .Prestamos}}
-                        <div>{{.Nombre}} {{.Fecha_Prestamos}}</div>
-                    {{end}}
+                    <div class="librotitulo">Eres Apoderado?</div>
+                    <div class="libroinputs">
+                        <a class="enviar" href="/?login=1">Login</a>
+                    </div>
                 {{end}}
-            {{else}}
-                <div class="librotitulo">Eres Apoderado?</div>
-                <div class="libroinputs">
-                    <a class="enviar" href="/?login=1">Login</a>
                 </div>
-            {{end}}
+            </div>
         </div>
     </div>
 </div>
