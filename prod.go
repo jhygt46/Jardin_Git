@@ -402,6 +402,9 @@ func main() {
 	}
 }
 func redirectHTTP(ctx *fasthttp.RequestCtx) {
+
+	fmt.Println("Host:", string(ctx.Host()))
+
 	redirectURL := fmt.Sprintf("https://%v%v", string(ctx.Host()), string(ctx.URI().RequestURI()))
 	ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
 }
