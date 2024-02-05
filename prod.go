@@ -2394,6 +2394,10 @@ func GetUsuariosEduAdmin(db *sql.DB) ([]Lista, bool) {
 }
 func IsCorreo(db *sql.DB, id int, correo string) bool {
 
+	if correo == "" {
+		return true
+	}
+
 	cn := 0
 	var err error
 	var res *sql.Rows
