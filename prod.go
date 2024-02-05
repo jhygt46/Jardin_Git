@@ -2175,6 +2175,15 @@ func InsertUsuario(db *sql.DB, tipo string, nombre string, telefono string, corr
 	if fecha_nacimiento == "" {
 		fecha_nacimiento = "0000-00-00"
 	}
+	if fecha_matricula == "" {
+		fecha_matricula = "0000-00-00"
+	}
+	if fecha_ingreso == "" {
+		fecha_ingreso = "0000-00-00"
+	}
+	if fecha_retiro == "" {
+		fecha_retiro = "0000-00-00"
+	}
 
 	stmt, err := db.Prepare("INSERT INTO usuarios (nombre, telefono, tipo, correo, nmatricula, rut, apellido1, apellido2, genero, reglamento, fecha_nacimiento, fecha_matricula, fecha_ingreso, direccion, fecha_retiro, motivo_retiro, observaciones) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
 	ErrorCheck(err)
