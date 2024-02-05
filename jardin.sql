@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 05-02-2024 a las 04:51:36
+-- Tiempo de generación: 05-02-2024 a las 05:02:16
 -- Versión del servidor: 8.0.17
 -- Versión de PHP: 7.3.10
 
@@ -193,11 +193,11 @@ CREATE TABLE `usuarios` (
   `apellido2` varchar(100) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL DEFAULT '',
   `genero` tinyint(1) NOT NULL DEFAULT '0',
   `reglamento` tinyint(1) NOT NULL DEFAULT '0',
-  `fecha_nacimiento` date DEFAULT '0000-00-00',
-  `fecha_matricula` date DEFAULT '0000-00-00',
-  `fecha_ingreso` date DEFAULT '0000-00-00',
+  `fecha_nacimiento` date DEFAULT NULL,
+  `fecha_matricula` date DEFAULT NULL,
+  `fecha_ingreso` date DEFAULT NULL,
   `direccion` varchar(255) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL DEFAULT '',
-  `fecha_retiro` date DEFAULT '0000-00-00',
+  `fecha_retiro` date DEFAULT NULL,
   `motivo_retiro` tinyint(1) NOT NULL DEFAULT '0',
   `observaciones` text COLLATE utf8_spanish2_ci NOT NULL,
   `telefono2` varchar(14) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL DEFAULT '',
