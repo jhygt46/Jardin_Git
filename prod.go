@@ -999,7 +999,7 @@ func Save(ctx *fasthttp.RequestCtx) {
 
 			direccion := string(ctx.FormValue("direccion"))
 			fecha_retiro := string(ctx.FormValue("fecha_retiro"))
-			motivo_retiro := string(ctx.FormValue("motivo_retiro"))
+			motivo_retiro := int(Read_uint32bytes((ctx.FormValue("motivo_retiro")))
 			observaciones := string(ctx.FormValue("observaciones"))
 			id_cur := Read_uint32bytes(ctx.FormValue("curso"))
 
@@ -2011,7 +2011,7 @@ func GetMySQLDB() (db *sql.DB, err error) {
 }
 
 // USUARIOS DB //
-func UpdateUsuario(db *sql.DB, tipo string, id int, nombre string, telefono string, correo string, nmatricula string, rut string, apellido1 string, apellido2 string, genero int, reglamento int, fecha_nacimiento string, fecha_matricula string, fecha_ingreso string, direccion string, fecha_retiro string, motivo_retiro string, observaciones string, id_cur int) (uint8, string) {
+func UpdateUsuario(db *sql.DB, tipo string, id int, nombre string, telefono string, correo string, nmatricula string, rut string, apellido1 string, apellido2 string, genero int, reglamento int, fecha_nacimiento string, fecha_matricula string, fecha_ingreso string, direccion string, fecha_retiro string, motivo_retiro int, observaciones string, id_cur int) (uint8, string) {
 	stmt, err := db.Prepare("UPDATE usuarios SET nombre = ?, telefono = ?, correo = ?, nmatricula = ?, rut = ?, apellido1 = ?, apellido2 = ?, genero = ?, reglamento = ?, fecha_nacimiento = ?, fecha_matricula = ?, fecha_ingreso = ?, direccion = ?, fecha_retiro = ?, motivo_retiro = ?, observaciones = ? WHERE id_usr = ?")
 	ErrorCheck(err)
 	_, err = stmt.Exec(nombre, telefono, correo, nmatricula, rut, apellido1, apellido2, genero, reglamento, fecha_nacimiento, fecha_matricula, fecha_ingreso, direccion, fecha_retiro, motivo_retiro, observaciones, id)
@@ -2170,7 +2170,7 @@ func AsociarCursoOnlineItem(db *sql.DB, id_cuo string, id_coi string) (uint8, st
 		}
 	}
 }
-func InsertUsuario(db *sql.DB, tipo string, nombre string, telefono string, correo string, nmatricula string, rut string, apellido1 string, apellido2 string, genero int, reglamento int, fecha_nacimiento string, fecha_matricula string, fecha_ingreso string, direccion string, fecha_retiro string, motivo_retiro string, observaciones string, id_cur int) (uint8, string) {
+func InsertUsuario(db *sql.DB, tipo string, nombre string, telefono string, correo string, nmatricula string, rut string, apellido1 string, apellido2 string, genero int, reglamento int, fecha_nacimiento string, fecha_matricula string, fecha_ingreso string, direccion string, fecha_retiro string, motivo_retiro int, observaciones string, id_cur int) (uint8, string) {
 
 	if fecha_nacimiento == "" {
 		fecha_nacimiento = "0000-00-00"
