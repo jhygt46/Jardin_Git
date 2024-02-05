@@ -2011,7 +2011,7 @@ func GetMySQLDB() (db *sql.DB, err error) {
 }
 
 // USUARIOS DB //
-func UpdateUsuario(db *sql.DB, tipo string, id int, nombre string, telefono string, correo string, nmatricula string, rut string, apellido1 string, apellido2 string, genero string, reglamento string, fecha_nacimiento string, fecha_matricula string, fecha_ingreso string, direccion string, fecha_retiro string, motivo_retiro string, observaciones string, id_cur int) (uint8, string) {
+func UpdateUsuario(db *sql.DB, tipo string, id int, nombre string, telefono string, correo string, nmatricula string, rut string, apellido1 string, apellido2 string, genero int, reglamento string, fecha_nacimiento string, fecha_matricula string, fecha_ingreso string, direccion string, fecha_retiro string, motivo_retiro string, observaciones string, id_cur int) (uint8, string) {
 	stmt, err := db.Prepare("UPDATE usuarios SET nombre = ?, telefono = ?, correo = ?, nmatricula = ?, rut = ?, apellido1 = ?, apellido2 = ?, genero = ?, reglamento = ?, fecha_nacimiento = ?, fecha_matricula = ?, fecha_ingreso = ?, direccion = ?, fecha_retiro = ?, motivo_retiro = ?, observaciones = ? WHERE id_usr = ?")
 	ErrorCheck(err)
 	_, err = stmt.Exec(nombre, telefono, correo, nmatricula, rut, apellido1, apellido2, genero, reglamento, fecha_nacimiento, fecha_matricula, fecha_ingreso, direccion, fecha_retiro, motivo_retiro, observaciones, id)
