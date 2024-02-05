@@ -429,7 +429,7 @@ body{
 .container .contagenda .cont_agenda{
     height: calc(100% - 15px);
     overflow-y: auto;
-    padding-bottom: 15px;
+    margin-bottom: 15px;
 }
 .container .contagenda .cont_agenda .agenda_fecha{
     text-align: center;
@@ -561,7 +561,7 @@ body{
     border-bottom: 1px solid #669;
 }
 .container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_nombre{
-    font-size: 18px;
+    font-size: 16px;
     padding: 5px 0px 0px 5px;
 }
 .container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos{
@@ -573,6 +573,7 @@ body{
 }
 .container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_nombre{
     padding: 5px 0px 0px 5px;
+    font-size: 14px;
 }
 .container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle{
     background: #eef;
