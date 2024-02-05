@@ -991,7 +991,7 @@ func Save(ctx *fasthttp.RequestCtx) {
 			apellido1 := string(ctx.FormValue("apellido1"))
 			apellido2 := string(ctx.FormValue("apellido2"))
 
-			genero := string(ctx.FormValue("genero"))
+			genero := int(Read_uint32bytes(ctx.FormValue("genero")))
 			reglamento := string(ctx.FormValue("reglamento"))
 			fecha_nacimiento := string(ctx.FormValue("fecha_nacimiento"))
 			fecha_matricula := string(ctx.FormValue("fecha_matricula"))
@@ -2170,7 +2170,7 @@ func AsociarCursoOnlineItem(db *sql.DB, id_cuo string, id_coi string) (uint8, st
 		}
 	}
 }
-func InsertUsuario(db *sql.DB, tipo string, nombre string, telefono string, correo string, nmatricula string, rut string, apellido1 string, apellido2 string, genero string, reglamento string, fecha_nacimiento string, fecha_matricula string, fecha_ingreso string, direccion string, fecha_retiro string, motivo_retiro string, observaciones string, id_cur int) (uint8, string) {
+func InsertUsuario(db *sql.DB, tipo string, nombre string, telefono string, correo string, nmatricula string, rut string, apellido1 string, apellido2 string, genero int, reglamento string, fecha_nacimiento string, fecha_matricula string, fecha_ingreso string, direccion string, fecha_retiro string, motivo_retiro string, observaciones string, id_cur int) (uint8, string) {
 	stmt, err := db.Prepare("INSERT INTO usuarios (nombre, telefono, tipo, correo, nmatricula, rut, apellido1, apellido2, genero, reglamento, fecha_nacimiento, fecha_matricula, fecha_ingreso, direccion, fecha_retiro, motivo_retiro, observaciones) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
 	ErrorCheck(err)
 	defer stmt.Close()
