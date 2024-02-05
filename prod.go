@@ -2171,6 +2171,11 @@ func AsociarCursoOnlineItem(db *sql.DB, id_cuo string, id_coi string) (uint8, st
 	}
 }
 func InsertUsuario(db *sql.DB, tipo string, nombre string, telefono string, correo string, nmatricula string, rut string, apellido1 string, apellido2 string, genero int, reglamento int, fecha_nacimiento string, fecha_matricula string, fecha_ingreso string, direccion string, fecha_retiro string, motivo_retiro string, observaciones string, id_cur int) (uint8, string) {
+
+	if fecha_nacimiento == "" {
+		fecha_nacimiento = "0000-00-00"
+	}
+
 	stmt, err := db.Prepare("INSERT INTO usuarios (nombre, telefono, tipo, correo, nmatricula, rut, apellido1, apellido2, genero, reglamento, fecha_nacimiento, fecha_matricula, fecha_ingreso, direccion, fecha_retiro, motivo_retiro, observaciones) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
 	ErrorCheck(err)
 	defer stmt.Close()
