@@ -3168,7 +3168,7 @@ func GetAgendaCurso(db *sql.DB, id int, fecha string) (Agenda, bool) {
 		Agenda.AgendaCurso = AgendaCurso{Cursos: make(map[int]Curso, 0)}
 
 		//cn := 0
-		res, err := db.Query("SELECT t3.id_usr, t1.id_cur, t3.nombre, t4.nombre FROM educadora_curso t1, curso_usuarios t2, usuarios t3, cursos t4 WHERE t1.id_usr = ? AND t1.id_cur=t2.id_cur AND t2.id_usr=t3.id_usr AND t1.id_cur=t4.id_cur", id)
+		res, err := db.Query("SELECT t3.id_usr, t1.id_cur, t3.nombre, t3.apellido1, t4.nombre FROM educadora_curso t1, curso_usuarios t2, usuarios t3, cursos t4 WHERE t1.id_usr = ? AND t1.id_cur=t2.id_cur AND t2.id_usr=t3.id_usr AND t1.id_cur=t4.id_cur", id)
 		defer res.Close()
 		if err != nil {
 			ErrorCheck(err)
@@ -3178,20 +3178,21 @@ func GetAgendaCurso(db *sql.DB, id int, fecha string) (Agenda, bool) {
 		var id_usr int
 		var id_cur int
 		var nombre_usr string
+		var apellido_usr string
 		var nombre_cur string
 
 		for res.Next() {
-			err := res.Scan(&id_usr, &id_cur, &nombre_usr, &nombre_cur)
+			err := res.Scan(&id_usr, &id_cur, &nombre_usr, &apellido_usr, &nombre_cur)
 			if err != nil {
 				ErrorCheck(err)
 				return Agenda, false
 			}
 
 			if _, Found := Agenda.AgendaCurso.Cursos[id_cur]; Found {
-				Agenda.AgendaCurso.Cursos[id_cur].Users[id_usr] = GetAgendaUser(db, id_usr, aux.Fecha, nombre_usr)
+				Agenda.AgendaCurso.Cursos[id_cur].Users[id_usr] = GetAgendaUser(db, id_usr, aux.Fecha, fmt.Sprintf("%s %s", nombre_usr, apellido_usr))
 			} else {
 				Agenda.AgendaCurso.Cursos[id_cur] = Curso{Nombre: nombre_cur, Users: make(map[int]AgendaUser, 0)}
-				Agenda.AgendaCurso.Cursos[id_cur].Users[id_usr] = GetAgendaUser(db, id_usr, aux.Fecha, nombre_usr)
+				Agenda.AgendaCurso.Cursos[id_cur].Users[id_usr] = GetAgendaUser(db, id_usr, aux.Fecha, fmt.Sprintf("%s %s", nombre_usr, apellido_usr))
 			}
 		}
 		return Agenda, true
