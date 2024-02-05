@@ -999,7 +999,7 @@ func Save(ctx *fasthttp.RequestCtx) {
 
 			direccion := string(ctx.FormValue("direccion"))
 			fecha_retiro := string(ctx.FormValue("fecha_retiro"))
-			motivo_retiro := int(Read_uint32bytes((ctx.FormValue("motivo_retiro")))
+			motivo_retiro := int(Read_uint32bytes(ctx.FormValue("motivo_retiro")))
 			observaciones := string(ctx.FormValue("observaciones"))
 			id_cur := Read_uint32bytes(ctx.FormValue("curso"))
 
