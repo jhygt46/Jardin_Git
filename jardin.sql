@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 05-02-2024 a las 04:29:25
+-- Tiempo de generación: 05-02-2024 a las 04:38:56
 -- Versión del servidor: 8.0.17
 -- Versión de PHP: 7.3.10
 
@@ -191,17 +191,17 @@ CREATE TABLE `usuarios` (
   `rut` varchar(20) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL DEFAULT '',
   `apellido1` varchar(100) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL DEFAULT '',
   `apellido2` varchar(100) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL DEFAULT '',
-  `genero` tinyint(1) NOT NULL DEFAULT '0',
-  `reglamento` tinyint(1) NOT NULL DEFAULT '0',
+  `genero` int(4) NOT NULL DEFAULT '0',
+  `reglamento` int(4) NOT NULL DEFAULT '0',
   `fecha_nacimiento` date DEFAULT '0000-00-00',
   `fecha_matricula` date DEFAULT '0000-00-00',
   `fecha_ingreso` date DEFAULT '0000-00-00',
   `direccion` varchar(255) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL DEFAULT '',
   `fecha_retiro` date DEFAULT '0000-00-00',
-  `motivo_retiro` tinyint(1) NOT NULL DEFAULT '0',
+  `motivo_retiro` int(4) NOT NULL DEFAULT '0',
   `observaciones` text COLLATE utf8_spanish2_ci NOT NULL,
   `telefono2` varchar(14) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL DEFAULT '',
-  `eliminado` tinyint(1) NOT NULL DEFAULT '0'
+  `eliminado` int(4) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 --
