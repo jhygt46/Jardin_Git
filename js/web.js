@@ -327,6 +327,8 @@ function GetName(n){
 }
 function agenda_alumno(that){
 
+    console.log("ID:", that.parentElement.id);
+
     if (that.parentElement.parentElement.children[1].style.display == "block"){
         that.parentElement.parentElement.children[1].style.display = "none";
     }else{
