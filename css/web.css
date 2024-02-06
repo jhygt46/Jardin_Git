@@ -575,6 +575,9 @@ body{
     position: relative;
     height: 30px;
 }
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_nombre_color{
+    background: #fcc;
+}
 .container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_nombre .alnom{
     width: calc(100% - 65px);
     padding-left: 5px;

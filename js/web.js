@@ -327,15 +327,15 @@ function GetName(n){
 }
 function agenda_alumno(that){
 
-    console.log("ID:", that.parentElement.id);
-
     if (that.parentElement.parentElement.children[1].style.display == "block"){
         that.parentElement.parentElement.children[1].style.display = "none";
     }else{
-        for (x of that.parentElement.parentElement.parentElement.children){
-            x.children[1].style.display = "none";
+        if(that.parentElement.id == 0){
+            for (x of that.parentElement.parentElement.parentElement.children){
+                x.children[1].style.display = "none";
+            }
+            that.parentElement.parentElement.children[1].style.display = "block";
         }
-        that.parentElement.parentElement.children[1].style.display = "block";
     }
 }
 function agenda_curso(that){
