@@ -11,6 +11,8 @@ function icon(i, w, l){
 }
 function sizeWeb(){
 
+    console.log(GC("a3", 0));
+
     var width = window.innerWidth;
     var cont_site = width * 0.85 > 800 ? 800 : width * 0.85
     var btns = GC("a3", 0).children;
