@@ -572,7 +572,7 @@ body{
     background: #ccf;
 }
 .container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_nombre{
-    padding: 5px 0px 0px 5px;
+    position: relative;
     font-size: 14px;
     height: 30px;
 }
@@ -580,7 +580,7 @@ body{
     
 }
 .container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_nombre .alaus{
-    
+    left: 5px;
 }
 .container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle{
     background: #eef;
