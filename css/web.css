@@ -700,10 +700,14 @@ body{
 
 
 @media only screen and (min-width: 768px) {
-    
+    .container .menu{
+        display: none;
+    }
 }
 @media only screen and (max-width: 768px) {
-    
+    .container .menu{
+        display: block;
+    }
 }
 
 @media (max-height: 500px) {
