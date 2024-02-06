@@ -311,13 +311,13 @@ function GetName(n){
 }
 function agenda_alumno(that){
 
-    if (that.parentElement.children[1].style.display == "block"){
-        that.parentElement.children[1].style.display = "none";
+    if (that.parentElement.parentElement.children[1].style.display == "block"){
+        that.parentElement.parentElement.children[1].style.display = "none";
     }else{
-        for (x of that.parentElement.parentElement.children){
+        for (x of that.parentElement.parentElement.parentElement.children){
             x.children[1].style.display = "none";
         }
-        that.parentElement.children[1].style.display = "block";
+        that.parentElement.parentElement.children[1].style.display = "block";
     }
 }
 function agenda_curso(that){
