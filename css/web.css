@@ -572,8 +572,14 @@ body{
     background: #ccf;
 }
 .container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_nombre{
-    padding: 5px 0px 0px 5px;
-    font-size: 14px;
+    height: 30px;
+    position: relative;
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_nombre .alnom{
+    
+}
+.container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_nombre .alaus{
+    
 }
 .container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle{
     background: #eef;
