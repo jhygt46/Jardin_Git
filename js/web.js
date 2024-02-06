@@ -11,26 +11,27 @@ function icon(i, w, l){
 }
 function sizeWeb(){
 
-    console.log(GC("a3", 0));
+    if (GC("a3", 0) !== undefined){
 
-    var width = window.innerWidth;
-    var cont_site = width * 0.85 > 800 ? 800 : width * 0.85
-    var btns = GC("a3", 0).children;
-    var margin = 20;
-    var btn_max_width = 142;
-    
-    var btn_width = (cont_site - margin * 2) / btns.length > btn_max_width ? btn_max_width : (cont_site - margin * 2) / btns.length ;
-    var left = (cont_site - btn_width * btns.length) / 2;
+        var width = window.innerWidth;
+        var cont_site = width * 0.85 > 800 ? 800 : width * 0.85
+        var btns = GC("a3", 0).children;
+        var margin = 20;
+        var btn_max_width = 142;
+        
+        var btn_width = (cont_site - margin * 2) / btns.length > btn_max_width ? btn_max_width : (cont_site - margin * 2) / btns.length ;
+        var left = (cont_site - btn_width * btns.length) / 2;
 
-    var i = 0;
-    for (x of btns){
-        x.style.width = btn_width+"px";
-        x.style.left = left+"px";
-        left += btn_width;
-        i++;
+        var i = 0;
+        for (x of btns){
+            x.style.width = btn_width+"px";
+            x.style.left = left+"px";
+            left += btn_width;
+            i++;
+        }
+
+        GC("a3", 0).style.height = btn_width+"px";
     }
-
-    GC("a3", 0).style.height = btn_width+"px";
 
 }
 
