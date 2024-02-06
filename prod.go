@@ -75,9 +75,11 @@ type Resize struct {
 	Dy    int    `json:"Dy"`
 }
 type Lista struct {
-	Id     int    `json:"Id"`
-	Nombre string `json:"Nombre"`
-	Tipo   int    `json:"Tipo"`
+	Id        int    `json:"Id"`
+	Nombre    string `json:"Nombre"`
+	Apellido1 string `json:"Apellido1"`
+	Apellido2 string `json:"Apellido2"`
+	Tipo      int    `json:"Tipo"`
 }
 type Config struct {
 	Tiempo time.Duration `json:"Tiempo"`
@@ -2351,7 +2353,7 @@ func GetUsuarios(db *sql.DB, tipo int) ([]Lista, bool) {
 	Listas := []Lista{}
 
 	cn := 0
-	res, err := db.Query("SELECT id_usr, nombre, tipo FROM usuarios WHERE tipo = ? AND eliminado = ?", tipo, cn)
+	res, err := db.Query("SELECT id_usr, nombre, apellido1, apellido2, tipo FROM usuarios WHERE tipo = ? AND eliminado = ?", tipo, cn)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
@@ -2360,7 +2362,7 @@ func GetUsuarios(db *sql.DB, tipo int) ([]Lista, bool) {
 
 	for res.Next() {
 		Lista := Lista{}
-		err := res.Scan(&Lista.Id, &Lista.Nombre, &Lista.Tipo)
+		err := res.Scan(&Lista.Id, &Lista.Nombre, &Lista.Apellido1, &Lista.Apellido2, &Lista.Tipo)
 		if err != nil {
 			ErrorCheck(err)
 			return Listas, false

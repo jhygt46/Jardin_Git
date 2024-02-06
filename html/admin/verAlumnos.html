@@ -24,7 +24,7 @@
                         <select id="id_usr">
                             <option value="0">Seleccionar</option>
                             {{range .Lista}}
-                            <option value="{{.Id}}" {{if eq .Id $.Padre.Id_usr}}checked="checked"{{end}}>{{.Nombre}}</option>
+                            <option value="{{.Id}}" {{if eq .Id $.Padre.Id_usr}}checked="checked"{{end}}>{{.Nombre}} {{.Apellido1}} {{.Apellido2}}</option>
                             {{end}}
                         </select>
                         <div class="mensaje"></div>
