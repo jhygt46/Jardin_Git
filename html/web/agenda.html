@@ -4,7 +4,7 @@
 <div class="contagenda respdim vhalign">
     {{if or .Permisos.Admin .Permisos.Educadora}}
     <div class="cont_agenda">
-        <div class="agenda_fecha">{{.Agenda.Fecha}}</div>
+        <div class="agenda_fecha">{{.Agenda.FechaStr}}</div>
         <div class="agenda_cursos">
             {{ range $Idcur, $Curso := .Agenda.AgendaCurso.Cursos }}
             <div class="agenda_curso">
