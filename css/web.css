@@ -573,14 +573,21 @@ body{
 }
 .container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_nombre{
     position: relative;
-    font-size: 14px;
     height: 30px;
 }
 .container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_nombre .alnom{
-    
+    width: calc(100% - 65px);
+    padding-left: 5px;
+    font-size: 14px;
 }
 .container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_nombre .alaus{
-    left: 5px;
+    right: 5px;
+    background: #c33;
+    color: #fff;
+    font-size: 12px;
+    padding: 1px 0px;
+    width: 55px;
+    text-align: center;
 }
 .container .contagenda .cont_agenda .agenda_cursos .agenda_curso .curso_alumnos .curso_alumno .alumno_detalle{
     background: #eef;
