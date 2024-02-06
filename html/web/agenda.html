@@ -8,11 +8,11 @@
         <div class="agenda_cursos">
             {{ range $Idcur, $Curso := .Agenda.AgendaCurso.Cursos }}
             <div class="agenda_curso">
-                <div class="curso_nombre" onclick="agenda_curso(this)">{{$Curso.Nombre}}</div></div>
+                <div class="curso_nombre" onclick="agenda_curso(this)">{{$Curso.Nombre}}</div>
                 <div class="curso_alumnos" style="display: none;">
                     {{ range $Idusr, $User := $Curso.Users }}
                     <div class="curso_alumno">
-                        <div class="alumno_nombre"><div onclick="agenda_alumno(this)" class="alnom valign">{{$User.Nombre}}</div><div class="alaus valign">Ausente</div></div>
+                        <div class="alumno_nombre" onclick="agenda_alumno(this)">{{$User.Nombre}}</div>
                         <div class="alumno_detalle" style="display: none">
                             <div class="tipo_agenda1">
                                 <div></div>
