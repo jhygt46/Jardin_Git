@@ -133,6 +133,9 @@ function devolver_libro(){
 function handleChange1(that, tipo, id){
 
     if (tipo == 6){
+
+        console.log(that.parentElement.id);
+
         if(that.parentElement.id == 0){
             sendAgenda(id, 1, tipo);
             that.parentElement.id = 1;
