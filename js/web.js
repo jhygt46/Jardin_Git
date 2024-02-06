@@ -137,12 +137,12 @@ function handleChange1(that, tipo, id){
         if(ids == "0"){
             sendAgenda(id, 1, tipo);
             that.parentElement.id = "1";
-            that.parentElement.children[0].className = "alumno_nombre alumno_nombre_color";
+            that.parentElement.className = "alumno_nombre alumno_nombre_color";
         }
         if(ids == "1"){
             sendAgenda(id, 0, tipo);
             that.parentElement.id = "0";
-            that.parentElement.children[0].className = "alumno_nombre";
+            that.parentElement.className = "alumno_nombre";
         }
     }else{
         var x = that.parentElement.parentElement.children;
