@@ -138,8 +138,7 @@ function handleChange1(that, tipo, id){
             sendAgenda(id, 1, tipo);
             that.parentElement.id = "1";
             console.log("A");
-        }
-        if(that.parentElement.id == "1"){
+        }else{
             sendAgenda(id, 0, tipo);
             that.parentElement.id = "0";
             console.log("B");
