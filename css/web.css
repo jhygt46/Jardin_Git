@@ -703,10 +703,16 @@ body{
     .container .menu{
         display: none;
     }
+    .site .cont_site .a3{
+        display: block;
+    }
 }
 @media only screen and (max-width: 768px) {
     .container .menu{
         display: block;
+    }
+    .site .cont_site .a3{
+        display: none;
     }
 }
 
