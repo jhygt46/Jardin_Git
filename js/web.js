@@ -131,20 +131,26 @@ function devolver_libro(){
     });
 }
 function handleChange1(that, tipo, id){
-    var x = that.parentElement.parentElement.children;
-    if(that.className == "selected"){
-        that.checked = false;
-        that.className = "";
-        sendAgenda(id, 0, tipo);
+
+    if (tipo == 6){
+        console.log("AUSENTE");
     }else{
-        that.className = "selected";
-        sendAgenda(id, that.value, tipo);
-        for(var i=1; i<x.length; i++){
-            if (i != that.value){
-                x[i].children[0].className = "";
+        var x = that.parentElement.parentElement.children;
+        if(that.className == "selected"){
+            that.checked = false;
+            that.className = "";
+            sendAgenda(id, 0, tipo);
+        }else{
+            that.className = "selected";
+            sendAgenda(id, that.value, tipo);
+            for(var i=1; i<x.length; i++){
+                if (i != that.value){
+                    x[i].children[0].className = "";
+                }
             }
         }
     }
+
 }
 function sendcommentagenda(that, id){
     sendAgenda(id, that.value, 6);
