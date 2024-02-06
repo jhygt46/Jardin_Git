@@ -138,6 +138,7 @@ function handleChange1(that, tipo, id){
             sendAgenda(id, 1, tipo);
             that.parentElement.id = "1";
             that.parentElement.className = "alumno_nombre alumno_nombre_color";
+            that.parentElement.parentElement.children[1].display = "none";
         }
         if(ids == "1"){
             sendAgenda(id, 0, tipo);
