@@ -133,7 +133,12 @@ function devolver_libro(){
 function handleChange1(that, tipo, id){
 
     if (tipo == 6){
-        console.log("AUSENTE");
+        if(that.id == 0){
+            sendAgenda(id, 1, tipo);
+        }
+        if(that.id == 1){
+            sendAgenda(id, 0, tipo);
+        }
     }else{
         var x = that.parentElement.parentElement.children;
         if(that.className == "selected"){
@@ -153,7 +158,7 @@ function handleChange1(that, tipo, id){
 
 }
 function sendcommentagenda(that, id){
-    sendAgenda(id, that.value, 6);
+    sendAgenda(id, that.value, 7);
 }
 function sendAgenda(id, val, tipo){
 

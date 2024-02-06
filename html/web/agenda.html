@@ -12,7 +12,7 @@
                 <div class="curso_alumnos" style="display: none;">
                     {{ range $Idusr, $User := $Curso.Users }}
                     <div class="curso_alumno">
-                        <div class="alumno_nombre"><div class="alnom valign" onclick="agenda_alumno(this)">{{$User.Nombre}}</div><div onclick="handleChange1(this, 6, {{$Idusr}})" class="alaus valign">Ausente</div></div>
+                        <div class="alumno_nombre"><div class="alnom valign" onclick="agenda_alumno(this)">{{$User.Nombre}}</div><div id="{{$User.Ausente}}" onclick="handleChange1(this, 6, {{$Idusr}})" class="alaus valign">Ausente</div></div>
                         <div class="alumno_detalle" style="display: none">
                             <div class="tipo_agenda1">
                                 <div></div>

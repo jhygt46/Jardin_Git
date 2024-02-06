@@ -219,6 +219,7 @@ type AgendaUser struct {
 	Dep1           int    `json:"Dep1"`
 	Dep2           int    `json:"Dep2"`
 	Comentario     string `json:"Comentario"`
+	Ausente        int    `json:"Ausente"`
 	UltimaAct      string `json:"UltimaAct"`
 	UltimaActAlert string `json:"UltimaActAlert"`
 	ShowComentario bool   `json:"ShowComentario"`
@@ -2638,6 +2639,8 @@ func IngresarAgenda(db *sql.DB, id_alu int, tipo int, value string) (uint8, stri
 		x = "dep1"
 	} else if tipo == 5 {
 		x = "dep2"
+	} else if tipo == 6 {
+		x = "ausente"
 	} else {
 		x = "comentario"
 	}
@@ -3206,7 +3209,7 @@ func GetAgendaUser(db *sql.DB, id int, fecha string, nombre string) AgendaUser {
 	AgendaUser.Nombre = nombre
 
 	//cn := 0
-	res, err := db.Query("SELECT ali1, ali2, ali3, dep1, dep2, comentario, ultima_actualizacion FROM agenda WHERE id_usr = ? AND fecha = ?", id, fecha)
+	res, err := db.Query("SELECT ali1, ali2, ali3, dep1, dep2, comentario, ausente, ultima_actualizacion FROM agenda WHERE id_usr = ? AND fecha = ?", id, fecha)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
@@ -3217,7 +3220,7 @@ func GetAgendaUser(db *sql.DB, id int, fecha string, nombre string) AgendaUser {
 
 		var ultimaact string
 
-		err := res.Scan(&AgendaUser.Ali1, &AgendaUser.Ali2, &AgendaUser.Ali3, &AgendaUser.Dep1, &AgendaUser.Dep2, &AgendaUser.Comentario, &ultimaact)
+		err := res.Scan(&AgendaUser.Ali1, &AgendaUser.Ali2, &AgendaUser.Ali3, &AgendaUser.Dep1, &AgendaUser.Dep2, &AgendaUser.Comentario, &AgendaUser.Ausente, &ultimaact)
 		if err != nil {
 			ErrorCheck(err)
 			return AgendaUser
