@@ -133,11 +133,13 @@ function devolver_libro(){
 function handleChange1(that, tipo, id){
 
     if (tipo == 6){
-        if(that.id == 0){
+        if(that.parentElement.id == 0){
             sendAgenda(id, 1, tipo);
+            that.parentElement.id = 1;
         }
-        if(that.id == 1){
+        if(that.parentElement.id == 1){
             sendAgenda(id, 0, tipo);
+            that.parentElement.id = 0;
         }
     }else{
         var x = that.parentElement.parentElement.children;
