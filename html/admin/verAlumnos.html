@@ -49,11 +49,11 @@
             <ul class="clearfix valign"></ul>
         </div>
         <ul class='lu'>
-            {{ range $I, $User := .Padres }}
+            {{range .Padres}}
             <li class="u" rel="{{.Id_usr}}">                
-                <div class="no">{{$I}} - {{$User.Nombre}}</div>
+                <div class="no">{{.Nombre}}</div>
                 <div class="btns clearfix valign">
-                    <a title="Eliminar" class="icn del" onclick="eliminar('{{$.DelAccion}}', '{{$User.Id_usr}}/{{$.FormId}}', '{{$.DelObj}}', '{{$User.Nombre}}')"></a>
+                    <a title="Eliminar" class="icn del" onclick="eliminar('{{$.DelAccion}}', '{{.Id_usr}}/{{$.FormId}}', '{{$.DelObj}}', '{{.Nombre}}')"></a>
                 </div>
             </li>
             {{end}}

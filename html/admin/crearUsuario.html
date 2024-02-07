@@ -182,17 +182,17 @@
             <ul class="clearfix valign"></ul>
         </div>
         <ul class='lu'>
-            {{range .Lista}}
-            <li class="u" rel="{{.Id}}">                
-                <div class="no">{{.Nombre}}</div>
+            {{ range $I, $User := .Lista }}
+            <li class="u" rel="{{$User.Id}}">                
+                <div class="no">{{$I}} - {{$User.Nombre}}</div>
                 <div class="btns clearfix valign">
-                    {{if eq $.UsuarioTipo 3}}<a title="Eliminar" class="icn del" onclick="navlink('/pages/borrarUsuario?id={{.Id}}')"></a>{{end}}
-                    {{if eq $.UsuarioTipo 2}}<a title="Eliminar" class="icn del" onclick="navlink('/pages/borrarUsuario?id={{.Id}}')"></a>{{end}}
-                    {{if eq $.UsuarioTipo 1}}<a title="Eliminar" class="icn del" onclick="eliminar('borrar_educadora', {{.Id}}, '{{$.DelObj}}', '{{.Nombre}}')"></a>{{end}}
-                    {{if eq $.UsuarioTipo 3}}<a title="Padres" class="icn pad" onclick="navlink('/pages/verPadres?id={{.Id}}')"></a>{{end}}
-                    {{if eq $.UsuarioTipo 1}}<a title="Cursos" class="icn mdl" onclick="navlink('/pages/verCursos?id={{.Id}}')"></a>{{end}}
-                    {{if eq $.UsuarioTipo 2}}<a title="Alumnos" class="icn pad" onclick="navlink('/pages/verAlumnos?id={{.Id}}')"></a>{{end}}
-                    <a title="Modificar" class="icn mod" onclick="navlink('{{$.PageMod}}?id={{.Id}}&tipo={{$.UsuarioTipo}}')"></a>
+                    {{if eq $.UsuarioTipo 3}}<a title="Eliminar" class="icn del" onclick="navlink('/pages/borrarUsuario?id={{$User.Id}}')"></a>{{end}}
+                    {{if eq $.UsuarioTipo 2}}<a title="Eliminar" class="icn del" onclick="navlink('/pages/borrarUsuario?id={{$User.Id}}')"></a>{{end}}
+                    {{if eq $.UsuarioTipo 1}}<a title="Eliminar" class="icn del" onclick="eliminar('borrar_educadora', {{$User.Id}}, '{{$.DelObj}}', '{{$User.Nombre}}')"></a>{{end}}
+                    {{if eq $.UsuarioTipo 3}}<a title="Padres" class="icn pad" onclick="navlink('/pages/verPadres?id={{$User.Id}}')"></a>{{end}}
+                    {{if eq $.UsuarioTipo 1}}<a title="Cursos" class="icn mdl" onclick="navlink('/pages/verCursos?id={{$User.Id}}')"></a>{{end}}
+                    {{if eq $.UsuarioTipo 2}}<a title="Alumnos" class="icn pad" onclick="navlink('/pages/verAlumnos?id={{$User.Id}}')"></a>{{end}}
+                    <a title="Modificar" class="icn mod" onclick="navlink('{{$.PageMod}}?id={{$User.Id}}&tipo={{$.UsuarioTipo}}')"></a>
                 </div>
             </li>
             {{end}}
