@@ -1971,7 +1971,7 @@ func Qr(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	urlqr := fmt.Sprintf("www.jardinvalleencantado.cl/libro/%v", randSeq(32, id))
+	urlqr := fmt.Sprintf("https://www.valleencantado.cl/libro/%v", string(randSeq(30, id)))
 
 	var q *qrcode.QRCode
 	q, err = qrcode.New(urlqr, qrcode.Low)
