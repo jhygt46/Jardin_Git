@@ -1908,7 +1908,7 @@ func LibroPage(ctx *fasthttp.RequestCtx) {
 	index.Page = "Libros"
 
 	code := fmt.Sprintf("%v", ctx.UserValue("name"))
-	if len(code) == 32 {
+	if len(code) == 30 {
 		Libro, found := GetLibro(db, code)
 		if found {
 			index.Libro = Libro
