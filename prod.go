@@ -2833,7 +2833,7 @@ func GetInfoPadres(db *sql.DB, id int) ([]Padres, bool) {
 	LPadres := make([]Padres, 0)
 
 	cn := 0
-	res, err := db.Query("SELECT t1.nombre, t1.telefono, t1.correo, t2.tipo, t2.apoderado FROM usuarios t1, parentensco t2 WHERE t2.id_alu = ? AND t2.id_apo=t1.id_usr AND t1.eliminado = ?", cn)
+	res, err := db.Query("SELECT t1.nombre, t1.telefono, t1.correo, t2.tipo, t2.apoderado FROM usuarios t1, parentensco t2 WHERE t2.id_alu = ? AND t2.id_apo=t1.id_usr AND t1.eliminado = ?", id, cn)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
