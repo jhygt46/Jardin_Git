@@ -76,6 +76,7 @@ type Resize struct {
 }
 type Lista struct {
 	Id        int    `json:"Id"`
+	Num       int    `json:"Num"`
 	Nombre    string `json:"Nombre"`
 	Apellido1 string `json:"Apellido1"`
 	Apellido2 string `json:"Apellido2"`
@@ -2360,6 +2361,7 @@ func GetUsuarios(db *sql.DB, tipo int) ([]Lista, bool) {
 		return Listas, false
 	}
 
+	i := 1
 	for res.Next() {
 		Lista := Lista{}
 		err := res.Scan(&Lista.Id, &Lista.Nombre, &Lista.Apellido1, &Lista.Apellido2, &Lista.Tipo)
@@ -2367,6 +2369,8 @@ func GetUsuarios(db *sql.DB, tipo int) ([]Lista, bool) {
 			ErrorCheck(err)
 			return Listas, false
 		}
+		Lista.Num = i
+		i++
 		Listas = append(Listas, Lista)
 	}
 	return Listas, true
