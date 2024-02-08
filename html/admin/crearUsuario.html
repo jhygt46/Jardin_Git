@@ -184,7 +184,7 @@
         <ul class='lu'>
             {{ range $I, $User := .Lista }}
             <li class="u" rel="{{$User.Id}}">        
-                <div class="no">{{$User.Num}} - {{$User.Nombre}}</div>
+                <div class="no">{{$User.Num}} - {{$User.Nombre}} {{$User.Apellido1}} {{$User.Apellido2}}</div>
                 <div class="btns clearfix valign">
                     {{if eq $.UsuarioTipo 3}}<a title="Eliminar" class="icn del" onclick="navlink('/pages/borrarUsuario?id={{$User.Id}}')"></a>{{end}}
                     {{if eq $.UsuarioTipo 2}}<a title="Eliminar" class="icn del" onclick="navlink('/pages/borrarUsuario?id={{$User.Id}}')"></a>{{end}}
