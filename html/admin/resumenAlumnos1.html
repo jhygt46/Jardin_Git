@@ -91,11 +91,11 @@
     {{range $I, $User := .ListaUsers}}
         <tr style="font-size: 20px; padding: 3px 0px;">
             <td>{{$User.Num}}</td>
-            <td>{{$User.Nombre}}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{$User.Nombre}} {{$User.Apellido1}} {{$User.Apellido2}}</td>
+            <td>{{$User.MamaNom}}</td>
+            <td>{{$User.MamaTelefono}}</td>
+            <td>{{$User.PapaNom}}</td>
+            <td>{{$User.PapaTelefono}}</td>
         </tr>
     {{ end }}    
 </table>
