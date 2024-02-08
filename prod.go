@@ -2779,7 +2779,10 @@ func InsertCursoOnline(db *sql.DB, nombre string, url string, visible string, ni
 
 type ListaUsers struct {
 	Id_usr       int    `json:"Id_usr"`
+	Num          int    `json:"Num"`
 	Nombre       string `json:"Nombre"`
+	Apellido1    string `json:"Apellido1"`
+	Apellido2    string `json:"Apellido2"`
 	Rut          string `json:"Rut"`
 	MamaNom      string `json:"MamaNom"`
 	MamaTelefono string `json:"MamaTelefono"`
@@ -2795,25 +2798,27 @@ func GetAllCurso(db *sql.DB) ([]ListaUsers, bool) {
 	LUsers := make([]ListaUsers, 0)
 
 	cn := 0
-	res, err := db.Query("SELECT id_usr, nombre, nmatricula, rut, fecha_nacimiento, direccion FROM usuarios WHERE tipo = 3 AND eliminado = ?", cn)
+	res, err := db.Query("SELECT id_usr, nombre, apellido1, apellido2, nmatricula, rut, fecha_nacimiento, direccion FROM usuarios WHERE tipo = 3 AND eliminado = ?", cn)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
 		return LUsers, false
 	}
 
+	i := 1
 	for res.Next() {
 		User := ListaUsers{}
-		err := res.Scan(&User.Id_usr, &User.Nombre, &User.NMatricula, &User.Rut, &User.FechaNac, &User.Direccion)
+		err := res.Scan(&User.Id_usr, &User.Nombre, &User.Apellido1, &User.Apellido2, &User.NMatricula, &User.Rut, &User.FechaNac, &User.Direccion)
 		if err != nil {
 			ErrorCheck(err)
 			return LUsers, false
 		}
 
+		User.Num = i
+		i++
 		padres, found := GetInfoPadres(db, User.Id_usr)
 		if found {
 			for _, x := range padres {
-				fmt.Println(x)
 				if x.Tipo == 0 {
 					User.MamaNom = x.Nombre
 					User.MamaTelefono = x.Telefono
