@@ -101,10 +101,10 @@
     </tr>
     {{range $I, $User := .ListaUsers}}
     <tr class="td3">
-        <td align="center">1</td>
-        <td>918</td>
-        <td>  Javiera</td>
-        <td></td>
+        <td align="center">{{$User.Num}}</td>
+        <td>{{$User.NMatricula}}</td>
+        <td>{{$User.Nombre}} {{$User.Apellido1}} {{$User.Apellido2}}</td>
+        <td>{{$User.Rut}}</td>
         <td></td>
         <td align="center"></td>
         <td align="center">F</td>
