@@ -2819,7 +2819,7 @@ func GetAllCurso(db *sql.DB) ([]ListaUsers, bool) {
 		padres, found := GetInfoPadres(db, User.Id_usr)
 		if found {
 			for _, x := range padres {
-				if x.Tipo == 0 {
+				if x.Tipo == 2 {
 					User.MamaNom = x.Nombre
 					User.MamaTelefono = x.Telefono
 				} else {
