@@ -2791,6 +2791,7 @@ type ListaUsers struct {
 	NMatricula   string `json:"NMatricula"`
 	FechaNac     string `json:"FechaNac"`
 	Direccion    string `json:"Direccion"`
+	Genero       int    `json:"Genero"`
 }
 
 func GetAllCurso(db *sql.DB) ([]ListaUsers, bool) {
@@ -2798,7 +2799,7 @@ func GetAllCurso(db *sql.DB) ([]ListaUsers, bool) {
 	LUsers := make([]ListaUsers, 0)
 
 	cn := 0
-	res, err := db.Query("SELECT id_usr, nombre, apellido1, apellido2, nmatricula, rut, fecha_nacimiento, direccion FROM usuarios WHERE tipo = 3 AND eliminado = ?", cn)
+	res, err := db.Query("SELECT id_usr, nombre, apellido1, apellido2, nmatricula, rut, fecha_nacimiento, direccion, genero FROM usuarios WHERE tipo = 3 AND eliminado = ?", cn)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
@@ -2808,7 +2809,7 @@ func GetAllCurso(db *sql.DB) ([]ListaUsers, bool) {
 	i := 1
 	for res.Next() {
 		User := ListaUsers{}
-		err := res.Scan(&User.Id_usr, &User.Nombre, &User.Apellido1, &User.Apellido2, &User.NMatricula, &User.Rut, &User.FechaNac, &User.Direccion)
+		err := res.Scan(&User.Id_usr, &User.Nombre, &User.Apellido1, &User.Apellido2, &User.NMatricula, &User.Rut, &User.FechaNac, &User.Direccion, &User.Genero)
 		if err != nil {
 			ErrorCheck(err)
 			return LUsers, false

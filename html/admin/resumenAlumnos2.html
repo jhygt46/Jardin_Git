@@ -106,9 +106,9 @@
         <td>{{$User.Nombre}} {{$User.Apellido1}} {{$User.Apellido2}}</td>
         <td>{{$User.Rut}}</td>
         <td></td>
-        <td align="center"></td>
-        <td align="center">F</td>
-        <td></td>
+        <td align="center">{{$User.FechaNac}}</td>
+        <td align="center">{{if eq $User.Genero 1}}M{{end}} {{if eq $User.Genero 2}}F{{end}}</td>
+        <td>{{$User.Direccion}}</td>
         <td align="center"></td>
         <td align="center"></td>
 	    <td align="center"></td>
