@@ -3330,20 +3330,23 @@ func GetCursoUser(db *sql.DB, id int) (int, bool) {
 func GetUserCurso(db *sql.DB, id int) ([]Lista, bool) {
 
 	lista := []Lista{}
-	res, err := db.Query("SELECT t2.id_usr, t2.nombre FROM curso_usuarios t1, usuarios t2 WHERE t1.id_cur = ? AND t1.id_usr=t2.id_usr", id)
+	res, err := db.Query("SELECT t2.id_usr, t2.nombre, t2.apellido1, t2.apellido2 FROM curso_usuarios t1, usuarios t2 WHERE t1.id_cur = ? AND t1.id_usr=t2.id_usr", id)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
 		return lista, false
 	}
 
+	i := 0
 	for res.Next() {
 		list := Lista{}
-		err := res.Scan(&list.Id, &list.Nombre)
+		err := res.Scan(&list.Id, &list.Nombre, &list.Apellido1, &list.Apellido2)
 		if err != nil {
 			ErrorCheck(err)
 			return lista, false
 		}
+		list.Num = i
+		i++
 		lista = append(lista, list)
 	}
 	return lista, true
