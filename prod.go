@@ -3337,7 +3337,7 @@ func GetUserCurso(db *sql.DB, id int) ([]Lista, bool) {
 		return lista, false
 	}
 
-	i := 0
+	i := 1
 	for res.Next() {
 		list := Lista{}
 		err := res.Scan(&list.Id, &list.Nombre, &list.Apellido1, &list.Apellido2)
