@@ -42,7 +42,7 @@
         <ul class='lu'>
             {{range .Lista}}
             <li class="u" rel="{{.Id}}">                
-                <div class="no">{{.Nombre}}</div>
+                <div class="no">{{.Num}} - {{.Nombre}}</div>
                 <div class="btns clearfix valign">
                     <a title="Eliminar" class="icn del" onclick="navlink('/pages/borrarCurso?id={{.Id}}&nombre={{.Nombre}}')"></a>
                     <a title="Educadoras" class="icn edu" onclick="navlink('/pages/verEducadoras?id={{.Id}}')"></a>

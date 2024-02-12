@@ -47,7 +47,7 @@
         <ul class='lu'>
             {{range .Padres}}
             <li class="u" rel="{{.Id_usr}}">                
-                <div class="no">{{.Num}} - {{.Nombre}}</div>
+                <div class="no">{{.Nombre}}</div>
                 <div class="btns clearfix valign">
                     <a title="Eliminar" class="icn del" onclick="eliminar('{{$.DelAccion}}', '{{.Id_usr}}/{{$.FormId}}', '{{$.DelObj}}', '{{.Nombre}}')"></a>
                 </div>
