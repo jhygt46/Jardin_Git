@@ -2938,6 +2938,7 @@ func GetCursos(db *sql.DB) ([]Lista, bool) {
 		return Listas, false
 	}
 
+	i := 1
 	for res.Next() {
 		Lista := Lista{}
 		err := res.Scan(&Lista.Id, &Lista.Nombre)
@@ -2945,6 +2946,8 @@ func GetCursos(db *sql.DB) ([]Lista, bool) {
 			ErrorCheck(err)
 			return Listas, false
 		}
+		Lista.Num = i
+		i++
 		Listas = append(Listas, Lista)
 	}
 	return Listas, true
