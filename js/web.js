@@ -378,7 +378,7 @@ function delete_prestamo(){
 }
 function opc_alu(x){
     var childElement = document.createElement("div");
-    childElement.innerHTML = x.Nombre;
+    childElement.innerHTML = x.Nombre+" "+x.Apellido1+" "+x.Apellido2;
     childElement.className = "alu";
     childElement.id = x.Id;
     childElement.addEventListener("click", select_user_libro);
