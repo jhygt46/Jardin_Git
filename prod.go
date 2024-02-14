@@ -81,7 +81,6 @@ type Lista struct {
 	Apellido1 string `json:"Apellido1"`
 	Apellido2 string `json:"Apellido2"`
 	Tipo      int    `json:"Tipo"`
-	Orden     int    `json:"Orden"`
 }
 type Config struct {
 	Tiempo time.Duration `json:"Tiempo"`
@@ -235,6 +234,7 @@ type AgendaCurso struct {
 type Curso struct {
 	Id_cur int                `json:"Id_cur"`
 	Nombre string             `json:"Nombre"`
+	Orden  int                `json:"Orden"`
 	Users  map[int]AgendaUser `json:"Users"`
 }
 type Libro struct {
@@ -284,6 +284,22 @@ type ListaImagenes struct {
 type DelImages struct {
 	Time  time.Time `json:"Time"`
 	Image string    `json:"Image"`
+}
+type ListaUsers struct {
+	Id_usr       int    `json:"Id_usr"`
+	Num          int    `json:"Num"`
+	Nombre       string `json:"Nombre"`
+	Apellido1    string `json:"Apellido1"`
+	Apellido2    string `json:"Apellido2"`
+	Rut          string `json:"Rut"`
+	MamaNom      string `json:"MamaNom"`
+	MamaTelefono string `json:"MamaTelefono"`
+	PapaNom      string `json:"PapaNom"`
+	PapaTelefono string `json:"PapaTelefono"`
+	NMatricula   string `json:"NMatricula"`
+	FechaNac     string `json:"FechaNac"`
+	Direccion    string `json:"Direccion"`
+	Genero       int    `json:"Genero"`
 }
 
 var (
@@ -2779,24 +2795,6 @@ func InsertCursoOnline(db *sql.DB, nombre string, url string, visible string, ni
 		return 2, errs
 	}
 }
-
-type ListaUsers struct {
-	Id_usr       int    `json:"Id_usr"`
-	Num          int    `json:"Num"`
-	Nombre       string `json:"Nombre"`
-	Apellido1    string `json:"Apellido1"`
-	Apellido2    string `json:"Apellido2"`
-	Rut          string `json:"Rut"`
-	MamaNom      string `json:"MamaNom"`
-	MamaTelefono string `json:"MamaTelefono"`
-	PapaNom      string `json:"PapaNom"`
-	PapaTelefono string `json:"PapaTelefono"`
-	NMatricula   string `json:"NMatricula"`
-	FechaNac     string `json:"FechaNac"`
-	Direccion    string `json:"Direccion"`
-	Genero       int    `json:"Genero"`
-}
-
 func GetAllCurso(db *sql.DB) ([]ListaUsers, bool) {
 
 	LUsers := make([]ListaUsers, 0)
@@ -2859,7 +2857,6 @@ func GetInfoPadres(db *sql.DB, id int) ([]Padres, bool) {
 	}
 	return LPadres, true
 }
-
 func UpdateCurso(db *sql.DB, id int, nombre string, orden int) (uint8, string) {
 	stmt, err := db.Prepare("UPDATE cursos SET nombre = ?, orden = ? WHERE id_cur = ?")
 	ErrorCheck(err)
@@ -2888,7 +2885,7 @@ func GetCurso(db *sql.DB, id int) (Curso, bool) {
 	Curso := Curso{}
 
 	cn := 0
-	res, err := db.Query("SELECT id_cur, nombre FROM cursos WHERE id_cur = ? AND eliminado = ?", id, cn)
+	res, err := db.Query("SELECT id_cur, nombre, orden FROM cursos WHERE id_cur = ? AND eliminado = ?", id, cn)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
@@ -2896,7 +2893,7 @@ func GetCurso(db *sql.DB, id int) (Curso, bool) {
 	}
 
 	if res.Next() {
-		err := res.Scan(&Curso.Id_cur, &Curso.Nombre)
+		err := res.Scan(&Curso.Id_cur, &Curso.Nombre, &Curso.Orden)
 		if err != nil {
 			ErrorCheck(err)
 			return Curso, false
@@ -2934,7 +2931,7 @@ func GetCursos(db *sql.DB) ([]Lista, bool) {
 	Listas := []Lista{}
 
 	cn := 0
-	res, err := db.Query("SELECT id_cur, nombre, orden FROM cursos WHERE eliminado = ? ORDER BY orden", cn)
+	res, err := db.Query("SELECT id_cur, nombre FROM cursos WHERE eliminado = ? ORDER BY orden", cn)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
@@ -2944,7 +2941,7 @@ func GetCursos(db *sql.DB) ([]Lista, bool) {
 	i := 1
 	for res.Next() {
 		Lista := Lista{}
-		err := res.Scan(&Lista.Id, &Lista.Nombre, &Lista.Orden)
+		err := res.Scan(&Lista.Id, &Lista.Nombre)
 		if err != nil {
 			ErrorCheck(err)
 			return Listas, false
