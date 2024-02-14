@@ -81,6 +81,7 @@ type Lista struct {
 	Apellido1 string `json:"Apellido1"`
 	Apellido2 string `json:"Apellido2"`
 	Tipo      int    `json:"Tipo"`
+	Orden     int    `json:"Orden"`
 }
 type Config struct {
 	Tiempo time.Duration `json:"Tiempo"`
@@ -321,7 +322,7 @@ func main() {
 	passwords, err := os.ReadFile("../password_valleencantado.json")
 	if err == nil {
 		if err := json.Unmarshal(passwords, &pass.Passwords); err == nil {
-			//fmt.Println("Passwords Ok")
+			//fmt.Println(pass.Passwords)
 		}
 	}
 
@@ -1037,11 +1038,13 @@ func Save(ctx *fasthttp.RequestCtx) {
 		if perms.Permisos.Admin {
 
 			nombre := string(ctx.FormValue("nombre"))
+			orden := Read_uint32bytes(ctx.FormValue("orden"))
+
 			if id > 0 {
-				resp.Op, resp.Msg = UpdateCurso(db, id, nombre)
+				resp.Op, resp.Msg = UpdateCurso(db, id, nombre, orden)
 			}
 			if id == 0 {
-				resp.Op, resp.Msg = InsertCurso(db, nombre)
+				resp.Op, resp.Msg = InsertCurso(db, nombre, orden)
 			}
 			if resp.Op == 1 {
 				resp.Page = "crearCursos"
@@ -2857,10 +2860,10 @@ func GetInfoPadres(db *sql.DB, id int) ([]Padres, bool) {
 	return LPadres, true
 }
 
-func UpdateCurso(db *sql.DB, id int, nombre string) (uint8, string) {
-	stmt, err := db.Prepare("UPDATE cursos SET nombre = ? WHERE id_cur = ?")
+func UpdateCurso(db *sql.DB, id int, nombre string, orden int) (uint8, string) {
+	stmt, err := db.Prepare("UPDATE cursos SET nombre = ?, orden = ? WHERE id_cur = ?")
 	ErrorCheck(err)
-	_, err = stmt.Exec(nombre, id)
+	_, err = stmt.Exec(nombre, orden, id)
 	if err == nil {
 		return 1, "Curso actualizada correctamente"
 	} else {
@@ -2868,11 +2871,11 @@ func UpdateCurso(db *sql.DB, id int, nombre string) (uint8, string) {
 		return 2, "El Curso no pudo ser actualizada"
 	}
 }
-func InsertCurso(db *sql.DB, nombre string) (uint8, string) {
-	stmt, err := db.Prepare("INSERT INTO cursos (nombre) VALUES (?)")
+func InsertCurso(db *sql.DB, nombre string, orden int) (uint8, string) {
+	stmt, err := db.Prepare("INSERT INTO cursos (nombre, orden) VALUES (?,?)")
 	ErrorCheck(err)
 	defer stmt.Close()
-	_, err = stmt.Exec(nombre)
+	_, err = stmt.Exec(nombre, orden)
 	if err == nil {
 		return 1, "Curso ingresado correctamente"
 	} else {
@@ -2931,7 +2934,7 @@ func GetCursos(db *sql.DB) ([]Lista, bool) {
 	Listas := []Lista{}
 
 	cn := 0
-	res, err := db.Query("SELECT id_cur, nombre FROM cursos WHERE eliminado = ?", cn)
+	res, err := db.Query("SELECT id_cur, nombre, orden FROM cursos WHERE eliminado = ? ORDER BY orden", cn)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
@@ -2941,7 +2944,7 @@ func GetCursos(db *sql.DB) ([]Lista, bool) {
 	i := 1
 	for res.Next() {
 		Lista := Lista{}
-		err := res.Scan(&Lista.Id, &Lista.Nombre)
+		err := res.Scan(&Lista.Id, &Lista.Nombre, &Lista.Orden)
 		if err != nil {
 			ErrorCheck(err)
 			return Listas, false
