@@ -193,7 +193,7 @@
                     {{if eq $.UsuarioTipo 1}}<a title="Eliminar" class="icn del" onclick="eliminar('borrar_educadora', {{$User.Id}}, '{{$.DelObj}}', '{{$User.Nombre}}')"></a>{{end}}
                     {{if eq $.UsuarioTipo 3}}<a title="Padres" class="icn pad" onclick="navlink('/pages/verPadres?id={{$User.Id}}')"></a>{{end}}
                     {{if eq $.UsuarioTipo 1}}<a title="Cursos" class="icn mdl" onclick="navlink('/pages/verCursos?id={{$User.Id}}')"></a>{{end}}
-                    {{if eq $.UsuarioTipo 2}}<a title="Alumnos" class="icn pad" onclick="navlink('/pages/verAlumnos?id={{$User.Id}}')"></a>{{end}}
+                    {{if eq $.UsuarioTipo 2}}<a title="Alumnos" class="icn pad" onclick="navlink('/pages/verAlumnos?id={{$User.Id}}&nombre={{$User.Nombre}}')"></a>{{end}}
                     <a title="Modificar" class="icn mod" onclick="navlink('{{$.PageMod}}?id={{$User.Id}}&tipo={{$.UsuarioTipo}}')"></a>
                 </div>
             </li>
