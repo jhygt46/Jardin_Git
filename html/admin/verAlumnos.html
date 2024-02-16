@@ -19,7 +19,7 @@
                 <input id="id" type="hidden" value="{{.FormId}}" />
                 <input id="accion" type="hidden" value="{{.FormAccion}}" />
                 <label>
-                    <span>Madre, Padre, Apoderado:</span>
+                    <span>Lista de Alumnos:</span>
                     {{if eq .Padre.Id_usr 0}}
                         <select id="id_usr">
                             <option value="0">Seleccionar</option>
@@ -44,8 +44,8 @@
 <div class="i">
     <div class="fc" id="info-0">
         <div class="fct">
-            <h1>Listado de Alumnos</h1>
-            <h2>{{.Usuario.Nombre}}</h2>
+            <h1>{{.Usuario.Nombre}}</h1>
+            <h2>Listado de Alumnos</h2>
             <ul class="clearfix valign"></ul>
         </div>
         <ul class='lu'>
