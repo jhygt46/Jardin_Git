@@ -647,7 +647,10 @@ func Pages(ctx *fasthttp.RequestCtx) {
 				if found {
 					obj.Padres = padres
 				}
-
+				aux, found1 := GetUsuario(db, id, 3)
+				if found1 {
+					obj.Usuario = aux
+				}
 				aux2, found2 := GetUsuarios(db, 2)
 				if found2 {
 					obj.Lista = aux2

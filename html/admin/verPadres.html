@@ -10,7 +10,7 @@
 <div class="i">
     <div class="fc" id="info-0">
         <div class="fct">
-            <h1>{{.SubTitulo}}</h1>
+            <h1>Seleccionar Apoderado</h1>
             <h2>{{.SubTitulo2}}</h2>
             <ul class="clearfix valign"></ul>
         </div>
@@ -50,8 +50,8 @@
 <div class="i">
     <div class="fc" id="info-0">
         <div class="fct">
-            <h1>{{.SubTitulo}}</h1>
-            <h2>{{.SubTitulo2}}</h2>
+            <h1>{{.Usuario.Nombre}}</h1>
+            <h2>Listado de Apoderados</h2>
             <ul class="clearfix valign"></ul>
         </div>
         <ul class='lu'>
@@ -60,7 +60,6 @@
                 <div class="no">{{.Nombre}}</div>
                 <div class="btns clearfix valign">
                     <a title="Eliminar" class="icn del" onclick="eliminar('{{$.DelAccion}}', '{{$.FormId}}/{{.Id_usr}}', '{{$.DelObj}}', '{{.Nombre}}')"></a>
-                    <a title="Modificar" class="icn mod" onclick="navlink('{{$.PageMod}}?id_apo={{.Id_usr}}&id={{$.FormId}}')"></a>
                 </div>
             </li>
             {{end}}
