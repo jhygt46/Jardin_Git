@@ -91,6 +91,7 @@ type MyHandler struct {
 	CursosOnline *CursosOnlineStruct `json:"CursosOnline"`
 	ListaDel     []DelImages         `json:"Lista"`
 	VideoPath    string              `json:"VideoPath"`
+	Os           string              `json:"Os"`
 }
 type CursosOnlineStruct struct {
 	CursosCat []CursosCat `json:"CursosCat"`
@@ -315,31 +316,47 @@ var pass = &MyHandler{Conf: Config{}, CursosOnline: &CursosOnlineStruct{}, Lista
 
 func main() {
 
+	log.SetFlags(0)
+	log.SetOutput(ioutil.Discard)
+
 	//SendEmail("diego.gomez.bezmalinovic@gmail.com", "prueba", "mensaje de prueba")
 
 	if runtime.GOOS == "windows" {
+
 		imgHandler = fasthttp.FSHandler("C:/Go/Jardin_Git/img", 1)
 		imgPreviewHandler = fasthttp.FSHandler("C:/Go/Jardin_Git/img/preview", 1)
 		imgCuentosHandler = fasthttp.FSHandler("C:/Go/Jardin_Git/img/cuentos", 1)
 		cssHandler = fasthttp.FSHandler("C:/Go/Jardin_Git/css", 1)
 		jsHandler = fasthttp.FSHandler("C:/Go/Jardin_Git/js", 1)
 		pass.VideoPath = "C:/Go/Jardin_Git/videos"
+		pass.Os = "windows"
 		port = ":81"
+
+		passwords, err := os.ReadFile("../password_valleencantado_local.json")
+		if err == nil {
+			if err := json.Unmarshal(passwords, &pass.Passwords); err == nil {
+				//fmt.Println(pass.Passwords)
+			}
+		}
+
 	} else {
+
 		imgHandler = fasthttp.FSHandler("/var/Jardin_Git/img", 1)
 		imgPreviewHandler = fasthttp.FSHandler("/var/Jardin_Git/img/preview", 1)
 		imgCuentosHandler = fasthttp.FSHandler("/var/Jardin_Git/img/cuentos", 1)
 		cssHandler = fasthttp.FSHandler("/var/Jardin_Git/css", 1)
 		jsHandler = fasthttp.FSHandler("/var/Jardin_Git/js", 1)
 		pass.VideoPath = "/var/Jardin_Git/videos"
+		pass.Os = "linux"
 		port = ":80"
-	}
 
-	passwords, err := os.ReadFile("../password_valleencantado.json")
-	if err == nil {
-		if err := json.Unmarshal(passwords, &pass.Passwords); err == nil {
-			//fmt.Println(pass.Passwords)
+		passwords, err := os.ReadFile("../password_valleencantado.json")
+		if err == nil {
+			if err := json.Unmarshal(passwords, &pass.Passwords); err == nil {
+				//fmt.Println(pass.Passwords)
+			}
 		}
+
 	}
 
 	if err := SetCurso(pass); err == nil {
@@ -406,15 +423,15 @@ func main() {
 		r.GET("/qrhtml/{name}", HtmlQr)
 
 		// ANTES
-		//fasthttp.ListenAndServe(port, r.Handler)
-
-		// DESPUES
-
-		go func() {
-			fasthttp.ListenAndServe(":80", redirectHTTP)
-		}()
-		server := &fasthttp.Server{Handler: r.Handler}
-		server.ListenAndServeTLS(":443", "/etc/letsencrypt/live/valleencantado.cl/fullchain.pem", "/etc/letsencrypt/live/valleencantado.cl/privkey.pem")
+		if runtime.GOOS == "windows" {
+			fasthttp.ListenAndServe(port, r.Handler)
+		} else {
+			go func() {
+				fasthttp.ListenAndServe(":80", redirectHTTP)
+			}()
+			server := &fasthttp.Server{Handler: r.Handler}
+			server.ListenAndServeTLS(":443", "/etc/letsencrypt/live/valleencantado.cl/fullchain.pem", "/etc/letsencrypt/live/valleencantado.cl/privkey.pem")
+		}
 
 	}()
 	if err := run(con, pass, os.Stdout); err != nil {
@@ -1649,29 +1666,35 @@ func Favicon(ctx *fasthttp.RequestCtx) {
 	ctx.Response.Header.Set("Content-Type", "image/x-icon")
 	ctx.SetBody(*favicon)
 }
+func Redirect(ctx *fasthttp.RequestCtx) (bool, string) {
+
+	host := string(ctx.Host())
+	if host != "www.valleencantado.cl" && host != "localhost:81" {
+		return true, fmt.Sprintf("https://www.valleencantado.cl%v", string(ctx.URI().RequestURI()))
+	} else {
+		return false, ""
+	}
+}
 func Index(ctx *fasthttp.RequestCtx) {
 
-	if string(ctx.Host()) != "www.valleencantado.cl" {
-
-		redirectURL := fmt.Sprintf("https://www.valleencantado.cl%v", string(ctx.URI().RequestURI()))
+	if redirect, redirectURL := Redirect(ctx); redirect {
 		ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
-
-	} else {
-
-		db, err := GetMySQLDB()
-		defer db.Close()
-		ErrorCheck(err)
-
-		ctx.SetContentType("text/html; charset=utf-8")
-		index := GetPermisoUser(db, string(ctx.Request.Header.Cookie("cu")), true)
-		index.Login = Read_uint32bytes(ctx.FormValue("login"))
-		index.Page = "Inicio"
-
-		t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html", "html/web/cursosonline.html")
-		ErrorCheck(err)
-		err = t.Execute(ctx, index)
-		ErrorCheck(err)
+		return
 	}
+
+	db, err := GetMySQLDB()
+	defer db.Close()
+	ErrorCheck(err)
+
+	ctx.SetContentType("text/html; charset=utf-8")
+	index := GetPermisoUser(db, string(ctx.Request.Header.Cookie("cu")), true)
+	index.Login = Read_uint32bytes(ctx.FormValue("login"))
+	index.Page = "Inicio"
+
+	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html", "html/web/cursosonline.html")
+	ErrorCheck(err)
+	err = t.Execute(ctx, index)
+	ErrorCheck(err)
 }
 func SetCurso(ref *MyHandler) error {
 
@@ -1764,6 +1787,11 @@ func GetCursoOnlineItem(db *sql.DB, id int) (CursosItems, bool) {
 }
 func CursosOnline(ctx *fasthttp.RequestCtx) {
 
+	if redirect, redirectURL := Redirect(ctx); redirect {
+		ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
+		return
+	}
+
 	db, err := GetMySQLDB()
 	defer db.Close()
 	ErrorCheck(err)
@@ -1830,6 +1858,11 @@ func CursosOnline(ctx *fasthttp.RequestCtx) {
 }
 func Salir(ctx *fasthttp.RequestCtx) {
 
+	if redirect, redirectURL := Redirect(ctx); redirect {
+		ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
+		return
+	}
+
 	tkn := string(ctx.Request.Header.Cookie("cu"))
 	if len(tkn) > 32 {
 
@@ -1845,6 +1878,11 @@ func Salir(ctx *fasthttp.RequestCtx) {
 	ctx.Redirect("/", 200)
 }
 func Admin(ctx *fasthttp.RequestCtx) {
+
+	if redirect, redirectURL := Redirect(ctx); redirect {
+		ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
+		return
+	}
 
 	db, err := GetMySQLDB()
 	defer db.Close()
@@ -1879,6 +1917,11 @@ func ImgCuentos(ctx *fasthttp.RequestCtx) {
 }
 func LibroInicio(ctx *fasthttp.RequestCtx) {
 
+	if redirect, redirectURL := Redirect(ctx); redirect {
+		ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
+		return
+	}
+
 	ctx.SetContentType("text/html; charset=utf-8")
 	db, err := GetMySQLDB()
 	defer db.Close()
@@ -1909,6 +1952,11 @@ func LibroInicio(ctx *fasthttp.RequestCtx) {
 }
 func VideoPage(ctx *fasthttp.RequestCtx) {
 
+	if redirect, redirectURL := Redirect(ctx); redirect {
+		ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
+		return
+	}
+
 	// Lee el archivo de video
 	video, err := ioutil.ReadFile(fmt.Sprintf("%v/%v", pass.VideoPath, ctx.UserValue("name")))
 	if err != nil {
@@ -1924,6 +1972,11 @@ func VideoPage(ctx *fasthttp.RequestCtx) {
 	ctx.Write(video)
 }
 func LibroPage(ctx *fasthttp.RequestCtx) {
+
+	if redirect, redirectURL := Redirect(ctx); redirect {
+		ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
+		return
+	}
 
 	ctx.SetContentType("text/html; charset=utf-8")
 
@@ -1956,6 +2009,11 @@ func LibroPage(ctx *fasthttp.RequestCtx) {
 	ErrorCheck(err)
 }
 func AgendaPage(ctx *fasthttp.RequestCtx) {
+
+	if redirect, redirectURL := Redirect(ctx); redirect {
+		ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
+		return
+	}
 
 	ctx.SetContentType("text/html; charset=utf-8")
 
@@ -1993,6 +2051,11 @@ func AgendaPage(ctx *fasthttp.RequestCtx) {
 }
 func Qr(ctx *fasthttp.RequestCtx) {
 
+	if redirect, redirectURL := Redirect(ctx); redirect {
+		ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
+		return
+	}
+
 	id, err := strconv.Atoi(fmt.Sprintf("%v", ctx.UserValue("name")))
 	if err != nil {
 		return
@@ -2016,6 +2079,11 @@ func Qr(ctx *fasthttp.RequestCtx) {
 	}
 }
 func HtmlQr(ctx *fasthttp.RequestCtx) {
+
+	if redirect, redirectURL := Redirect(ctx); redirect {
+		ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
+		return
+	}
 
 	ctx.SetContentType("text/html; charset=utf-8")
 
@@ -2256,65 +2324,40 @@ func InsertUsuario(db *sql.DB, tipo string, nombre string, telefono string, corr
 }
 func AddUserClass(db *sql.DB, id_usr int, id_cur int) bool {
 
-	list := []int{}
-	res, err := db.Query("SELECT id_cur FROM curso_usuarios WHERE id_usr = ?", id_usr)
+	res, err := db.Query("SELECT id_cur FROM curso_usuarios WHERE id_usr = ? AND id_cur = ?", id_usr, id_cur)
 	defer res.Close()
-	if err != nil {
-		ErrorCheck(err)
-	}
+	ErrorCheck(err)
 
-	for res.Next() {
-		var id_cur int
-		err := res.Scan(&id_cur)
+	if !res.Next() {
+
+		delForm, err := db.Prepare("DELETE FROM curso_usuarios WHERE id_usr = ?")
 		if err != nil {
 			ErrorCheck(err)
+			return false
 		}
-		list = append(list, id_cur)
-	}
+		_, err = delForm.Exec(id_usr)
+		if err != nil {
+			ErrorCheck(err)
+			return false
+		}
 
-	insert := true
-	for _, x := range list {
-		if x == id_cur {
-			insert = false
-		} else {
-			return DeleteUserClass(db, id_usr, id_cur)
+		if id_cur > 0 {
+			stmt, err := db.Prepare("INSERT INTO curso_usuarios (id_usr, id_cur) VALUES (?,?)")
+			if err != nil {
+				ErrorCheck(err)
+				return false
+			}
+			defer stmt.Close()
+			_, err = stmt.Exec(id_usr, id_cur)
+			if err != nil {
+				ErrorCheck(err)
+				return false
+			}
 		}
-	}
-	if insert {
-		return InsertUserClass(db, id_usr, id_cur)
 	}
 	return true
 }
-func DeleteUserClass(db *sql.DB, id_usr int, id_cur int) bool {
-	delForm, err := db.Prepare("DELETE FROM curso_usuarios WHERE id_usr = ? AND id_cur = ?")
-	if err != nil {
-		ErrorCheck(err)
-		return false
-	}
-	_, err = delForm.Exec(id_usr, id_cur)
-	defer db.Close()
-	if err != nil {
-		ErrorCheck(err)
-		return false
-	}
-	return true
-}
-func InsertUserClass(db *sql.DB, id_usr int, id_cur int) bool {
 
-	stmt, err := db.Prepare("INSERT INTO curso_usuarios (id_usr, id_cur) VALUES (?,?)")
-	if err != nil {
-		ErrorCheck(err)
-		return false
-	}
-	defer stmt.Close()
-	_, err = stmt.Exec(id_usr, id_cur)
-	if err == nil {
-		return true
-	} else {
-		ErrorCheck(err)
-		return false
-	}
-}
 func GetUsuario(db *sql.DB, id int, tipo int) (Usuario, bool) {
 
 	Usuario := Usuario{}

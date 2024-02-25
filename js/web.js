@@ -14,7 +14,7 @@ function sizeWeb(){
     if (GC("a3", 0) !== undefined){
 
         var width = window.innerWidth;
-        var cont_site = width * 0.85 > 800 ? 800 : width * 0.85
+        var cont_site = width * 0.98 > 800 ? 800 : width * 0.98;
         var btns = GC("a3", 0).children;
         var margin = 20;
         var btn_max_width = 142;
