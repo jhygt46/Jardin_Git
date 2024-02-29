@@ -11,6 +11,7 @@ function icon(i, w, l){
 }
 function sizeWeb(){
 
+    start_visita();
     if (GC("a3", 0) !== undefined){
 
         var width = window.innerWidth;
@@ -36,6 +37,8 @@ function sizeWeb(){
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    GC("page5", 0).addEventListener("mousemove", mouse_move);
 
     sizeWeb();
     window.addEventListener("resize", (event) => {
@@ -658,4 +661,24 @@ function initMap(){
     });
 
     
+}
+
+
+function start_visita(){
+    var width = window.innerWidth;
+    var cont_site = width * 0.98 > 800 ? 800 : width * 0.98;
+    var images = GC("page5", 0).children;
+    for (x of images){
+        var left = (cont_site - x.offsetWidth) / 2
+        x.style.left = left+"px";
+    }
+}
+
+function mouse_move(e){
+    var div = GC("visible", 0);
+    var width = window.innerWidth;
+    var cont_site = width * 0.98 > 800 ? 800 : width * 0.98;
+    var j = (e.clientX - (width - cont_site)/2)/cont_site;
+    var left = (cont_site - div.offsetWidth)*j;
+    div.style.left = left+"px";
 }

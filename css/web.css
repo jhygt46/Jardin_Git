@@ -961,16 +961,37 @@ body{
 .site .cont_site .a2a .page .igradcolx1{
     background: linear-gradient(90deg, rgba(253, 181, 168, 1) 0%, rgba(253, 181, 168, 0) 100%);
 }
+.site .cont_site .a2a .page .igradcolx2{
+    background: linear-gradient(90deg, rgba(253, 204, 159, 1) 0%, rgba(253, 204, 159, 0) 100%);
+}
+.site .cont_site .a2a .page .igradcolx3{
+    background: linear-gradient(90deg, rgba(255, 235, 153, 1) 0%, rgba(255, 235, 153, 0) 100%);
+}
 .site .cont_site .a2a .page .imagen{
     height: 100%;
     position: absolute;
     top: 0px;
     right: 0px;
     z-index: 1;
-    background: url("https://jardinvalleencantado.cl/img/conozcanos.jpg");
+    background: url("/img/conozcanos.jpg");
     background-size: cover;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
+}
+.site .cont_site .a2a .page5{
+    overflow: hidden;
+    position: relative;
+}
+.site .cont_site .a2a .page5 .pan{
+    position: absolute;
+}
+.site .cont_site .a2a .page5 .pan .punto{
+    position: absolute;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    z-index: 2;
 }
 
 .site .cont_site .a2a .conozcanos{
