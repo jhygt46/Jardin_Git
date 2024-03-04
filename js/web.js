@@ -4,6 +4,7 @@ var id_lib = 0;
 var fecha_agenda = {};
 var code = "";
 var open_menu = false;
+var list_nav_visita = [0];
 
 function icon(i, w, l){
     GC(i, 0).style.width = w+"px";
@@ -38,12 +39,31 @@ function sizeWeb(){
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    GC("page5", 0).addEventListener("mousemove", mouse_move);
+    //GC("salir", 0).addEventListener("click", salir);
+    GC("back", 0).addEventListener("click", back);
+
+    
 
     sizeWeb();
     window.addEventListener("resize", (event) => {
         sizeWeb();
     });
+
+    var puntos = GCS("punto");
+    for(var i=0; i<puntos.length; i++){
+        puntos[i].addEventListener("click", ver_puntos);
+    }
+
+    var pan = GCS("pan");
+    for(var i=0; i<pan.length; i++){
+        pan[i].addEventListener("mousemove", mouse_move);
+    }
+
+    var vvimg = GCS("vvimage_chica");
+    for(var i=0; i<vvimg.length; i++){
+        vvimg[i].addEventListener("click", vvimgclick);
+    }
+    
 
     GC("user", 0).addEventListener("click", show_login);
     GC("close", 0).addEventListener("click", hide_login);
@@ -62,15 +82,23 @@ document.addEventListener('DOMContentLoaded', function() {
     if (GI("guardar_libro") !== null){
         GI("guardar_libro").addEventListener("click", guardar_libro);
     }
-    
+    if(GC("loginolvido", 0) !== undefined){
+        GC("loginolvido", 0).addEventListener("click", loginolvido);
+    }
+    if(GC("loginback", 0) !== undefined){
+        GC("loginback", 0).addEventListener("click", loginback);
+    }
+    if (GI("reestablecer") !== null){
+        GI("reestablecer").addEventListener("click", reestablecer);
+    }
     if (GI("login") !== null){
         GI("login").addEventListener("click", login);
     }
+    if (GI("loginrec") !== null){
+        GI("loginrec").addEventListener("click", loginrec);
+    }
     if (GI("alu_nom") !== null){
         GI("alu_nom").addEventListener("keyup", buscaralumno);
-    }
-    for (x of GCS("d4")){
-        x.addEventListener("click", d4);
     }
     for (x of GCS("bp")){
         x.addEventListener("click", a3);
@@ -80,6 +108,67 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }, false);
 
+function vvimgclick(){
+
+    var id = this.getAttribute("id");
+    var imglist = this.parentElement.parentElement.children[0].children;
+    for(var i=0; i<imglist.length; i++){
+        if(i == id){
+            imglist[i].className = "vvimage_grande visible";
+        }else{
+            imglist[i].className = "vvimage_grande";
+        }
+    }
+}
+function loginolvido(event){
+    GC("form1", 0).style.display = "none";
+    GC("form2", 0).style.display = "block";
+    event.preventDefault();
+}
+function loginback(event){
+    GC("form1", 0).style.display = "block";
+    GC("form2", 0).style.display = "none";
+    event.preventDefault();
+}
+
+function salir(event){
+    if (confirm("¿Realmente desea salir?") == true) {
+        window.location.href = "/salir";
+    }
+    event.preventDefault();
+}
+function ver_puntos(){
+    var id = this.getAttribute("id");
+    list_nav_visita.push(id);
+    GC("back", 0).style.display = "block";
+    ShowVisita(id);
+}
+function back(){
+    list_nav_visita.pop();
+    var id = list_nav_visita[list_nav_visita.length-1];
+    if(id == 0){
+        GC("back", 0).style.display = "none";
+    }
+    ShowVisita(id);
+}
+function ShowVisita(id){
+    var list = GC("page5", 0).children;
+    for(var i=0; i<list.length - 1; i++){
+        if(i == id){
+            list[i].className = AddVisible(list[i].className, true);
+        }else{
+            list[i].className = AddVisible(list[i].className, false);
+        }
+    }
+}
+function AddVisible(clase, visible){
+    var list = clase.split(" ");
+    if(visible){
+        return list[0]+" visible";
+    }else{
+        return list[0];
+    }
+}
 function guardar_libro(){
 
     const formData = new FormData();
@@ -415,12 +504,6 @@ function change_user(){
     });
 
 }
-function d4(){
-    var el = this.parentElement.children;
-    el[1].style.display = "none";
-    el[2].style.display = "block";
-    el[3].style.display = "none";
-}
 function a3(){
 
     var id = this.getAttribute("id");
@@ -438,30 +521,6 @@ function a3(){
         GC(id, 0).classList.add("AnimateTopclass");
         this.setAttribute("selected", 1);
     }
-
-    /*
-    if(id == "conozcanos"){
-        GC(id, 0).classList.add("AnimateTopclass");
-        //aparece(id);
-        history.pushState(null, 'Conozcanos', 'conozcanos');
-        //close_menu();
-    }
-    if(id == "propuestaeducativa"){
-        //aparece(id);
-        history.pushState(null, 'Propuesta educativa', 'propuestaeducativa');
-        //close_menu();
-    }
-    if(id == "horarios"){
-        //aparece(id);
-        history.pushState(null, 'Horarios', 'horarios');
-        //close_menu();
-    }
-    if(id == "contacto"){
-        //aparece(id);
-        history.pushState(null, 'Contacto', 'contacto');
-        //close_menu();
-    }
-    */
 }
 
 var btn_active = 1;
@@ -593,6 +652,27 @@ async function postData2(url, formData) {
     });
     return response.json();
 }
+
+function loginrec(){
+
+    const formData = new FormData();
+    formData.append('user', GI("correo_rec").value);
+
+    postData2("/recuperar", formData).then((resp) => {
+
+        console.log("RESP", resp);
+
+        if (resp.Op == 1){
+            mensaje(1, "Correo Enviado", function(){ location.reload(true); });
+        } else if (resp.Op == 2){
+            mensaje(2, resp.Msg, function(){});
+        } else {
+            mensaje(3, resp.Msg, function(){});
+        }
+    });
+
+}
+
 function login(){
 
     const formData = new FormData();
@@ -610,6 +690,26 @@ function login(){
     });
     
 }
+
+function reestablecer(){
+    const formData = new FormData();
+    formData.append('accion', 'reestablecer');
+    formData.append('pass1', GI("pass1").value);
+    formData.append('pass2', GI("pass2").value);
+    formData.append('id_usr', GI("id_usr").value);
+    formData.append('code', GI("code").value);
+
+    postData2("/accion", formData).then((resp) => {
+        if (resp.Op == 1){
+            mensaje(1, "Contraseña Reestablecida", function(){ window.location.href = "/?login=1"; });
+        } else if (resp.Op == 2){
+            mensaje(2, resp.Msg, function(){});
+        } else {
+            mensaje(3, resp.Msg, function(){});
+        }
+    });
+}
+
 function mensaje(op, message, func){
     var el = GC("mensaje", 0);
 
@@ -665,20 +765,28 @@ function initMap(){
 
 
 function start_visita(){
+
     var width = window.innerWidth;
     var cont_site = width * 0.98 > 800 ? 800 : width * 0.98;
     var images = GC("page5", 0).children;
-    for (x of images){
-        var left = (cont_site - x.offsetWidth) / 2
-        x.style.left = left+"px";
+
+    for(var i=0; i<images.length; i++){
+        if(images[i].className == "pan" || images[i].className == "pan visible"){
+            var left = (cont_site - images[i].getAttribute("id")) / 2
+            images[i].style.left = left+"px";
+        }
     }
 }
 
 function mouse_move(e){
+    
     var div = GC("visible", 0);
-    var width = window.innerWidth;
-    var cont_site = width * 0.98 > 800 ? 800 : width * 0.98;
-    var j = (e.clientX - (width - cont_site)/2)/cont_site;
-    var left = (cont_site - div.offsetWidth)*j;
-    div.style.left = left+"px";
+    
+    if(div.className == "pan visible"){
+        var width = window.innerWidth;
+        var cont_site = width * 0.98 > 800 ? 800 : width * 0.98;
+        var j = (e.clientX - (width - cont_site)/2)/cont_site;
+        var left = (cont_site - div.offsetWidth)*j;
+        div.style.left = left+"px";
+    }
 }

@@ -181,14 +181,23 @@ body{
     margin-top: 10px;
     display: block;
     text-decoration: none;
+    background: #efefef;
+    border-radius: 5px;
+    height: 60px;
+}
+.container .login .clogin .form .inputs .data .d0{
+    left: 10px;
 }
 .container .login .clogin .form .inputs .data .d1{
-    font-size: 14px;
-    line-height: 14px;
-    
+    font-size: 15px;
+    line-height: 15px;
+    padding-top: 5px;
+    color: #003;
 }
 .container .login .clogin .form .inputs .data .d2{
-    height: 33px;
+    font-size: 12px;
+    line-height: 12px;
+    color: #003;
 }
 .container .login .clogin .form .inputs .data .d3{
     display: none;
@@ -199,11 +208,23 @@ body{
     padding: 3px 2px;
     height: 25px;
 }
-.container .login .clogin .form .inputs .data .d4{
-    right: 0px;
-    width: 30px;
-    height: 30px;
-    background-position: -176px -431px;
+.container .login .clogin .form .inputs .data .iclibro{
+    right: 5px;
+    width: 60px;
+    height: 37px;
+    background: url("../img/icnbiblioteca.png");
+}
+.container .login .clogin .form .inputs .data .icagenda{
+    right: 13px;
+    width: 47px;
+    height: 50px;
+    background: url("../img/icnagenda.png");
+}
+.container .login .clogin .form .inputs .data .icuser{
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    background: url("../img/icnuser.png");
 }
 
 .container .menu .button{
@@ -895,26 +916,54 @@ body{
 .site .cont_site .a2a .page .info .info2{
     padding: 10px 20px;
 }
-.site .cont_site .a2a .page .info .info2 .t1{
+
+.site .cont_site .a2a .page .info .info2 .f25{
     font-size: 25px;
     line-height: 25px;
-    padding-top: 10px;
-    padding-bottom: 15px;
 }
-.site .cont_site .a2a .page .info .info2 .t2{
-    font-size: 15px;
-    line-height: 15px;
-    padding-bottom: 10px;
+.site .cont_site .a2a .page .info .info2 .f19{
+    font-size: 19px;
+    line-height: 19px;
 }
-.site .cont_site .a2a .page .info .info2 .t3{
+.site .cont_site .a2a .page .info .info2 .f17{
+    font-size: 17px;
+    line-height: 17px;
+}
+.site .cont_site .a2a .page .info .info2 .f14{
     font-size: 14px;
     line-height: 14px;
 }
-.site .cont_site .a2a .page .info .info2 ul{
+.site .cont_site .a2a .page .info .info2 .f13{
+    font-size: 13px;
+    line-height: 13px;
+}
+.site .cont_site .a2a .page .info .info2 .f12{
+    font-size: 12px;
+    line-height: 14px;
+}
+
+.site .cont_site .a2a .page .info .info2 .pt5{
+    padding-top: 5px;
+}
+.site .cont_site .a2a .page .info .info2 .pt10{
+    padding-top: 10px;
+}
+.site .cont_site .a2a .page .info .info2 .pt15{
+    padding-top: 15px;
+}
+.site .cont_site .a2a .page .info .info2 .pb10{
+    padding-bottom: 10px;
+}
+.site .cont_site .a2a .page .info .info2 .pb15{
+    padding-bottom: 15px;
+}
+
+
+.site .cont_site .a2a .page .info .info2 .ul1{
     padding: 0px 0px 0px 17px;
 }
-.site .cont_site .a2a .page .info .info2 ul li{
-    font-size: 14px;
+.site .cont_site .a2a .page .info .info2 .ul1 li{
+    font-size: 12px;
     line-height: 14px;
 }
 
@@ -973,10 +1022,20 @@ body{
     top: 0px;
     right: 0px;
     z-index: 1;
-    background: url("/img/conozcanos.jpg");
-    background-size: cover;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
+}
+.site .cont_site .a2a .page .imagen1{
+    background: url("/img/conozcanos.jpg");
+    background-size: cover;
+}
+.site .cont_site .a2a .page .imagen2{
+    background: url("/img/propuesta_educativa.jpg");
+    background-size: cover;
+}
+.site .cont_site .a2a .page .imagen3{
+    background: url("/img/horarios.jpg");
+    background-size: cover;
 }
 .site .cont_site .a2a .page5{
     overflow: hidden;
@@ -984,6 +1043,69 @@ body{
 }
 .site .cont_site .a2a .page5 .pan{
     position: absolute;
+    display: none;
+    z-index: 2;
+}
+.site .cont_site .a2a .page5 .vvlist_images{
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: relative;
+}
+.site .cont_site .a2a .page5 .vvlist_images .vvimage{
+    width: 78%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+    position: absolute;
+}
+.site .cont_site .a2a .page5 .vvlist_images .vvlista{
+    width: 20%;
+    padding: 1%;
+    height: 100%;
+    right: 0px;
+    top: 0px;
+    position: absolute;
+}
+
+.site .cont_site .a2a .page5 .vvlist_images .vvimage #vb01{
+    background-image: url("/img/vv_biblioteca_01.jpg");
+}
+.site .cont_site .a2a .page5 .vvlist_images .vvimage #vb02{
+    background-image: url("/img/vv_biblioteca_02.jpg");
+}
+
+.site .cont_site .a2a .page5 .vvlist_images .vvimage .vvimage_grande{
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+}
+.site .cont_site .a2a .page5 .vvlist_images .vvimage .visible{
+    display: block !important;
+}
+.site .cont_site .a2a .page5 .vvlist_images .vvimage .vvimage{
+    
+}
+.site .cont_site .a2a .page5 .vvlist_images .vvlista .vvimage_chica{
+    cursor: pointer;
+}
+.site .cont_site .a2a .page5 .vvlist_images .vvlista .vvimage_chica img{
+    width: 100%;
+}
+.site .cont_site .a2a .page5 .back{
+    position: absolute;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    z-index: 2;
+    bottom: 10px;
+    right: 10px;
+    display: none;
+}
+.site .cont_site .a2a .page5 .visible{
+    display: block !important;
 }
 .site .cont_site .a2a .page5 .pan .punto{
     position: absolute;
@@ -993,6 +1115,43 @@ body{
     cursor: pointer;
     z-index: 2;
 }
+.site .cont_site .a2a .page5 .pan .pos_entrada{
+    top: 200px;
+    left: 430px;
+}
+
+
+.site .cont_site .a2a .page5 .pan .pos_back{
+    top: 200px;
+    left: 430px;
+}
+.site .cont_site .a2a .page5 .pan .pos_patio{
+    top: 150px;
+    left: 830px;
+}
+.site .cont_site .a2a .page5 .pan .pos_biblioteca{
+    top: 150px;
+    left: 670px;
+}
+.site .cont_site .a2a .page5 .pan .pos_salas{
+    top: 150px;
+    left: 1060px;
+}
+.site .cont_site .a2a .page5 .pan .pos_sala_verde{
+    top: 100px;
+    left: 80px;
+}
+.site .cont_site .a2a .page5 .pan .pos_sala_naranja{
+    top: 150px;
+    left: 80px;
+}
+.site .cont_site .a2a .page5 .pan .pos_cocina{
+    top: 200px;
+    left: 80px;
+}
+
+
+
 
 .site .cont_site .a2a .conozcanos{
     background: rgba(249, 72, 39, 0.4);

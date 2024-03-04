@@ -123,8 +123,14 @@ type Passwords struct {
 	PassDb    string `json:"PassDb"`
 	PassEmail string `json:"PassEmail"`
 }
+type Reestablecer struct {
+	Op   int    `json:"Op"`
+	Id   int    `json:"Id"`
+	Code string `json:"Code"`
+}
 type Indexs struct {
 	Login        int                `json:"Login"`
+	Reestablecer Reestablecer       `json:"Reestablecer"`
 	Function     string             `json:"Nombre"`
 	Page         string             `json:"Page"`
 	User         IndexUser          `json:"User"`
@@ -404,12 +410,14 @@ func main() {
 		r.GET("/images_cuentos/{name}", ImgCuentos)
 		r.GET("/pages/{name}", Pages)
 		r.POST("/login", Login)
+		r.POST("/recuperar", Recuperar)
 		r.POST("/nueva", Nueva)
 		r.POST("/save", Save)
 		r.POST("/delete", Delete)
 		r.POST("/accion", Accion)
 		r.GET("/salir", Salir)
 		r.GET("/admin", Admin)
+		r.GET("/reestablecer", Index)
 		r.GET("/libros", LibroInicio)
 		r.GET("/libro/{name}", LibroPage)
 		r.GET("/videos/{name}", VideoPage)
@@ -509,6 +517,13 @@ func Accion(ctx *fasthttp.RequestCtx) {
 		} else {
 			resp.Msg = "No tiene permisos"
 		}
+	case "reestablecer":
+		ctx.Response.Header.Set("Content-Type", "application/json")
+		id_usr := Read_uint32bytes(ctx.FormValue("id_usr"))
+		code := string(ctx.FormValue("code"))
+		pass1 := ctx.FormValue("pass1")
+		pass2 := ctx.FormValue("pass2")
+		resp.Op, resp.Msg = ReestablecerPassword(db, id_usr, code, pass1, pass2)
 	default:
 		ctx.Response.Header.Set("Content-Type", "application/json")
 		json.NewEncoder(ctx).Encode(resp)
@@ -1616,6 +1631,50 @@ func Login(ctx *fasthttp.RequestCtx) {
 
 	json.NewEncoder(ctx).Encode(resp)
 }
+func Recuperar(ctx *fasthttp.RequestCtx) {
+
+	ctx.Response.Header.Set("Content-Type", "application/json")
+	resp := Response{Op: 2}
+
+	db, err := GetMySQLDB()
+	defer db.Close()
+	ErrorCheck(err)
+
+	user := string(ctx.FormValue("user"))
+
+	cn := 0
+	res, err := db.Query("SELECT id_usr FROM usuarios WHERE correo = ? AND eliminado = ?", user, cn)
+	defer res.Close()
+	ErrorCheck(err)
+
+	if res.Next() {
+
+		var id_usr int
+		err := res.Scan(&id_usr)
+		ErrorCheck(err)
+
+		code := string(randSeq(30, 1))
+		stmt, err := db.Prepare("UPDATE usuarios SET mailcode = ? WHERE id_usr = ?")
+		ErrorCheck(err)
+		_, err = stmt.Exec(code, id_usr)
+		if err == nil {
+
+			resp.Op = 1
+			resp.Msg = "Correo Enviado"
+
+			SendEmail(user, "Restablecer Contraseña Jardin ValleEncantado", fmt.Sprintf("<a href='https://www.valleencantado.cl/reestablecer?id=%v&code=%v'>REESTABLECER CONTRASEÑA</a>", id_usr, code))
+
+		} else {
+			ErrorCheck(err)
+			resp.Msg = "Usuario Contraseña no existen"
+		}
+
+	} else {
+		resp.Msg = "Usuario Contraseña no existen"
+	}
+
+	json.NewEncoder(ctx).Encode(resp)
+}
 func Nueva(ctx *fasthttp.RequestCtx) {
 
 	ctx.Response.Header.Set("Content-Type", "application/json")
@@ -1690,6 +1749,11 @@ func Index(ctx *fasthttp.RequestCtx) {
 	index := GetPermisoUser(db, string(ctx.Request.Header.Cookie("cu")), true)
 	index.Login = Read_uint32bytes(ctx.FormValue("login"))
 	index.Page = "Inicio"
+
+	if len(ctx.FormValue("code")) == 30 && Read_uint32bytes(ctx.FormValue("id")) > 0 {
+		index.Reestablecer = Reestablecer{Op: 1, Code: string(ctx.FormValue("code")), Id: Read_uint32bytes(ctx.FormValue("id"))}
+		index.Login = 1
+	}
 
 	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html", "html/web/cursosonline.html")
 	ErrorCheck(err)
@@ -1784,6 +1848,45 @@ func GetCursoOnlineItem(db *sql.DB, id int) (CursosItems, bool) {
 		return Resp, true
 	}
 	return Resp, false
+}
+func ReestablecerPassword(db *sql.DB, id int, code string, pass1 []byte, pass2 []byte) (uint8, string) {
+
+	if len(code) == 30 {
+		if string(pass1) == string(pass2) {
+
+			cn := 0
+			res, err := db.Query("SELECT id_usr FROM usuarios WHERE mailcode = ? AND id_usr = ? AND eliminado = ?", code, id, cn)
+			defer res.Close()
+			ErrorCheck(err)
+
+			if res.Next() {
+
+				var id_usr int
+				err := res.Scan(&id_usr)
+				ErrorCheck(err)
+
+				str := ""
+				stmt, err := db.Prepare("UPDATE usuarios SET pass = ?, mailcode = ? WHERE id_usr = ?")
+				ErrorCheck(err)
+				_, err = stmt.Exec(GetMD5Hash(pass1), str, id_usr)
+				if err == nil {
+					return 1, ""
+				} else {
+					ErrorCheck(err)
+					return 2, "Se produjo un error"
+				}
+
+			} else {
+				return 2, "Se produjo un error"
+			}
+
+		} else {
+			return 2, "Password Diferentes"
+		}
+	} else {
+		return 2, "Se produjo un error"
+	}
+
 }
 func CursosOnline(ctx *fasthttp.RequestCtx) {
 
@@ -2357,7 +2460,6 @@ func AddUserClass(db *sql.DB, id_usr int, id_cur int) bool {
 	}
 	return true
 }
-
 func GetUsuario(db *sql.DB, id int, tipo int) (Usuario, bool) {
 
 	Usuario := Usuario{}
@@ -2785,7 +2887,6 @@ func ChangeUserTelefono(db *sql.DB, id int, nombre string) (uint8, string) {
 		return 2, "El Telefono no pudo ser actualizada"
 	}
 }
-
 func ExisteUrlCurso(db *sql.DB, url string, id int) (bool, string) {
 
 	cn := 0
@@ -3912,15 +4013,15 @@ func GetPermisoUser(db *sql.DB, tkn string, complete bool) Indexs {
 				Index.Permisos.Admin = true
 				if complete {
 					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Administrador", Icon: "admin", Url: "admin"})
-					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Resumen Libro", Icon: "libro", Url: "libros"})
-					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Agenda Virtual", Icon: "agenda", Url: "agenda"})
+					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Resumen Libro", Icon: "iclibro", Url: "libros"})
+					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Agenda Virtual", Icon: "icagenda", Url: "agenda"})
 				}
 			} else if Index.User.Tipo == 1 {
 				// PERSONAL
 				Index.Permisos.Educadora = true
 				if complete {
-					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Resumen Libro", Icon: "libro", Url: "libros"})
-					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Agenda Virtual", Icon: "agenda", Url: "agenda"})
+					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Resumen Libro", Icon: "iclibro", Url: "libros"})
+					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Agenda Virtual", Icon: "icagenda", Url: "agenda"})
 				}
 			} else if Index.User.Tipo == 2 {
 				// PADRES
@@ -3938,8 +4039,8 @@ func GetPermisoUser(db *sql.DB, tkn string, complete bool) Indexs {
 					if found {
 						textLibro = fmt.Sprintf("%v libro prestado", Libro)
 					}
-					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Resumen Libro", Icon: "libro", Url: "libros", Text: textLibro})
-					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Agenda Virtual", Icon: "agenda", Url: "agenda", Text: textAgenda})
+					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Resumen Libro", Icon: "iclibro", Url: "libros", Text: textLibro})
+					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Agenda Virtual", Icon: "icagenda", Url: "agenda", Text: textAgenda})
 				}
 			} else {
 				// OTROS

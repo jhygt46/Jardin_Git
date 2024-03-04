@@ -44,68 +44,47 @@
                         <div class="inputs vhalign">
                         {{ range .Modulos }}
                             <a href="/{{.Url}}" class="data">
-                                <div class="d1">{{.Titulo}}:</div>
-                                <div class="d2">{{.Text}}</div>
-                                <div class="d4 icon valign"></div>
+                                <div class="d0 valign">
+                                    <div class="d1">{{.Titulo}}</div>
+                                    <div class="d2">{{.Text}}</div>
+                                </div>
+                                <div class="{{.Icon}} icon valign"></div>
                             </a>
                         {{end}}
                         {{if eq .User.Tipo 2}}
-                            <div class="data">
-                                <div class="d1">Cambiar Datos:</div>
-                                <div class="d2"></div>
-                                <div class="d4 icon valign"></div>
-                            </div>
+                            <a href="" class="data">
+                                <div class="d0 valign">
+                                    <div class="d1">Modificar Datos</div>
+                                    <div class="d2">Datos Personales</div>
+                                </div>
+                                <div class="icuser icon valign"></div>
+                            </a>
                         {{end}}
-                        </div>
-                        <!--
-                        <div class="alldata inputs vhalign">
-                            <div class="data">
-                                <div class="d1">Biblioteca:</div>
-                                <div class="d2">3 prestamos</div>
-                                <div class="d4 icon valign"></div>
-                            </div>
-                            <div class="data">
-                                <div class="d1">Agenda:</div>
-                                <div class="d2">3 nuevas</div>
-                                <div class="d4 icon valign"></div>
-                            </div>
-                            <div class="data">
-                                <div class="d1">Cambiar Datos:</div>
-                                <div class="d2"></div>
-                                <div class="d3"><input type="text" class="changeuser" id="user_telefono" value="{{.User.Telefono}}"></div>
-                                <div class="d4 icon valign"></div>
-                            </div>
-                            <div class="recuperar"><a href="/salir">Cerrar Sesión</a></div>
-                        </div>
-                        -->
-                    </div>
-                    <!--
-                    <div class="form">
-                        <div class="alldata inputs vhalign">
-                            <div class="data">
-                                <div class="d1">Nombre:</div>
-                                <div class="d2">{{.User.Nombre}}</div>
-                                <div class="d3"><input type="text" class="changeuser" id="user_nom" value="{{.User.Nombre}}"></div>
-                                <div class="d4 icon valign"></div>
-                            </div>
-                            <div class="data">
-                                <div class="d1">Correo:</div>
-                                <div class="d2">{{.User.Correo}}</div>
-                                <div class="d3"><input type="text" class="changeuser" id="user_correo" value="{{.User.Correo}}"></div>
-                                <div class="d4 icon valign"></div>
-                            </div>
-                            <div class="data">
-                                <div class="d1">Telefono:</div>
-                                <div class="d2">{{if eq .User.Telefono2 ""}}{{.User.Telefono}}{{else}}{{.User.Telefono2}}{{end}}</div>
-                                <div class="d3"><input type="text" class="changeuser" id="user_telefono" value="{{.User.Telefono}}"></div>
-                                <div class="d4 icon valign"></div>
-                            </div>
-                            <div class="recuperar"><a href="/salir">Salir</a></div>
+                            <div class="recuperar"><a href="" class="salir">Cerrar Sesión</a></div>
                         </div>
                     </div>
-                    -->
                     {{else}}
-                        <div class="form">
+                        {{if eq .Reestablecer.Op 1}}
+                        <div class="form form1">
+                            <div class="inputs vhalign">
+                                <input type="hidden" id="id_usr" value="{{.Reestablecer.Id}}">
+                                <input type="hidden" id="code" value="{{.Reestablecer.Code}}">
+                                <div class="input">
+                                    <div class="name">Contraseña</div>
+                                    <div><input type="text" id="pass1"></div>
+                                </div>
+                                <div class="input">
+                                    <div class="name">Repetir Contraseña</div>
+                                    <div><input type="password" id="pass2"></div>
+                                </div>
+                                <div class="input">
+                                    <a class="enviar" id="reestablecer">Reestablecer</a>
+                                </div>
+                                <div class="recuperar"><a href="" class="login2">Login</a></div>
+                            </div>
+                        </div>
+                        {{else}}
+                        <div class="form form1">
                             <div class="inputs vhalign">
                                 <div class="input">
                                     <div class="name">Correo</div>
@@ -118,9 +97,22 @@
                                 <div class="input">
                                     <a class="enviar" id="login">Enviar</a>
                                 </div>
-                                <div class="recuperar">Recuperar Contraseña</div>
+                                <div class="recuperar"><a href="" class="loginolvido">Olvido Contraseña</a></div>
                             </div>
                         </div>
+                        <div class="form form2" style="display: none;">
+                            <div class="inputs vhalign">
+                                <div class="input">
+                                    <div class="name">Correo</div>
+                                    <div><input type="text" id="correo_rec"></div>
+                                </div>
+                                <div class="input">
+                                    <a class="enviar" id="loginrec">Recuperar</a>
+                                </div>
+                                <div class="recuperar"><a href="" class="loginback">Volver al Login</a></div>
+                            </div>
+                        </div>
+                        {{end}}
                     {{end}}
                 </div>
             </div>
