@@ -39,9 +39,6 @@ function sizeWeb(){
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    //GC("salir", 0).addEventListener("click", salir);
-    GC("back", 0).addEventListener("click", back);
-
     
 
     sizeWeb();
@@ -64,15 +61,15 @@ document.addEventListener('DOMContentLoaded', function() {
         vvimg[i].addEventListener("click", vvimgclick);
     }
     
-
     GC("user", 0).addEventListener("click", show_login);
     GC("close", 0).addEventListener("click", hide_login);
     GC("button", 0).addEventListener("click", toogle_menu);
-
     if (GC("delete_prestamo", 0) !== undefined){
         GC("delete_prestamo", 0).addEventListener("click", delete_prestamo);
     }
-    
+    if (GC("back", 0) !== undefined){
+        GC("back", 0).addEventListener("click", back);
+    }
     if (GI("devolver_libro") !== null){
         GI("devolver_libro").addEventListener("click", devolver_libro);
     }
@@ -88,6 +85,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if(GC("loginback", 0) !== undefined){
         GC("loginback", 0).addEventListener("click", loginback);
     }
+    if(GC("salir", 0) !== undefined){
+        GC("salir", 0).addEventListener("click", salir);
+    }
+
     if (GI("reestablecer") !== null){
         GI("reestablecer").addEventListener("click", reestablecer);
     }
@@ -130,7 +131,6 @@ function loginback(event){
     GC("form2", 0).style.display = "none";
     event.preventDefault();
 }
-
 function salir(event){
     if (confirm("¿Realmente desea salir?") == true) {
         window.location.href = "/salir";
@@ -314,8 +314,10 @@ function search_agenda(that, n){
                     fecha[2].className = "fecha_next icon opacity";
                 }
                 
-                cont_users.innerHTML = "";
-                cont_users.appendChild(GenerarAgendaUsers(resp.Agenda.Users));
+                if(resp.Agenda.Users !== null){
+                    cont_users.innerHTML = "";
+                    cont_users.appendChild(GenerarAgendaUsers(resp.Agenda.Users));
+                }
 
             } else if (resp.Op == 2){
                 mensaje(2, resp.Msg, function(){});
@@ -522,7 +524,6 @@ function a3(){
         this.setAttribute("selected", 1);
     }
 }
-
 var btn_active = 1;
 function aparece(pag){
     if(btn_active == 1){
@@ -553,7 +554,6 @@ function desaparece(){
         $("."+pag ).css({top: "500px"});
     });
 }
-
 function animateJs(obj, callback){
 
     if (!obj.hasOwnProperty("times")){
@@ -631,8 +631,6 @@ function toogle_menu(){
         open_menu = !open_menu
     });
 }
-
-
 function GC(name, pos){
     return document.getElementsByClassName(name)[pos];
 }
@@ -652,7 +650,6 @@ async function postData2(url, formData) {
     });
     return response.json();
 }
-
 function loginrec(){
 
     const formData = new FormData();
@@ -672,7 +669,6 @@ function loginrec(){
     });
 
 }
-
 function login(){
 
     const formData = new FormData();
@@ -690,7 +686,6 @@ function login(){
     });
     
 }
-
 function reestablecer(){
     const formData = new FormData();
     formData.append('accion', 'reestablecer');
@@ -709,7 +704,6 @@ function reestablecer(){
         }
     });
 }
-
 function mensaje(op, message, func){
     var el = GC("mensaje", 0);
 
@@ -762,22 +756,21 @@ function initMap(){
 
     
 }
-
-
 function start_visita(){
 
-    var width = window.innerWidth;
-    var cont_site = width * 0.98 > 800 ? 800 : width * 0.98;
-    var images = GC("page5", 0).children;
+    if(GC("page5", 0) !== undefined){
+        var width = window.innerWidth;
+        var cont_site = width * 0.98 > 800 ? 800 : width * 0.98;
+        var images = GC("page5", 0).children;
 
-    for(var i=0; i<images.length; i++){
-        if(images[i].className == "pan" || images[i].className == "pan visible"){
-            var left = (cont_site - images[i].getAttribute("id")) / 2
-            images[i].style.left = left+"px";
+        for(var i=0; i<images.length; i++){
+            if(images[i].className == "pan" || images[i].className == "pan visible"){
+                var left = (cont_site - images[i].getAttribute("id")) / 2
+                images[i].style.left = left+"px";
+            }
         }
     }
 }
-
 function mouse_move(e){
     
     var div = GC("visible", 0);

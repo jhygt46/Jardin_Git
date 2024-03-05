@@ -4039,7 +4039,7 @@ func GetPermisoUser(db *sql.DB, tkn string, complete bool) Indexs {
 					if found {
 						textLibro = fmt.Sprintf("%v libro prestado", Libro)
 					}
-					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Resumen Libro", Icon: "iclibro", Url: "libros", Text: textLibro})
+					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Biblioteca", Icon: "iclibro", Url: "libros", Text: textLibro})
 					Index.Modulos = append(Index.Modulos, Modulo{Titulo: "Agenda Virtual", Icon: "icagenda", Url: "agenda", Text: textAgenda})
 				}
 			} else {
