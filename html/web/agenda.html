@@ -88,34 +88,38 @@
                             <div class="apo_alu_nom">{{.Nombre}}</div>
                             <div class="apo_alu_det">
                                 {{if .Data}}
-                                    <div class="cont_alu_det clearfix">
-                                        <div class="alu_info col1 b1">Colación</div>
-                                        <div class="alu_info col1 b1">Almuerzo</div>
-                                        <div class="alu_info col1 b1">Once</div>
-                                    </div>
-                                    <div class="cont_alu_det clearfix">
-                                        <div class="alu_info col1 b2">{{if eq .Ali1 1}}Nada{{else if eq .Ali1 2}}Mitad{{else if eq .Ali1 3}}Toda{{else}}&nbsp;{{end}}</div>
-                                        <div class="alu_info col1 b2">{{if eq .Ali2 1}}Nada{{else if eq .Ali2 2}}Mitad{{else if eq .Ali2 3}}Toda{{else}}&nbsp;{{end}}</div>
-                                        <div class="alu_info col1 b2">{{if eq .Ali3 1}}Nada{{else if eq .Ali3 2}}Mitad{{else if eq .Ali3 3}}Toda{{else}}&nbsp;{{end}}</div>
-                                    </div>
-                                    <div class="cont_alu_det clearfix mtop">
-                                        <div class="alu_info col2 b1">Orina</div>
-                                        <div class="alu_info col2 b1">Deposición</div>
-                                    </div>
-                                    <div class="cont_alu_det clearfix">
-                                        <div class="alu_info col2 b2">{{.Dep1}}</div>
-                                        <div class="alu_info col2 b2">{{.Dep2}}</div>
-                                    </div>
-                                    {{if .ShowComentario }}
-                                        <div class="cont_alu_det clearfix mtop">
-                                            <div class="alu_info col3a b1">Comentario</div>
+                                    {{if eq .Ausente 0}}
+                                        <div class="cont_alu_det clearfix">
+                                            <div class="alu_info col1 b1">Colación</div>
+                                            <div class="alu_info col1 b1">Almuerzo</div>
+                                            <div class="alu_info col1 b1">Once</div>
                                         </div>
                                         <div class="cont_alu_det clearfix">
-                                            <div class="alu_info col3b b2">{{.Comentario}}</div>
+                                            <div class="alu_info col1 b2">{{if eq .Ali1 1}}Nada{{else if eq .Ali1 2}}Mitad{{else if eq .Ali1 3}}Toda{{else}}&nbsp;{{end}}</div>
+                                            <div class="alu_info col1 b2">{{if eq .Ali2 1}}Nada{{else if eq .Ali2 2}}Mitad{{else if eq .Ali2 3}}Toda{{else}}&nbsp;{{end}}</div>
+                                            <div class="alu_info col1 b2">{{if eq .Ali3 1}}Nada{{else if eq .Ali3 2}}Mitad{{else if eq .Ali3 3}}Toda{{else}}&nbsp;{{end}}</div>
                                         </div>
+                                        <div class="cont_alu_det clearfix mtop">
+                                            <div class="alu_info col2 b1">Orina</div>
+                                            <div class="alu_info col2 b1">Deposición</div>
+                                        </div>
+                                        <div class="cont_alu_det clearfix">
+                                            <div class="alu_info col2 b2">{{.Dep1}}</div>
+                                            <div class="alu_info col2 b2">{{.Dep2}}</div>
+                                        </div>
+                                        {{if .ShowComentario }}
+                                            <div class="cont_alu_det clearfix mtop">
+                                                <div class="alu_info col3a b1">Comentario</div>
+                                            </div>
+                                            <div class="cont_alu_det clearfix">
+                                                <div class="alu_info col3b b2">{{.Comentario}}</div>
+                                            </div>
+                                        {{end}}
+                                    {{else}}
+                                        <div class="nodata vhalign">Hoy se registro como ausente</div>
                                     {{end}}
                                 {{else}}
-                                    NO DATA
+                                        <div class="nodata vhalign">Hoy no se registraron datos</div>
                                 {{end}}
                             </div>
                         </div>

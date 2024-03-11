@@ -479,30 +479,20 @@ func Accion(ctx *fasthttp.RequestCtx) {
 		} else {
 			resp.Msg = "No tiene permisos"
 		}
-	case "user_nom":
+	case "mod_datos":
 		ctx.Response.Header.Set("Content-Type", "application/json")
 		perms := GetPermisoUser(db, token, false)
 		if perms.Permisos.Apoderado {
-			nombre := string(ctx.FormValue("value"))
+			nombre := string(ctx.FormValue("nom"))
+			mail := string(ctx.FormValue("mail"))
+			fono := string(ctx.FormValue("fono"))
 			resp.Op, resp.Msg = ChangeUserNom(db, perms.User.Id_usr, nombre)
-		} else {
-			resp.Msg = "No tiene permisos"
-		}
-	case "user_correo":
-		ctx.Response.Header.Set("Content-Type", "application/json")
-		perms := GetPermisoUser(db, token, false)
-		if perms.Permisos.Apoderado {
-			correo := string(ctx.FormValue("value"))
-			resp.Op, resp.Msg = ChangeUserCorreo(db, perms.User.Id_usr, correo)
-		} else {
-			resp.Msg = "No tiene permisos"
-		}
-	case "user_telefono":
-		ctx.Response.Header.Set("Content-Type", "application/json")
-		perms := GetPermisoUser(db, token, false)
-		if perms.Permisos.Apoderado {
-			telefono := string(ctx.FormValue("value"))
-			resp.Op, resp.Msg = ChangeUserTelefono(db, perms.User.Id_usr, telefono)
+			if resp.Op == 1 {
+				resp.Op, resp.Msg = ChangeUserCorreo(db, perms.User.Id_usr, mail)
+				if resp.Op == 1 {
+					resp.Op, resp.Msg = ChangeUserTelefono(db, perms.User.Id_usr, fono)
+				}
+			}
 		} else {
 			resp.Msg = "No tiene permisos"
 		}
@@ -524,6 +514,17 @@ func Accion(ctx *fasthttp.RequestCtx) {
 		pass1 := ctx.FormValue("pass1")
 		pass2 := ctx.FormValue("pass2")
 		resp.Op, resp.Msg = ReestablecerPassword(db, id_usr, code, pass1, pass2)
+	case "enviar_contacto":
+		ctx.Response.Header.Set("Content-Type", "application/json")
+		nombre := string(ctx.FormValue("nombre"))
+		correo := string(ctx.FormValue("correo"))
+		telefono := string(ctx.FormValue("telefono"))
+		mensaje := string(ctx.FormValue("mensaje"))
+		if SendEmail("valle-encantado@hotmail.com", "Contacto ValleEncantado", fmt.Sprintf("Nombre: %v <br/> Correo: %v <br/> Telefono: %v <br/> Mensaje: %v", nombre, correo, telefono, mensaje)) {
+			resp.Op = 1
+		} else {
+			resp.Msg = "Error al enviar el correo"
+		}
 	default:
 		ctx.Response.Header.Set("Content-Type", "application/json")
 		json.NewEncoder(ctx).Encode(resp)
@@ -1760,6 +1761,47 @@ func Index(ctx *fasthttp.RequestCtx) {
 	err = t.Execute(ctx, index)
 	ErrorCheck(err)
 }
+func AgendaPage(ctx *fasthttp.RequestCtx) {
+
+	if redirect, redirectURL := Redirect(ctx); redirect {
+		ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
+		return
+	}
+
+	ctx.SetContentType("text/html; charset=utf-8")
+
+	db, err := GetMySQLDB()
+	defer db.Close()
+	ErrorCheck(err)
+
+	index := GetPermisoUser(db, string(ctx.Request.Header.Cookie("cu")), true)
+	index.Page = "Agenda"
+
+	if index.Permisos.Educadora || index.Permisos.Admin {
+		agenda, found := GetAgendaCurso(db, index.User.Id_usr, "")
+		if found {
+			index.Agenda = agenda
+		}
+	}
+	if index.Permisos.Apoderado {
+		agenda, found := GetHijosAgenda(db, index.User.Id_usr, "")
+		if found {
+
+			for i := 0; i < len(agenda.Users); i++ {
+				if agenda.Users[i].Comentario != "" || len(agenda.Users) == 1 {
+					agenda.Users[i].ShowComentario = true
+				}
+			}
+
+			index.Agenda = agenda
+		}
+	}
+
+	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html", "html/web/cursosonline.html")
+	ErrorCheck(err)
+	err = t.Execute(ctx, index)
+	ErrorCheck(err)
+}
 func SetCurso(ref *MyHandler) error {
 
 	db, err := GetMySQLDB()
@@ -1886,7 +1928,6 @@ func ReestablecerPassword(db *sql.DB, id int, code string, pass1 []byte, pass2 [
 	} else {
 		return 2, "Se produjo un error"
 	}
-
 }
 func CursosOnline(ctx *fasthttp.RequestCtx) {
 
@@ -2030,10 +2071,8 @@ func LibroInicio(ctx *fasthttp.RequestCtx) {
 	defer db.Close()
 	ErrorCheck(err)
 
-	index := GetPermisoUser(db, string(ctx.Request.Header.Cookie("cu")), false)
+	index := GetPermisoUser(db, string(ctx.Request.Header.Cookie("cu")), true)
 	index.Page = "LibroBase"
-
-	fmt.Println(index.Permisos.Admin, index.Permisos.Educadora, index.Permisos.Apoderado)
 
 	if index.Permisos.Admin || index.Permisos.Educadora {
 		prestamos, found := GetTodosLibroPrestados(db)
@@ -2105,47 +2144,6 @@ func LibroPage(ctx *fasthttp.RequestCtx) {
 		}
 	}
 	index.Libro.Code = code
-
-	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html", "html/web/cursosonline.html")
-	ErrorCheck(err)
-	err = t.Execute(ctx, index)
-	ErrorCheck(err)
-}
-func AgendaPage(ctx *fasthttp.RequestCtx) {
-
-	if redirect, redirectURL := Redirect(ctx); redirect {
-		ctx.Redirect(redirectURL, fasthttp.StatusMovedPermanently)
-		return
-	}
-
-	ctx.SetContentType("text/html; charset=utf-8")
-
-	db, err := GetMySQLDB()
-	defer db.Close()
-	ErrorCheck(err)
-
-	index := GetPermisoUser(db, string(ctx.Request.Header.Cookie("cu")), false)
-	index.Page = "Agenda"
-
-	if index.Permisos.Educadora || index.Permisos.Admin {
-		agenda, found := GetAgendaCurso(db, index.User.Id_usr, "")
-		if found {
-			index.Agenda = agenda
-		}
-	}
-	if index.Permisos.Apoderado {
-		agenda, found := GetHijosAgenda(db, index.User.Id_usr, "")
-		if found {
-
-			for i := 0; i < len(agenda.Users); i++ {
-				if agenda.Users[i].Comentario != "" || len(agenda.Users) == 1 {
-					agenda.Users[i].ShowComentario = true
-				}
-			}
-
-			index.Agenda = agenda
-		}
-	}
 
 	t, err := TemplatePages("html/web/index.html", "html/web/inicio.html", "html/web/libros.html", "html/web/agenda.html", "html/web/librobase.html", "html/web/cursosonline.html")
 	ErrorCheck(err)
@@ -2539,7 +2537,7 @@ func GetUsuarios(db *sql.DB, tipo int) ([]Lista, bool) {
 	Listas := []Lista{}
 
 	cn := 0
-	res, err := db.Query("SELECT id_usr, nombre, apellido1, apellido2, tipo FROM usuarios WHERE tipo = ? AND eliminado = ?", tipo, cn)
+	res, err := db.Query("SELECT id_usr, nombre, apellido1, apellido2, tipo FROM usuarios WHERE tipo = ? AND eliminado = ? ORDER BY apellido1, apellido2, nombre", tipo, cn)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
@@ -2854,7 +2852,7 @@ func ChangeUserNom(db *sql.DB, id int, nombre string) (uint8, string) {
 	ErrorCheck(err)
 	_, err = stmt.Exec(nombre, id)
 	if err == nil {
-		return 1, "Nombre actualizada correctamente"
+		return 1, "Datos actualizados correctamente"
 	} else {
 		ErrorCheck(err)
 		return 2, "El Nombre no pudo ser actualizada"
@@ -2867,7 +2865,7 @@ func ChangeUserCorreo(db *sql.DB, id int, correo string) (uint8, string) {
 		ErrorCheck(err)
 		_, err = stmt.Exec(correo, id)
 		if err == nil {
-			return 1, "Correo actualizada correctamente"
+			return 1, "Datos actualizados correctamente"
 		} else {
 			ErrorCheck(err)
 			return 2, "El Correo no pudo ser actualizada"
@@ -2881,7 +2879,7 @@ func ChangeUserTelefono(db *sql.DB, id int, nombre string) (uint8, string) {
 	ErrorCheck(err)
 	_, err = stmt.Exec(nombre, id)
 	if err == nil {
-		return 1, "Telefono actualizada correctamente"
+		return 1, "Datos actualizados correctamente"
 	} else {
 		ErrorCheck(err)
 		return 2, "El Telefono no pudo ser actualizada"
@@ -2970,9 +2968,10 @@ func GetAllCurso(db *sql.DB) ([]ListaUsers, bool) {
 		User.Num = i
 		i++
 		padres, found := GetInfoPadres(db, User.Id_usr)
+		PrintJson(padres)
 		if found {
 			for _, x := range padres {
-				if x.Tipo == 2 {
+				if x.Tipo == 1 {
 					User.MamaNom = x.Nombre
 					User.MamaTelefono = x.Telefono
 				} else {
@@ -2991,7 +2990,7 @@ func GetInfoPadres(db *sql.DB, id int) ([]Padres, bool) {
 	LPadres := make([]Padres, 0)
 
 	cn := 0
-	res, err := db.Query("SELECT t1.nombre, t1.telefono, t1.correo, t2.tipo, t2.apoderado FROM usuarios t1, parentensco t2 WHERE t2.id_alu = ? AND t2.id_apo=t1.id_usr AND t1.eliminado = ?", id, cn)
+	res, err := db.Query("SELECT t1.nombre, t1.telefono, t1.correo, t1.genero, t2.apoderado FROM usuarios t1, parentensco t2 WHERE t2.id_alu = ? AND t2.id_apo=t1.id_usr AND t1.eliminado = ?", id, cn)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
@@ -3318,7 +3317,7 @@ func GetLibroPrestadosUser(db *sql.DB, id int) ([]Prestamo, bool) {
 	Prestamos := []Prestamo{}
 	Prestamo := Prestamo{}
 
-	res, err := db.Query("SELECT t2.id_pre, t2.fecha_prestamo, t3.nombre FROM parentensco t1, prestamos t2, libros t3 WHERE t1.id_apo = ? AND t1.id_alu=t2.id_alu AND t2.fecha_devolucion = '0000-00-00 00:00:00' AND t2.id_lib=t3.id_lib", id)
+	res, err := db.Query("SELECT t2.id_pre, t2.fecha_prestamo, t3.nombre, t4.nombre FROM parentensco t1, prestamos t2, libros t3, usuarios t4 WHERE t1.id_apo = ? AND t1.id_alu=t2.id_alu AND t2.id_alu=t4.id_usr AND t2.fecha_devolucion = '0000-00-00 00:00:00' AND t2.id_lib=t3.id_lib", id)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
@@ -3327,7 +3326,7 @@ func GetLibroPrestadosUser(db *sql.DB, id int) ([]Prestamo, bool) {
 
 	for res.Next() {
 
-		err := res.Scan(&Prestamo.Id, &Prestamo.Fecha_Prestamos, &Prestamo.Nombre)
+		err := res.Scan(&Prestamo.Id, &Prestamo.Fecha_Prestamos, &Prestamo.Nombre, &Prestamo.Nombre_Alu)
 		if err != nil {
 			ErrorCheck(err)
 			return Prestamos, false

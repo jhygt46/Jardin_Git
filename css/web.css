@@ -523,9 +523,17 @@ body{
 }
 .container .contagenda .form .inputs .agenda_bottom .ca1 .apo_alu .apo_alu_det{
     min-height: 170px;
+    position: relative;
 }
 .container .contagenda .form .inputs .agenda_bottom .ca2 .apo_alu .apo_alu_det{
     min-height: 80px;
+    position: relative;
+}
+.nodata{
+    text-align: center;
+    font-size: 16px;
+    line-height: 16px;
+    padding-bottom: 10px;
 }
 .container .contagenda .form .inputs .agenda_bottom .cont_agenda .apo_alu .apo_alu_det .cont_alu_det{
     width: 100%;
@@ -1037,29 +1045,29 @@ body{
     background: url("/img/horarios.jpg");
     background-size: cover;
 }
-.site .cont_site .a2a .page5{
+.site .cont_site .a2a .visita-virtual{
     overflow: hidden;
     position: relative;
 }
-.site .cont_site .a2a .page5 .pan{
+.site .cont_site .a2a .visita-virtual .pan{
     position: absolute;
     display: none;
     z-index: 2;
 }
-.site .cont_site .a2a .page5 .vvlist_images{
+.site .cont_site .a2a .visita-virtual .vvlist_images{
     width: 100%;
     height: 100%;
     display: none;
     position: relative;
 }
-.site .cont_site .a2a .page5 .vvlist_images .vvimage{
+.site .cont_site .a2a .visita-virtual .vvlist_images .vvimage{
     width: 78%;
     height: 100%;
     left: 0px;
     top: 0px;
     position: absolute;
 }
-.site .cont_site .a2a .page5 .vvlist_images .vvlista{
+.site .cont_site .a2a .visita-virtual .vvlist_images .vvlista{
     width: 20%;
     padding: 1%;
     height: 100%;
@@ -1068,32 +1076,32 @@ body{
     position: absolute;
 }
 
-.site .cont_site .a2a .page5 .vvlist_images .vvimage #vb01{
+.site .cont_site .a2a .visita-virtual .vvlist_images .vvimage #vb01{
     background-image: url("/img/vv_biblioteca_01.jpg");
 }
-.site .cont_site .a2a .page5 .vvlist_images .vvimage #vb02{
+.site .cont_site .a2a .visita-virtual .vvlist_images .vvimage #vb02{
     background-image: url("/img/vv_biblioteca_02.jpg");
 }
 
-.site .cont_site .a2a .page5 .vvlist_images .vvimage .vvimage_grande{
+.site .cont_site .a2a .visita-virtual .vvlist_images .vvimage .vvimage_grande{
     display: none;
     width: 100%;
     height: 100%;
     background-size: cover;
 }
-.site .cont_site .a2a .page5 .vvlist_images .vvimage .visible{
+.site .cont_site .a2a .visita-virtual .vvlist_images .vvimage .visible{
     display: block !important;
 }
-.site .cont_site .a2a .page5 .vvlist_images .vvimage .vvimage{
+.site .cont_site .a2a .visita-virtual .vvlist_images .vvimage .vvimage{
     
 }
-.site .cont_site .a2a .page5 .vvlist_images .vvlista .vvimage_chica{
+.site .cont_site .a2a .visita-virtual .vvlist_images .vvlista .vvimage_chica{
     cursor: pointer;
 }
-.site .cont_site .a2a .page5 .vvlist_images .vvlista .vvimage_chica img{
+.site .cont_site .a2a .visita-virtual .vvlist_images .vvlista .vvimage_chica img{
     width: 100%;
 }
-.site .cont_site .a2a .page5 .back{
+.site .cont_site .a2a .visita-virtual .back{
     position: absolute;
     padding: 10px 20px;
     border-radius: 5px;
@@ -1104,10 +1112,10 @@ body{
     right: 10px;
     display: none;
 }
-.site .cont_site .a2a .page5 .visible{
+.site .cont_site .a2a .visita-virtual .visible{
     display: block !important;
 }
-.site .cont_site .a2a .page5 .pan .punto{
+.site .cont_site .a2a .visita-virtual .pan .punto{
     position: absolute;
     padding: 10px 20px;
     border-radius: 5px;
@@ -1115,37 +1123,37 @@ body{
     cursor: pointer;
     z-index: 2;
 }
-.site .cont_site .a2a .page5 .pan .pos_entrada{
+.site .cont_site .a2a .visita-virtual .pan .pos_entrada{
     top: 200px;
     left: 430px;
 }
 
 
-.site .cont_site .a2a .page5 .pan .pos_back{
+.site .cont_site .a2a .visita-virtual .pan .pos_back{
     top: 200px;
     left: 430px;
 }
-.site .cont_site .a2a .page5 .pan .pos_patio{
+.site .cont_site .a2a .visita-virtual .pan .pos_patio{
     top: 150px;
     left: 830px;
 }
-.site .cont_site .a2a .page5 .pan .pos_biblioteca{
+.site .cont_site .a2a .visita-virtual .pan .pos_biblioteca{
     top: 150px;
     left: 670px;
 }
-.site .cont_site .a2a .page5 .pan .pos_salas{
+.site .cont_site .a2a .visita-virtual .pan .pos_salas{
     top: 150px;
     left: 1060px;
 }
-.site .cont_site .a2a .page5 .pan .pos_sala_verde{
+.site .cont_site .a2a .visita-virtual .pan .pos_sala_verde{
     top: 100px;
     left: 80px;
 }
-.site .cont_site .a2a .page5 .pan .pos_sala_naranja{
+.site .cont_site .a2a .visita-virtual .pan .pos_sala_naranja{
     top: 150px;
     left: 80px;
 }
-.site .cont_site .a2a .page5 .pan .pos_cocina{
+.site .cont_site .a2a .visita-virtual .pan .pos_cocina{
     top: 200px;
     left: 80px;
 }
@@ -1156,7 +1164,7 @@ body{
 .site .cont_site .a2a .conozcanos{
     background: rgba(249, 72, 39, 0.4);
 }
-.site .cont_site .a2a .propuestaeducativa{
+.site .cont_site .a2a .propuesta-educativa{
     background: rgba(249, 128, 14, 0.4);
 }
 .site .cont_site .a2a .horarios{

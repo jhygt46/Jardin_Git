@@ -39,8 +39,6 @@ function sizeWeb(){
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    
-
     sizeWeb();
     window.addEventListener("resize", (event) => {
         sizeWeb();
@@ -79,6 +77,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (GI("guardar_libro") !== null){
         GI("guardar_libro").addEventListener("click", guardar_libro);
     }
+    if (GI("enviar") !== null){
+        GI("enviar").addEventListener("click", enviar);
+    }
+    if(GC("moddatauser", 0) !== undefined){
+        GC("moddatauser", 0).addEventListener("click", showmoddatauser);
+    }
     if(GC("loginolvido", 0) !== undefined){
         GC("loginolvido", 0).addEventListener("click", loginolvido);
     }
@@ -88,7 +92,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if(GC("salir", 0) !== undefined){
         GC("salir", 0).addEventListener("click", salir);
     }
-
+    if (GI("mod_datos") !== null){
+        GI("mod_datos").addEventListener("click", mod_datos);
+    }
     if (GI("reestablecer") !== null){
         GI("reestablecer").addEventListener("click", reestablecer);
     }
@@ -124,6 +130,12 @@ function vvimgclick(){
 function loginolvido(event){
     GC("form1", 0).style.display = "none";
     GC("form2", 0).style.display = "block";
+    event.preventDefault();
+}
+function showmoddatauser(event){
+    var form = GC("form", 0).children;
+    form[0].style.display = "none";
+    form[1].style.display = "block";
     event.preventDefault();
 }
 function loginback(event){
@@ -168,6 +180,26 @@ function AddVisible(clase, visible){
     }else{
         return list[0];
     }
+}
+function enviar(){
+    const formData = new FormData();
+    formData.append('accion', 'enviar_contacto');
+    formData.append('nombre', GI("contacto_nombre").value);
+    formData.append('correo', GI("contacto_correo").value);
+    formData.append('telefono', GI("contacto_telefono").value);
+    formData.append('mensaje', GI("contacto_mensaje").value);
+
+    postData2("/save", formData).then((resp) => {
+        if (resp.Op == 1){
+            mensaje(1, "Mensaje Enviado", function(){
+                window.location.reload();
+            });
+        } else if (resp.Op == 2){
+            mensaje(2, resp.Msg, function(){});
+        } else {
+            mensaje(3, resp.Msg, function(){});
+        }
+    });
 }
 function guardar_libro(){
 
@@ -278,8 +310,6 @@ function sendAgenda(id, val, tipo){
             mensaje(3, resp.Msg, function(){});
         }
     });
-
-
 }
 function search_agenda(that, n){
 
@@ -287,6 +317,8 @@ function search_agenda(that, n){
 
         var fecha = that.parentElement.children;
         var cont_users = that.parentElement.parentElement.children[1];
+
+        console.log(cont_users);
 
         const formData = new FormData();
         formData.append('accion', 'get_agenda');
@@ -300,6 +332,8 @@ function search_agenda(that, n){
         postData2("/accion", formData).then((resp) => {
             if (resp.Op == 1){
                 mensaje(1, "Datos Actualizados", function(){});
+
+                console.log(resp.Agenda);
 
                 fecha[1].innerHTML = resp.Agenda.FechaStr;
                 fecha_agenda.fecha = resp.Agenda.Fecha;
@@ -345,61 +379,105 @@ function GenerarAgendaUsers(users){
         var apo_alu_det = document.createElement("div");
         apo_alu_det.className = "apo_alu_det";
 
-        var cont_alu_det = document.createElement("div");
-        cont_alu_det.className = "cont_alu_det clearfix";
-        var cont_alu_det1 = document.createElement("div");
-        cont_alu_det1.className = "alu_info col1 b1";
-        cont_alu_det1.innerHTML = "Colación";
-        cont_alu_det.appendChild(cont_alu_det1);
-        var cont_alu_det2 = document.createElement("div");
-        cont_alu_det2.className = "alu_info col1 b1";
-        cont_alu_det2.innerHTML = "Almuerzo";
-        cont_alu_det.appendChild(cont_alu_det2);
-        var cont_alu_det3 = document.createElement("div");
-        cont_alu_det3.className = "alu_info col1 b1";
-        cont_alu_det3.innerHTML = "Once";
-        cont_alu_det.appendChild(cont_alu_det3);
-        apo_alu_det.appendChild(cont_alu_det);
+        if(users[i].Data){
 
-        var cont_alu_det = document.createElement("div");
-        cont_alu_det.className = "cont_alu_det clearfix";
-        var cont_alu_det1 = document.createElement("div");
-        cont_alu_det1.className = "alu_info col1 b2";
-        cont_alu_det1.innerHTML = GetName(users[i].Ali1)
-        cont_alu_det.appendChild(cont_alu_det1);
-        var cont_alu_det2 = document.createElement("div");
-        cont_alu_det2.className = "alu_info col1 b2";
-        cont_alu_det2.innerHTML = GetName(users[i].Ali2)
-        cont_alu_det.appendChild(cont_alu_det2);
-        var cont_alu_det3 = document.createElement("div");
-        cont_alu_det3.className = "alu_info col1 b2";
-        cont_alu_det3.innerHTML = GetName(users[i].Ali3)
-        cont_alu_det.appendChild(cont_alu_det3);
-        apo_alu_det.appendChild(cont_alu_det);
+            if(users[i].Ausente == 0){
 
-        var cont_alu_det = document.createElement("div");
-        cont_alu_det.className = "cont_alu_det clearfix mtop";
-        var cont_alu_det1 = document.createElement("div");
-        cont_alu_det1.className = "alu_info col2 b1";
-        cont_alu_det1.innerHTML = "Orina";
-        cont_alu_det.appendChild(cont_alu_det1);
-        var cont_alu_det2 = document.createElement("div");
-        cont_alu_det2.className = "alu_info col2 b1";
-        cont_alu_det2.innerHTML = "Deposición";
-        cont_alu_det.appendChild(cont_alu_det2);
-        apo_alu_det.appendChild(cont_alu_det);
+                var cont_alu_det = document.createElement("div");
+                cont_alu_det.className = "cont_alu_det clearfix";
+                var cont_alu_det1 = document.createElement("div");
+                cont_alu_det1.className = "alu_info col1 b1";
+                cont_alu_det1.innerHTML = "Colación";
+                cont_alu_det.appendChild(cont_alu_det1);
+                var cont_alu_det2 = document.createElement("div");
+                cont_alu_det2.className = "alu_info col1 b1";
+                cont_alu_det2.innerHTML = "Almuerzo";
+                cont_alu_det.appendChild(cont_alu_det2);
+                var cont_alu_det3 = document.createElement("div");
+                cont_alu_det3.className = "alu_info col1 b1";
+                cont_alu_det3.innerHTML = "Once";
+                cont_alu_det.appendChild(cont_alu_det3);
+                apo_alu_det.appendChild(cont_alu_det);
 
-        var cont_alu_det = document.createElement("div");
-        cont_alu_det.className = "cont_alu_det clearfix";
-        var cont_alu_det1 = document.createElement("div");
-        cont_alu_det1.className = "alu_info col2 b2";
-        cont_alu_det1.innerHTML = users[i].Dep1;
-        cont_alu_det.appendChild(cont_alu_det1);
-        var cont_alu_det2 = document.createElement("div");
-        cont_alu_det2.className = "alu_info col2 b2";
-        cont_alu_det2.innerHTML = users[i].Dep2;
-        cont_alu_det.appendChild(cont_alu_det2);
-        apo_alu_det.appendChild(cont_alu_det);
+                var cont_alu_det = document.createElement("div");
+                cont_alu_det.className = "cont_alu_det clearfix";
+                var cont_alu_det1 = document.createElement("div");
+                cont_alu_det1.className = "alu_info col1 b2";
+                cont_alu_det1.innerHTML = GetName(users[i].Ali1)
+                cont_alu_det.appendChild(cont_alu_det1);
+                var cont_alu_det2 = document.createElement("div");
+                cont_alu_det2.className = "alu_info col1 b2";
+                cont_alu_det2.innerHTML = GetName(users[i].Ali2)
+                cont_alu_det.appendChild(cont_alu_det2);
+                var cont_alu_det3 = document.createElement("div");
+                cont_alu_det3.className = "alu_info col1 b2";
+                cont_alu_det3.innerHTML = GetName(users[i].Ali3)
+                cont_alu_det.appendChild(cont_alu_det3);
+                apo_alu_det.appendChild(cont_alu_det);
+
+                var cont_alu_det = document.createElement("div");
+                cont_alu_det.className = "cont_alu_det clearfix mtop";
+                var cont_alu_det1 = document.createElement("div");
+                cont_alu_det1.className = "alu_info col2 b1";
+                cont_alu_det1.innerHTML = "Orina";
+                cont_alu_det.appendChild(cont_alu_det1);
+                var cont_alu_det2 = document.createElement("div");
+                cont_alu_det2.className = "alu_info col2 b1";
+                cont_alu_det2.innerHTML = "Deposición";
+                cont_alu_det.appendChild(cont_alu_det2);
+                apo_alu_det.appendChild(cont_alu_det);
+
+                var cont_alu_det = document.createElement("div");
+                cont_alu_det.className = "cont_alu_det clearfix";
+                var cont_alu_det1 = document.createElement("div");
+                cont_alu_det1.className = "alu_info col2 b2";
+                cont_alu_det1.innerHTML = users[i].Dep1;
+                cont_alu_det.appendChild(cont_alu_det1);
+                var cont_alu_det2 = document.createElement("div");
+                cont_alu_det2.className = "alu_info col2 b2";
+                cont_alu_det2.innerHTML = users[i].Dep2;
+                cont_alu_det.appendChild(cont_alu_det2);
+                apo_alu_det.appendChild(cont_alu_det);
+
+
+                if(users[i].Comentario != ""){
+
+                    var comentario1 = document.createElement("div");
+                    comentario1.className = "cont_alu_det clearfix mtop";
+                    var cont_comentario1 = document.createElement("div");
+                    cont_comentario1.className = "alu_info col3a b1";
+                    cont_comentario1.innerHTML = "Comentario";
+                    comentario1.appendChild(cont_comentario1);
+
+                    var comentario2 = document.createElement("div");
+                    comentario2.className = "cont_alu_det clearfix";
+                    var cont_comentario2 = document.createElement("div");
+                    cont_comentario2.className = "alu_info col3b b2";
+                    cont_comentario2.innerHTML = users[i].Comentario;
+                    comentario2.appendChild(cont_comentario2);
+
+                    apo_alu_det.appendChild(comentario1);
+                    apo_alu_det.appendChild(comentario2);
+
+                }
+
+            }else{
+                
+                var nodata = document.createElement("div");
+                nodata.className = "nodata vhalign";
+                nodata.innerHTML = "Hoy se registro como ausente";
+                apo_alu_det.appendChild(nodata);
+
+            }
+            
+        }else{
+
+            var nodata = document.createElement("div");
+            nodata.className = "nodata vhalign";
+            nodata.innerHTML = "Hoy no se registraron datos";
+            apo_alu_det.appendChild(nodata);
+
+        }
 
         
         apo_alu.appendChild(apo_alu_nom);
@@ -478,26 +556,21 @@ function opc_alu(x){
     childElement.addEventListener("click", select_user_libro);
     return childElement;
 }
-function closeoptions(data){
-    data[1].style.display = "block";
-    data[2].style.display = "none";
-    data[3].style.display = "block";
-}
-function change_user(){
+function mod_datos(){
 
-    var el = this.parentElement.parentElement.children;
-    var id = this.getAttribute("id");
-    var value = this.value;
+    var nom = GI("mod_nombre").value;
+    var mail = GI("mod_mail").value;
+    var fono = GI("mod_telefono").value;
     
     const formData = new FormData();
-    formData.append('accion', id);
-    formData.append('value', value);
+    formData.append('accion', 'mod_datos');
+    formData.append('nom', nom);
+    formData.append('mail', mail);
+    formData.append('fono', fono);
 
     postData2("/accion", formData).then((resp) => {
         if (resp.Op == 1){
             mensaje(1, "Cambio Exitoso", function(){});
-            el[1].innerHTML = value;
-            closeoptions(el);
         } else if (resp.Op == 2){
             mensaje(2, resp.Msg, function(){});
         } else {
@@ -506,24 +579,50 @@ function change_user(){
     });
 
 }
-function a3(){
+function a3(event){
+    SelectPage(this.getAttribute("href"), true);
+    event.preventDefault();
+}
+function SelectPage(h, p){
 
-    var id = this.getAttribute("id");
-    var selected = this.getAttribute("selected");
+    var btns = GC("a3", 0).children;
+    var n = 999;
+    for(var i=0; i<btns.length; i++){
+        if(btns[i].getAttribute("href") == h){
+            n = i;
+        }
+    }
 
-    if (selected == 0){
-        for (x of GCS("bp")){
-            if (x.getAttribute("selected") == 1){
-                GC(x.getAttribute("id"), 0).classList.remove("AnimateTopclass");
-                GC(x.getAttribute("id"), 0).classList.add("AnimateBottomclass");
-                x.setAttribute("selected", 0);
+    if(btns.length > n){
+        if(!btns[n].classList.contains('selected')){
+            var href = btns[n].getAttribute("href");
+            for(x of btns){
+                if(x.classList.contains('selected')){
+                    GC(x.getAttribute("href"), 0).classList.remove("AnimateTopclass");
+                    GC(x.getAttribute("href"), 0).classList.add("AnimateBottomclass");
+                    x.classList.remove("selected");
+                }
+            }
+            GC(href, 0).classList.remove("AnimateBottomclass");
+            GC(href, 0).classList.add("AnimateTopclass");
+            btns[n].classList.add("selected");
+            if(p){
+                history.pushState(null, GetTitle(href), href);
             }
         }
-        GC(id, 0).classList.remove("AnimateBottomclass");
-        GC(id, 0).classList.add("AnimateTopclass");
-        this.setAttribute("selected", 1);
     }
+    
 }
+function GetTitle(s){
+    return s.substring(1);
+}
+
+window.addEventListener('popstate', historyfunc);
+function historyfunc(){
+    console.log("BACK: ", document.location.pathname);
+    SelectPage(document.location.pathname, false);
+}
+
 var btn_active = 1;
 function aparece(pag){
     if(btn_active == 1){
@@ -608,9 +707,6 @@ function show_login(){
 }
 function hide_login(){
     GC("login", 0).style.display = "none";
-    for (x of GCS("data")){
-        closeoptions(x.children);
-    }
 }
 function toogle_menu(){
     obj = {

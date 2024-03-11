@@ -52,7 +52,7 @@
                             </a>
                         {{end}}
                         {{if eq .User.Tipo 2}}
-                            <a href="" class="data">
+                            <a href="" class="data moddatauser">
                                 <div class="d0 valign">
                                     <div class="d1">Modificar Datos</div>
                                     <div class="d2">Datos Personales</div>
@@ -61,6 +61,23 @@
                             </a>
                         {{end}}
                             <div class="recuperar"><a href="" class="salir">Cerrar Sesión</a></div>
+                        </div>
+                        <div class="inputs vhalign" style="display: none">
+                            <div class="input">
+                                <div class="name">Nombre</div>
+                                <div><input type="text" id="mod_nombre" value="{{.User.Nombre}}"></div>
+                            </div>
+                            <div class="input">
+                                <div class="name">Correo</div>
+                                <div><input type="text" id="mod_mail" value="{{.User.Correo}}"></div>
+                            </div>
+                            <div class="input">
+                                <div class="name">Telefono</div>
+                                <div><input type="text" id="mod_telefono" value="{{.User.Telefono}}"></div>
+                            </div>
+                            <div class="input">
+                                <a class="enviar" id="mod_datos">Modificar</a>
+                            </div>
                         </div>
                     </div>
                     {{else}}
