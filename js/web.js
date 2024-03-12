@@ -580,8 +580,9 @@ function mod_datos(){
 
 }
 function a3(event){
-    SelectPage(this.getAttribute("href"), true);
     event.preventDefault();
+    SelectPage(this.getAttribute("href"), true);
+    
 }
 function SelectPage(h, p){
 
@@ -598,13 +599,13 @@ function SelectPage(h, p){
             var href = btns[n].getAttribute("href");
             for(x of btns){
                 if(x.classList.contains('selected')){
-                    GC(x.getAttribute("href"), 0).classList.remove("AnimateTopclass");
-                    GC(x.getAttribute("href"), 0).classList.add("AnimateBottomclass");
+                    GC(x.getAttribute("href").substring(1), 0).classList.remove("AnimateTopclass");
+                    GC(x.getAttribute("href").substring(1), 0).classList.add("AnimateBottomclass");
                     x.classList.remove("selected");
                 }
             }
-            GC(href, 0).classList.remove("AnimateBottomclass");
-            GC(href, 0).classList.add("AnimateTopclass");
+            GC(href.substring(1), 0).classList.remove("AnimateBottomclass");
+            GC(href.substring(1), 0).classList.add("AnimateTopclass");
             btns[n].classList.add("selected");
             if(p){
                 history.pushState(null, GetTitle(href), href);
