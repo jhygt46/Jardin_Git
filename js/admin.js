@@ -271,3 +271,24 @@ function agenda_detail(that){
 function openwn(url, w, h){
     var myWindow = window.open(url, "_blank", "width="+w+",height="+h);
 }
+function showsearch(that){
+    var d = that.parentElement;
+    if(d.style.width == "" || d.style.width == "30px"){
+        d.style.width = "132px";
+    }else{
+        d.style.width = "30px";
+    }
+}
+function filtraralumno(that){
+    var lista_alu = GC("listaalumnos", 0).children;
+    for (x of lista_alu){
+        if (x.children[0].innerHTML.toUpperCase().indexOf(that.value.toUpperCase()) !== -1){
+            x.style.display = "block";
+        }else{
+            x.style.display = "none";
+        }
+    }
+}
+function GC(name, pos){
+    return document.getElementsByClassName(name)[pos];
+}

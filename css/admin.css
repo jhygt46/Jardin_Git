@@ -514,6 +514,24 @@ body{
     height: 30px;
     float: left;
 }
+.h .i .fc .fct ul .lifunc{
+    position: relative;
+    overflow: hidden;
+}
+.h .i .fc .fct ul li #searchuser{
+    position: absolute;
+    right: 30px;
+    width: 100px;
+    top: 3px;
+    height: 25px;
+}
+.h .i .fc .fct ul li #btnsu{
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    right: 0px;
+}
+
 .h .i .fc .lu{
     padding-top: 10px;
 }

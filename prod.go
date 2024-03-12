@@ -636,6 +636,7 @@ func Pages(ctx *fasthttp.RequestCtx) {
 
 			agenda, found := GetAgendaCurso(db, perms.User.Id_usr, fecha)
 			if found {
+				PrintJson(agenda)
 				obj.Agenda = agenda
 			}
 
@@ -3364,6 +3365,7 @@ func GetAgendaCurso(db *sql.DB, id int, fecha string) (Agenda, bool) {
 		var nombre_cur string
 
 		for res.Next() {
+			fmt.Println("HOLA")
 			err := res.Scan(&id_usr, &id_cur, &nombre_usr, &apellido_usr, &nombre_cur)
 			if err != nil {
 				ErrorCheck(err)

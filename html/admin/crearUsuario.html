@@ -180,10 +180,13 @@
         <div class="fct">
             <h1>{{.TituloLista}}</h1>
             <ul class="clearfix valign">
-                <li class="icn ic4"></li>
+                <li class="lifunc">
+                    <input type="text" id="searchuser" onkeyup="filtraralumno(this)">
+                    <div class="icn ic4" id="btnsu" onclick="showsearch(this)"></div>
+                </li>
             </ul>
         </div>
-        <ul class='lu'>
+        <ul class='lu listaalumnos'>
             {{ range $I, $User := .Lista }}
             <li class="u" rel="{{$User.Id}}">        
                 <div class="no">{{$User.Num}} - {{$User.Nombre}} {{$User.Apellido1}} {{$User.Apellido2}}</div>
