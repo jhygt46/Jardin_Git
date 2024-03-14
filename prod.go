@@ -133,6 +133,7 @@ type Indexs struct {
 	Reestablecer Reestablecer       `json:"Reestablecer"`
 	Function     string             `json:"Nombre"`
 	Page         string             `json:"Page"`
+	PageIndex    string             `json:"PageIndex"`
 	User         IndexUser          `json:"User"`
 	Modulos      []Modulo           `json:"Modulos"`
 	Register     bool               `json:"Register"`
@@ -325,8 +326,6 @@ func main() {
 	log.SetFlags(0)
 	log.SetOutput(ioutil.Discard)
 
-	//SendEmail("diego.gomez.bezmalinovic@gmail.com", "prueba", "mensaje de prueba")
-
 	if runtime.GOOS == "windows" {
 
 		imgHandler = fasthttp.FSHandler("C:/Go/Jardin_Git/img", 1)
@@ -402,6 +401,13 @@ func main() {
 	go func() {
 		r := router.New()
 		r.GET("/", Index)
+
+		r.GET("/conozcanos", Index)
+		r.GET("/propuesta-educativa", Index)
+		r.GET("/horarios", Index)
+		r.GET("/contacto", Index)
+		r.GET("/visita-virtual", Index)
+
 		r.GET("/favicon.ico", Favicon)
 		r.GET("/css/{name}", Css)
 		r.GET("/js/{name}", Js)
@@ -1750,6 +1756,8 @@ func Index(ctx *fasthttp.RequestCtx) {
 	index := GetPermisoUser(db, string(ctx.Request.Header.Cookie("cu")), true)
 	index.Login = Read_uint32bytes(ctx.FormValue("login"))
 	index.Page = "Inicio"
+
+	index.PageIndex = string(ctx.URI().RequestURI())
 
 	if len(ctx.FormValue("code")) == 30 && Read_uint32bytes(ctx.FormValue("id")) > 0 {
 		index.Reestablecer = Reestablecer{Op: 1, Code: string(ctx.FormValue("code")), Id: Read_uint32bytes(ctx.FormValue("id"))}

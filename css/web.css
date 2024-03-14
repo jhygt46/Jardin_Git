@@ -1054,35 +1054,70 @@ body{
     display: none;
     z-index: 2;
 }
+
+
+
+
+@media (max-width: 600px) {
+    .site .cont_site .a2a .visita-virtual .vvlist_images .vvlista{
+        width: 100%;
+        padding: 1% 0%;
+        height: 20%;
+        right: 0px;
+        bottom: 0px;
+        position: absolute;
+    }
+    .site .cont_site .a2a .visita-virtual .vvlist_images .vvimage{
+        width: 100%;
+        height: 78%;
+        left: 0px;
+        top: 0px;
+        position: absolute;
+    }
+    .site .cont_site .a2a .visita-virtual .vvlist_images .vvlista .vvimage_chica{
+        cursor: pointer;
+        width: 128px;
+        height: 100%;
+        float: left;
+        padding-right: 5px;
+    }
+}
+@media (min-width: 600px) {
+    .site .cont_site .a2a .visita-virtual .vvlist_images .vvlista{
+        width: 20%;
+        padding: 1%;
+        height: 100%;
+        right: 0px;
+        top: 0px;
+        position: absolute;
+    }
+    .site .cont_site .a2a .visita-virtual .vvlist_images .vvimage{
+        width: 78%;
+        height: 100%;
+        left: 0px;
+        top: 0px;
+        position: absolute;
+    }
+    .site .cont_site .a2a .visita-virtual .vvlist_images .vvlista .vvimage_chica{
+        cursor: pointer;
+    }
+}
+
+
+
+
 .site .cont_site .a2a .visita-virtual .vvlist_images{
     width: 100%;
     height: 100%;
     display: none;
     position: relative;
 }
-.site .cont_site .a2a .visita-virtual .vvlist_images .vvimage{
-    width: 78%;
-    height: 100%;
-    left: 0px;
-    top: 0px;
-    position: absolute;
-}
-.site .cont_site .a2a .visita-virtual .vvlist_images .vvlista{
-    width: 20%;
-    padding: 1%;
-    height: 100%;
-    right: 0px;
-    top: 0px;
-    position: absolute;
-}
-
 .site .cont_site .a2a .visita-virtual .vvlist_images .vvimage #vb01{
     background-image: url("/img/vv_biblioteca_01.jpg");
 }
 .site .cont_site .a2a .visita-virtual .vvlist_images .vvimage #vb02{
     background-image: url("/img/vv_biblioteca_02.jpg");
 }
-
 .site .cont_site .a2a .visita-virtual .vvlist_images .vvimage .vvimage_grande{
     display: none;
     width: 100%;
@@ -1095,12 +1130,16 @@ body{
 .site .cont_site .a2a .visita-virtual .vvlist_images .vvimage .vvimage{
     
 }
-.site .cont_site .a2a .visita-virtual .vvlist_images .vvlista .vvimage_chica{
-    cursor: pointer;
-}
 .site .cont_site .a2a .visita-virtual .vvlist_images .vvlista .vvimage_chica img{
     width: 100%;
 }
+
+
+
+
+
+
+
 .site .cont_site .a2a .visita-virtual .back{
     position: absolute;
     padding: 10px 20px;

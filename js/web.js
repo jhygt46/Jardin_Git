@@ -52,6 +52,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var pan = GCS("pan");
     for(var i=0; i<pan.length; i++){
         pan[i].addEventListener("mousemove", mouse_move);
+        pan[i].addEventListener("touchmove", touchmove);
+        pan[i].addEventListener("touchstart", touchstart);
     }
 
     var vvimg = GCS("vvimage_chica");
@@ -164,7 +166,7 @@ function back(){
     ShowVisita(id);
 }
 function ShowVisita(id){
-    var list = GC("page5", 0).children;
+    var list = GC("visita-virtual", 0).children;
     for(var i=0; i<list.length - 1; i++){
         if(i == id){
             list[i].className = AddVisible(list[i].className, true);
@@ -855,10 +857,10 @@ function initMap(){
 }
 function start_visita(){
 
-    if(GC("page5", 0) !== undefined){
+    if(GC("visita-virtual", 0) !== undefined){
         var width = window.innerWidth;
         var cont_site = width * 0.98 > 800 ? 800 : width * 0.98;
-        var images = GC("page5", 0).children;
+        var images = GC("visita-virtual", 0).children;
 
         for(var i=0; i<images.length; i++){
             if(images[i].className == "pan" || images[i].className == "pan visible"){
@@ -869,9 +871,7 @@ function start_visita(){
     }
 }
 function mouse_move(e){
-    
     var div = GC("visible", 0);
-    
     if(div.className == "pan visible"){
         var width = window.innerWidth;
         var cont_site = width * 0.98 > 800 ? 800 : width * 0.98;
@@ -879,4 +879,25 @@ function mouse_move(e){
         var left = (cont_site - div.offsetWidth)*j;
         div.style.left = left+"px";
     }
+}
+var touchX = 0;
+function touchmove(e){
+    
+    var move = touchX - e.touches[0].pageX;
+    touchX = e.touches[0].pageX;
+
+    var width = window.innerWidth;
+    var cont_site = width * 0.98 > 800 ? 800 : width * 0.98;
+    var left_max = cont_site - this.id;
+
+    var left = parseInt(this.style.left) - move;
+
+    if(left <= 0 && left > left_max){
+        this.style.left = left+"px";
+    }
+    e.preventDefault();
+
+}
+function touchstart(e){
+    touchX = e.touches[0].pageX;
 }

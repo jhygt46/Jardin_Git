@@ -19,7 +19,7 @@
         <div class="a1 halign"><img class="vhalign" src="/img/hada_chica.png" alt="" /></div>
         <div class="a2">
             <div class="a2a">
-                <div class="page conozcanos" style="top: 2px">
+                <div class="page conozcanos" {{ if or (eq .PageIndex "/") (eq .PageIndex "/conozcanos") }}style="top: 2px"{{end}}>
                     <div class="info infox">
                         <div class="info2">
                             <div class="f25 pt10 pb15">Conózcanos</div>
@@ -51,7 +51,7 @@
                     <div class="imagen imagenx imagen1"></div>
                     <div class="imagegradient igradx igradcolx1"></div>
                 </div>
-                <div class="page propuesta-educativa">
+                <div class="page propuesta-educativa" {{ if eq .PageIndex "/propuesta-educativa" }}style="top: 2px"{{end}}>
                     <div class="info infox">
                         <div class="info2">
                             <div class="f25 pt10 pb10">Propuesta Educativa</div>
@@ -97,7 +97,7 @@
                     <div class="imagen imagenx imagen2"></div>
                     <div class="imagegradient igradx igradcolx2"></div>
                 </div>
-                <div class="page horarios">
+                <div class="page horarios" {{ if eq .PageIndex "/horarios" }}style="top: 2px"{{end}}>
                     <div class="info infox">
                         <div class="info2">
                             <div class="f25 pt10 pb10">Horarios</div>
@@ -112,7 +112,7 @@
                     <div class="imagen imagenx imagen3"></div>
                     <div class="imagegradient igradx igradcolx3"></div>
                 </div>
-                <div class="page contacto">
+                <div class="page contacto" {{ if eq .PageIndex "/contacto" }}style="top: 2px"{{end}}>
                     <div class="form">
                         <div class="formulario">
                             <div class="titulo">Contacto</div>
@@ -127,7 +127,7 @@
                     </div>
                     <div class="mapa"><div id="map"></div></div>
                 </div>
-                <div class="page visita-virtual">
+                <div class="page visita-virtual" {{ if eq .PageIndex "/visita-virtual" }}style="top: 2px"{{end}}>
                     <div class="pan visible" id="858">
                         <div class="punto pos_entrada" id="1">Entrar</div>
                         <img class="img" src="/img/vv_visita.jpg" alt="">
@@ -171,11 +171,11 @@
             </div>
         </div>
         <div class="a3">
-            <a class="bp b ba selected" href="/conozcanos" selected="1"><div class="icn icn1"><div class="icnnom">Conózcanos</div></div></a>
-            <a class="bp b bb" href="/propuesta-educativa" selected="0"><div class="icn icn2"><div class="icnnom">Propuesta Educativa</div></div></a>
-            <a class="bp b bc" href="/horarios" selected="0"><div class="icn icn3"><div class="icnnom">Horarios</div></div></a>
-            <a class="bp b bd" href="/contacto" selected="0"><div class="icn icn4"><div class="icnnom">Contacto</div></div></a>
-            <a class="bp b be" href="/visita-virtual" selected="0"><div class="icn icn5"><div class="icnnom">Tour Virtual</div></div></a>
+            <a class='bp b ba {{ if or (eq .PageIndex "/") (eq .PageIndex "/conozcanos") }}selected{{end}}' href="/conozcanos"><div class="icn icn1"><div class="icnnom">Conózcanos</div></div></a>
+            <a class='bp b bb {{ if eq .PageIndex "/propuesta-educativa" }}selected{{end}}' href="/propuesta-educativa"><div class="icn icn2"><div class="icnnom">Propuesta Educativa</div></div></a>
+            <a class='bp b bc {{ if eq .PageIndex "/horarios" }}selected{{end}}' href="/horarios"><div class="icn icn3"><div class="icnnom">Horarios</div></div></a>
+            <a class='bp b bd {{ if eq .PageIndex "/contacto" }}selected{{end}}' href="/contacto"><div class="icn icn4"><div class="icnnom">Contacto</div></div></a>
+            <a class='bp b be {{ if eq .PageIndex "/visita-virtual" }}selected{{end}}' href="/visita-virtual"><div class="icn icn5"><div class="icnnom">Tour Virtual</div></div></a>
         </div>
     </div>
 </div>
