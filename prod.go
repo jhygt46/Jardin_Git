@@ -2976,10 +2976,9 @@ func GetAllCurso(db *sql.DB) ([]ListaUsers, bool) {
 		User.Num = i
 		i++
 		padres, found := GetInfoPadres(db, User.Id_usr)
-		PrintJson(padres)
 		if found {
 			for _, x := range padres {
-				if x.Tipo == 1 {
+				if x.Tipo == 2 {
 					User.MamaNom = x.Nombre
 					User.MamaTelefono = x.Telefono
 				} else {
