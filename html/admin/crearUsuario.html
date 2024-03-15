@@ -140,8 +140,10 @@
                     <span>Motivo Retiro:</span>
                     <select id="motivo_retiro">
                         <option value="0" {{if eq .Usuario.MotivoRetiro 0}}selected{{end}}>Seleccionar</option>
-                        <option value="1" {{if eq .Usuario.MotivoRetiro 1}}selected{{end}}>Si</option>
-                        <option value="2" {{if eq .Usuario.MotivoRetiro 2}}selected{{end}}>No</option>
+                        <option value="1" {{if eq .Usuario.MotivoRetiro 1}}selected{{end}}>Cumplió 2 años</option>
+                        <option value="2" {{if eq .Usuario.MotivoRetiro 2}}selected{{end}}>Enfermedad</option>
+                        <option value="3" {{if eq .Usuario.MotivoRetiro 3}}selected{{end}}>Decision de Padres</option>
+                        <option value="4" {{if eq .Usuario.MotivoRetiro 4}}selected{{end}}>Egreso</option>
                     </select>
                     <div class="mensaje"></div>
                 </label>

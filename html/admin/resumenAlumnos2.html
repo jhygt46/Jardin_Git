@@ -88,9 +88,6 @@
         <td width="60">Fecha Mat</td>
         <td width="60">Fecha Ing</td>
 	    <td width="60">Reglamento</td>        
-        <td width="60">Apoderado</td>
-        <td width="60">Telefono</td>
-        <td width="60">Email</td>
         <td width="60">Mama</td>
         <td width="60">Celular</td>
         <td width="60">Papa</td>
@@ -99,29 +96,26 @@
         <td width="60">Fecha Retiro</td>
         <td width="45">Motivo Retiro</td>
     </tr>
-    {{range $I, $User := .ListaUsers}}
+    {{range .ListaUsers}}
     <tr class="td3">
-        <td align="center">{{$User.Num}}</td>
-        <td>{{$User.NMatricula}}</td>
-        <td>{{$User.Nombre}} {{$User.Apellido1}} {{$User.Apellido2}}</td>
-        <td>{{$User.Rut}}</td>
-        <td></td>
-        <td align="center">{{$User.FechaNac}}</td>
-        <td align="center">{{if eq $User.Genero 1}}M{{end}} {{if eq $User.Genero 2}}F{{end}}</td>
-        <td>{{$User.Direccion}}</td>
-        <td align="center"></td>
-        <td align="center"></td>
-	    <td align="center"></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td align="center"></td>
-        <td></td>
+        <td align="center">{{.Num}}</td>
+        <td align="center">{{.NMatricula}}</td>
+        <td align="center">{{.Nombre}} {{.Apellido1}} {{.Apellido2}}</td>
+        <td align="center">{{.Rut}}</td>
+        <td align="center">{{.Curso}}</td>
+        <td align="center">{{if eq .FechaNac "0000-00-00"}} - {{else}}{{.FechaNac}}{{end}}</td>
+        <td align="center">{{if eq .Genero 1}}M{{end}} {{if eq .Genero 2}}F{{end}}</td>
+        <td align="center">{{.Direccion}}</td>
+        <td align="center">{{if eq .FechaMat "0000-00-00"}} - {{else}}{{.FechaMat}}{{end}}</td>
+        <td align="center">{{if eq .FechaIng "0000-00-00"}} - {{else}}{{.FechaIng}}{{end}}</td>
+	    <td align="center">{{if eq .Reglamento 1}}Si{{else}}No{{end}}</td>
+        <td align="center">{{.MamaNom}}</td>
+        <td align="center">{{.MamaTelefono}}</td>
+        <td align="center">{{.PapaNom}}</td>
+        <td align="center">{{.PapaTelefono}}</td>
+        <td align="center">{{.Obervaciones}}</td>
+        <td align="center">{{if eq .Fretiro "0000-00-00"}} - {{else}}{{.Fretiro}}{{end}}</td>
+        <td align="center">{{if eq .Mretiro 1}}Cumplió 2 años{{end}}{{if eq .Mretiro 2}}Enfermedad{{end}}{{if eq .Mretiro 3}}Decision de Padres{{end}}{{if eq .Mretiro 4}}Egreso{{end}}</td>
     </tr>
     {{end}}
     </table>

@@ -308,6 +308,13 @@ type ListaUsers struct {
 	FechaNac     string `json:"FechaNac"`
 	Direccion    string `json:"Direccion"`
 	Genero       int    `json:"Genero"`
+	Curso        string `json:"Curso"`
+	FechaMat     string `json:"FechaMat"`
+	FechaIng     string `json:"FechaIng"`
+	Reglamento   int    `json:"Reglamento"`
+	Obervaciones string `json:"Obervaciones"`
+	Fretiro      string `json:"Fretiro"`
+	Mretiro      int    `json:"Mretiro"`
 }
 
 var (
@@ -2957,7 +2964,7 @@ func GetAllCurso(db *sql.DB) ([]ListaUsers, bool) {
 	LUsers := make([]ListaUsers, 0)
 
 	cn := 0
-	res, err := db.Query("SELECT id_usr, nombre, apellido1, apellido2, nmatricula, rut, fecha_nacimiento, direccion, genero FROM usuarios WHERE tipo = 3 AND eliminado = ?", cn)
+	res, err := db.Query("SELECT t1.id_usr, t1.nombre, t1.apellido1, t1.apellido2, t1.nmatricula, t1.rut, t1.fecha_nacimiento, t1.direccion, t1.genero, t3.nombre, t1.fecha_matricula, t1.fecha_ingreso, t1.reglamento, t1.observaciones, t1.fecha_retiro, t1.motivo_retiro FROM usuarios t1, curso_usuarios t2, cursos t3 WHERE t1.tipo = 3 AND t1.id_usr=t2.id_usr AND t2.id_cur=t3.id_cur AND t1.eliminado = ?", cn)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
@@ -2967,7 +2974,7 @@ func GetAllCurso(db *sql.DB) ([]ListaUsers, bool) {
 	i := 1
 	for res.Next() {
 		User := ListaUsers{}
-		err := res.Scan(&User.Id_usr, &User.Nombre, &User.Apellido1, &User.Apellido2, &User.NMatricula, &User.Rut, &User.FechaNac, &User.Direccion, &User.Genero)
+		err := res.Scan(&User.Id_usr, &User.Nombre, &User.Apellido1, &User.Apellido2, &User.NMatricula, &User.Rut, &User.FechaNac, &User.Direccion, &User.Genero, &User.Curso, &User.FechaMat, &User.FechaIng, &User.Reglamento, &User.Obervaciones, &User.Fretiro, &User.Mretiro)
 		if err != nil {
 			ErrorCheck(err)
 			return LUsers, false
@@ -2977,6 +2984,7 @@ func GetAllCurso(db *sql.DB) ([]ListaUsers, bool) {
 		i++
 		padres, found := GetInfoPadres(db, User.Id_usr)
 		if found {
+
 			for _, x := range padres {
 				if x.Tipo == 2 {
 					User.MamaNom = x.Nombre
