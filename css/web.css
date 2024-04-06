@@ -46,6 +46,12 @@ body{
     -moz-box-shadow: -3px 0px 27px -2px rgba(0,0,0,0.75);
     box-shadow: -3px 0px 27px -2px rgba(0,0,0,0.75);
 }
+.container .menu .cont_menu{
+    width: 100%;
+    height: 100%;
+    background: rgb(255,255,255);
+    background: linear-gradient(180deg, rgba(255,255,255,1) 50%, rgba(218,218,218,1) 100%);
+}
 .container .mensaje{
     position: fixed;
     z-index: 4;
@@ -234,6 +240,7 @@ body{
     top: 15px;
     left: 250px;
     cursor: pointer;
+    z-index: 2;
 }
 .container .menu .button p{
     width: 40px;
@@ -1156,9 +1163,9 @@ body{
 }
 .site .cont_site .a2a .visita-virtual .pan .punto{
     position: absolute;
-    padding: 10px 20px;
+    padding: 8px 16px;
     border-radius: 5px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.7);
     cursor: pointer;
     z-index: 2;
 }
@@ -1166,8 +1173,6 @@ body{
     top: 200px;
     left: 430px;
 }
-
-
 .site .cont_site .a2a .visita-virtual .pan .pos_back{
     top: 200px;
     left: 430px;
@@ -1195,6 +1200,42 @@ body{
 .site .cont_site .a2a .visita-virtual .pan .pos_cocina{
     top: 200px;
     left: 80px;
+}
+.site .cont_site .a2a .visita-virtual .pan .pos_samarilla{
+    top: 140px;
+    left: 336px;
+}
+.site .cont_site .a2a .visita-virtual .pan .pos_bsalacuna1{
+    top: 186px;
+    left: 290px;
+}
+.site .cont_site .a2a .visita-virtual .pan .pos_bjardin{
+    top: 233px;
+    left: 271px;
+}
+.site .cont_site .a2a .visita-virtual .pan .pos_sroja{
+    top: 153px;
+    left: 550px;
+}
+.site .cont_site .a2a .visita-virtual .pan .pos_psalacuna{
+    top: 199px;
+    left: 570px;
+}
+.site .cont_site .a2a .visita-virtual .pan .pos_sazul{
+    top: 245px;
+    left: 619px;
+}
+.site .cont_site .a2a .visita-virtual .pan .pos_sactividades{
+    top: 245px;
+    left: 150px;
+}
+.site .cont_site .a2a .visita-virtual .pan .pos_psiesta{
+    top: 245px;
+    left: 1230px;
+}
+.site .cont_site .a2a .visita-virtual .pan .pos_bsalacuna2{
+    top: 245px;
+    left: 580px;
 }
 
 

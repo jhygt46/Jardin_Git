@@ -50,9 +50,10 @@
                 <div class="no">{{.Num}} - {{.Nombre}}</div>
                 <div class="btns clearfix valign">
                     <a title="Eliminar" class="icn del" onclick="navlink('/pages/borrarCurso?id={{.Id}}&nombre={{.Nombre}}')"></a>
-                    <a title="Educadoras" class="icn edu" onclick="navlink('/pages/verEducadoras?id={{.Id}}')"></a>
                     <a title="Modificar" class="icn mod" onclick="navlink('{{$.PageMod}}?id={{.Id}}')"></a>
-                    <a title="Modificar" class="icn mdl" onclick="openwn('/pages/listaCursos?id={{.Id}}', 1320, 650)"></a>
+                    <a title="Configuracion" class="icn con" onclick="navlink('/pages/CursoConfig?id={{.Id}}')"></a>
+                    <a title="Educadoras" class="icn edu" onclick="navlink('/pages/verEducadoras?id={{.Id}}')"></a>
+                    <a title="Ver Lista" class="icn mdl" onclick="openwn('/pages/listaCursos?id={{.Id}}', 1320, 650)"></a>
                 </div>
             </li>
             {{end}}

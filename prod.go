@@ -761,6 +761,30 @@ func Pages(ctx *fasthttp.RequestCtx) {
 			err = t.Execute(ctx, obj)
 			ErrorCheck(err)
 		}
+	case "CursoConfig":
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+
+			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
+			obj := GetTemplateConf("Configuracion Curso", "Cursos Padre", "Seleccione cursos padre", "Listado de Educadoras", "guardar_conf_curso", fmt.Sprintf("/pages/%s", name), "borrar_conf_curso", "Curso Padre")
+			obj.FormId = id
+
+			educadoras, found := GetCursosPadres(db, id)
+			if found {
+				obj.Padres = educadoras
+			}
+
+			aux, found := GetCursos(db)
+			if found {
+				obj.Lista = aux
+			}
+
+			t, err := TemplatePage(fmt.Sprintf("html/admin/%s.html", name))
+			ErrorCheck(err)
+
+			err = t.Execute(ctx, obj)
+			ErrorCheck(err)
+		}
 	case "verCursos":
 		perms := GetPermisoUser(db, token, false)
 		if perms.Permisos.Admin {
@@ -986,7 +1010,7 @@ func Pages(ctx *fasthttp.RequestCtx) {
 			obj := GetTemplateConf("Codigos Qr", "Formulario", "Complete los campos", "", "", fmt.Sprintf("/pages/%s", name), "", "")
 
 			id := Read_uint32bytes(ctx.QueryArgs().Peek("id"))
-			lcursos, found := GetUserCurso(db, id)
+			lcursos, found := GetUserCursoP(db, id)
 			if found {
 				obj.Lista = lcursos
 			}
@@ -1117,6 +1141,25 @@ func Save(ctx *fasthttp.RequestCtx) {
 			}
 			if resp.Op == 1 {
 				resp.Page = "crearCursos"
+				resp.Reload = 1
+			}
+		} else {
+			resp.Msg = "No tiene permisos"
+		}
+		json.NewEncoder(ctx).Encode(resp)
+	case "guardar_conf_curso":
+
+		ctx.Response.Header.Set("Content-Type", "application/json")
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+
+			id_cur := int(Read_uint32bytes(ctx.FormValue("id")))
+			id_pcur := int(Read_uint32bytes(ctx.FormValue("id_pcur")))
+
+			resp.Op, resp.Msg = InsertCursoPadre(db, id_cur, id_pcur)
+
+			if resp.Op == 1 {
+				resp.Page = fmt.Sprintf("CursoConfig?id=%v", id_cur)
 				resp.Reload = 1
 			}
 		} else {
@@ -1543,6 +1586,23 @@ func Delete(ctx *fasthttp.RequestCtx) {
 				if resp.Tipo == "success" {
 					resp.Reload = 1
 					resp.Page = fmt.Sprintf("verCursos?id=%v", res[1])
+				}
+			} else {
+				resp.Tipo, resp.Titulo, resp.Texto = "error", "Error al eliminar Usuario", "Error inesperado"
+			}
+		} else {
+			resp.Tipo, resp.Titulo, resp.Texto = "error", "Error al eliminar Usuario", "No tiene permiso para esta acción"
+		}
+	case "borrar_conf_curso":
+		perms := GetPermisoUser(db, token, false)
+		if perms.Permisos.Admin {
+			id := string(ctx.FormValue("id"))
+			res := strings.Split(id, "/")
+			if len(res) == 2 {
+				resp.Tipo, resp.Titulo, resp.Texto = BorrarCursoPadre(db, res[0], res[1])
+				if resp.Tipo == "success" {
+					resp.Reload = 1
+					resp.Page = fmt.Sprintf("CursoConfig?id=%v", res[0])
 				}
 			} else {
 				resp.Tipo, resp.Titulo, resp.Texto = "error", "Error al eliminar Usuario", "Error inesperado"
@@ -2756,6 +2816,26 @@ func InsertEducadoraCurso(db *sql.DB, id_cur int, id_edu int) (uint8, string) {
 		return 2, "La Educadora no pudo ser asociada"
 	}
 }
+func InsertCursoPadre(db *sql.DB, id_cur int, id_pcur int) (uint8, string) {
+
+	if id_cur != id_pcur {
+		stmt, err := db.Prepare("INSERT INTO curso_padre (id_cur, id_pcur) VALUES (?,?)")
+		if err != nil {
+			ErrorCheck(err)
+			return 2, "El Curso Padre no pudo ser asociado"
+		}
+		defer stmt.Close()
+		_, err = stmt.Exec(id_cur, id_pcur)
+		if err == nil {
+			return 1, "El Curso Padre ha sido asociado correctamente"
+		} else {
+			ErrorCheck(err)
+			return 2, "El Curso Padre no pudo ser asociado"
+		}
+	} else {
+		return 2, "El Curso Padre no pudo ser asociado"
+	}
+}
 
 // LIBROS DB //
 func GuardarLibro(db *sql.DB, nombre string, code string) (uint8, string) {
@@ -2964,7 +3044,7 @@ func GetAllCurso(db *sql.DB) ([]ListaUsers, bool) {
 	LUsers := make([]ListaUsers, 0)
 
 	cn := 0
-	res, err := db.Query("SELECT t1.id_usr, t1.nombre, t1.apellido1, t1.apellido2, t1.nmatricula, t1.rut, t1.fecha_nacimiento, t1.direccion, t1.genero, t3.nombre, t1.fecha_matricula, t1.fecha_ingreso, t1.reglamento, t1.observaciones, t1.fecha_retiro, t1.motivo_retiro FROM usuarios t1, curso_usuarios t2, cursos t3 WHERE t1.tipo = 3 AND t1.id_usr=t2.id_usr AND t2.id_cur=t3.id_cur AND t1.eliminado = ?", cn)
+	res, err := db.Query("SELECT t1.id_usr, t1.nombre, t1.apellido1, t1.apellido2, t1.nmatricula, t1.rut, t1.fecha_nacimiento, t1.direccion, t1.genero, t3.nombre, t1.fecha_matricula, t1.fecha_ingreso, t1.reglamento, t1.observaciones, t1.fecha_retiro, t1.motivo_retiro FROM usuarios t1, curso_usuarios t2, cursos t3 WHERE t1.tipo = 3 AND t1.id_usr=t2.id_usr AND t2.id_cur=t3.id_cur AND t1.eliminado = ? ORDER BY t1.apellido1, t1.apellido2, t1.nombre", cn)
 	defer res.Close()
 	if err != nil {
 		ErrorCheck(err)
@@ -3502,6 +3582,51 @@ func GetCursoUser(db *sql.DB, id int) (int, bool) {
 		return 0, false
 	}
 }
+func GetUserCursoP(db *sql.DB, id int) ([]Lista, bool) {
+
+	lista := []Lista{}
+
+	cn := 0
+	res, err := db.Query("SELECT t1.id_pcur FROM curso_padre t1, cursos t2 WHERE t1.id_cur = ? AND t1.id_pcur=t2.id_cur AND t2.eliminado=?", id, cn)
+	defer res.Close()
+	if err != nil {
+		ErrorCheck(err)
+		return lista, false
+	}
+
+	var res2 *sql.Rows
+	if res.Next() {
+		id_pcur := 0
+		err := res.Scan(&id_pcur)
+		if err != nil {
+			ErrorCheck(err)
+			return lista, false
+		}
+		res2, err = db.Query("SELECT t2.id_usr, t2.nombre, t2.apellido1, t2.apellido2 FROM curso_usuarios t1, usuarios t2 WHERE (t1.id_cur = ? OR t1.id_cur = ?) AND t1.id_usr=t2.id_usr", id, id_pcur)
+	} else {
+		res2, err = db.Query("SELECT t2.id_usr, t2.nombre, t2.apellido1, t2.apellido2 FROM curso_usuarios t1, usuarios t2 WHERE t1.id_cur = ? AND t1.id_usr=t2.id_usr", id)
+	}
+
+	defer res2.Close()
+	if err != nil {
+		ErrorCheck(err)
+		return lista, false
+	}
+
+	i := 1
+	for res2.Next() {
+		list := Lista{}
+		err := res2.Scan(&list.Id, &list.Nombre, &list.Apellido1, &list.Apellido2)
+		if err != nil {
+			ErrorCheck(err)
+			return lista, false
+		}
+		list.Num = i
+		i++
+		lista = append(lista, list)
+	}
+	return lista, true
+}
 func GetUserCurso(db *sql.DB, id int) ([]Lista, bool) {
 
 	lista := []Lista{}
@@ -3751,6 +3876,28 @@ func GetCursosUser(db *sql.DB, id int) ([]Padres, bool) {
 	}
 	return padres, true
 }
+func GetCursosPadres(db *sql.DB, id int) ([]Padres, bool) {
+
+	padres := []Padres{}
+
+	res, err := db.Query("SELECT t2.id_cur, t2.nombre FROM curso_padre t1, cursos t2 WHERE t1.id_cur = ? AND t1.id_pcur=t2.id_cur", id)
+	defer res.Close()
+	if err != nil {
+		ErrorCheck(err)
+		return padres, false
+	}
+
+	for res.Next() {
+		obj := Padres{}
+		err := res.Scan(&obj.Id_usr, &obj.Nombre)
+		if err != nil {
+			ErrorCheck(err)
+			return padres, false
+		}
+		padres = append(padres, obj)
+	}
+	return padres, true
+}
 func BorrarParentesco(db *sql.DB, id1 string, id2 string) (string, string, string) {
 
 	delForm, err := db.Prepare("DELETE FROM parentensco WHERE id_alu = ? AND id_apo = ?")
@@ -3795,8 +3942,6 @@ func BorrarPrestamo(db *sql.DB, id string) (string, string, string) {
 }
 func BorrarCursoEdu(db *sql.DB, id1 string, id2 string) (string, string, string) {
 
-	fmt.Printf("ID_CUR %v - ID_USR %v\n", id1, id2)
-
 	delForm, err := db.Prepare("DELETE FROM educadora_curso WHERE id_cur = ? AND id_usr = ?")
 	ErrorCheck(err)
 	_, e := delForm.Exec(id1, id2)
@@ -3809,6 +3954,21 @@ func BorrarCursoEdu(db *sql.DB, id1 string, id2 string) (string, string, string)
 		return "error", "Error al eliminar el relacion", "La relacion no pudo ser eliminada"
 	}
 }
+func BorrarCursoPadre(db *sql.DB, id1 string, id2 string) (string, string, string) {
+
+	delForm, err := db.Prepare("DELETE FROM curso_padre WHERE id_cur = ? AND id_pcur = ?")
+	ErrorCheck(err)
+	_, e := delForm.Exec(id1, id2)
+	defer db.Close()
+
+	ErrorCheck(e)
+	if e == nil {
+		return "success", "Relacion eliminada", "Relacion eliminada correctamente"
+	} else {
+		return "error", "Error al eliminar el relacion", "La relacion no pudo ser eliminada"
+	}
+}
+
 func GetEducadoraCurso(db *sql.DB, id int, id2 int) (Padres, bool) {
 
 	padre := Padres{}
