@@ -3602,9 +3602,9 @@ func GetUserCursoP(db *sql.DB, id int) ([]Lista, bool) {
 			ErrorCheck(err)
 			return lista, false
 		}
-		res2, err = db.Query("SELECT t2.id_usr, t2.nombre, t2.apellido1, t2.apellido2 FROM curso_usuarios t1, usuarios t2 WHERE (t1.id_cur = ? OR t1.id_cur = ?) AND t1.id_usr=t2.id_usr", id, id_pcur)
+		res2, err = db.Query("SELECT t2.id_usr, t2.nombre, t2.apellido1, t2.apellido2 FROM curso_usuarios t1, usuarios t2 WHERE (t1.id_cur = ? OR t1.id_cur = ?) AND t1.id_usr=t2.id_usr ORDER BY t2.apellido1, t2.apellido2, t2.nombre", id, id_pcur)
 	} else {
-		res2, err = db.Query("SELECT t2.id_usr, t2.nombre, t2.apellido1, t2.apellido2 FROM curso_usuarios t1, usuarios t2 WHERE t1.id_cur = ? AND t1.id_usr=t2.id_usr", id)
+		res2, err = db.Query("SELECT t2.id_usr, t2.nombre, t2.apellido1, t2.apellido2 FROM curso_usuarios t1, usuarios t2 WHERE t1.id_cur = ? AND t1.id_usr=t2.id_usr ORDER BY t2.apellido1, t2.apellido2, t2.nombre", id)
 	}
 
 	defer res2.Close()
